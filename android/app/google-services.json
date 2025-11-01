@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1004979894879",
+    "project_id": "mentor-project-60e60",
+    "storage_bucket": "mentor-project-60e60.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1004979894879:android:cf30b6071a5ba85c8979ea",
+        "android_client_info": {
+          "package_name": "com.example.educationapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNjva5mxX-a8CIe1c2ViWQ5iHA6mTD67A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,2 @@
+C:/Users/Dell_9/StudioProjects/education/android/app/.cxx/RelWithDebInfo/6c376l1n/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/Users/Dell_9/StudioProjects/education/android/app/.cxx/RelWithDebInfo/6c376l1n/arm64-v8a/CMakeFiles/rebuild_cache.dir
