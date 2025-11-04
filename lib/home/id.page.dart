@@ -245,7 +245,7 @@ class FromDataMode {
   String? dob;
   String? userType;
   String? serviceType;
-  String? profilePicture;
+  String? profileImage;
   String? idCardImage;
 
   FromDataMode({
@@ -257,7 +257,7 @@ class FromDataMode {
     this.phoneNumber,
     this.userType,
     this.serviceType,
-    this.profilePicture,
+    this.profileImage,
     this.idCardImage,
   });
 
@@ -270,7 +270,7 @@ class FromDataMode {
     String? phoneNumber,
     String? userType,
     String? serviceType,
-    String? profilePicture,
+    String? profileImage,
     String? idCardImage,
   }) {
     return FromDataMode(
@@ -282,7 +282,7 @@ class FromDataMode {
       dob: dob ?? this.dob,
       userType: userType ?? this.userType,
       serviceType: serviceType ?? this.serviceType,
-      profilePicture: profilePicture ?? this.profilePicture,
+      profileImage: profileImage ?? this.profileImage,
       idCardImage: idCardImage ?? this.idCardImage,
     );
   }
@@ -313,17 +313,17 @@ class FormDataNotifier extends StateNotifier<FromDataMode> {
   void setSerType(String type) => state = state.copyWith(serviceType: type);
 
   void setProfilePicture(String path) =>
-      state = state.copyWith(profilePicture: path);
+      state = state.copyWith(profileImage: path);
 
   void setIdCarPic(String path) => state = state.copyWith(idCardImage: path);
 
   Future<void> register() async {
     try {
-      File? profileImageFile;
+      File? profileFile;
       File? idCardFile;
 
-      if (state.profilePicture != null && state.profilePicture!.isNotEmpty) {
-        profileImageFile = File(state.profilePicture!);
+      if (state.profileImage != null && state.profileImage!.isNotEmpty) {
+        profileFile = File(state.profileImage!);
       }
       if (state.idCardImage != null && state.idCardImage!.isNotEmpty) {
         idCardFile = File(state.idCardImage!);
@@ -338,7 +338,7 @@ class FormDataNotifier extends StateNotifier<FromDataMode> {
         state.dob ?? "",
         state.userType ?? "",
         state.serviceType ?? "",
-        profileImageFile,
+        profileFile,
         idCardFile,
       );
 

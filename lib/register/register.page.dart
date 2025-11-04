@@ -466,10 +466,7 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                         Notifier.setUserType(
                             formData.userType ?? "Professional");
 
-                        // Notifier.setProfilePicture(_image!.path);
-                        ref
-                            .read(myFormDataProvider.notifier)
-                            .setProfilePicture(_image!.path);
+                        Notifier.setProfilePicture(_image!.path);
 
                         await ref.read(myFormDataProvider.notifier).register();
 
