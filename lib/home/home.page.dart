@@ -116,7 +116,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   Widget drawerWidget(Box box) {
     final userType = box.get('userType');
-
+    final profileImage = box.get('profile');
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Container(
@@ -175,17 +175,19 @@ class _HomePageState extends ConsumerState<HomePage> {
                             color: const Color.fromARGB(25, 255, 255, 255),
                             borderRadius: BorderRadius.circular(500.r),
                           ),
-                          child: Image.network(
-                            box.get("profile").toString(),
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return ClipOval(
-                                child: Image.network(
-                                  "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png",
-                                  fit: BoxFit.cover,
-                                ),
-                              );
-                            },
+                          child: ClipOval(
+                            child: Image.network(
+                              profileImage['profile_picture'].toString(),
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return ClipOval(
+                                  child: Image.network(
+                                    "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png",
+                                    fit: BoxFit.cover,
+                                  ),
+                                );
+                              },
+                            ),
                           ),
                         ),
                         InkWell(
@@ -516,17 +518,19 @@ class _HomePageContentState extends ConsumerState<HomePageContent> {
                       color: const Color.fromARGB(25, 255, 255, 255),
                       borderRadius: BorderRadius.circular(500.r),
                     ),
-                    child: Image.network(
-                      profileImage['profile_picture'].toString(),
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return ClipOval(
-                          child: Image.network(
-                            "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png",
-                            fit: BoxFit.cover,
-                          ),
-                        );
-                      },
+                    child: ClipOval(
+                      child: Image.network(
+                        profileImage['profile_picture'].toString(),
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return ClipOval(
+                            child: Image.network(
+                              "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png",
+                              fit: BoxFit.cover,
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ),
