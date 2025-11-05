@@ -445,18 +445,19 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                         ),
                                       ),
                                       SizedBox(height: 10.h),
-                                      if (userProfile.data!.languageKnown !=
-                                              null &&
-                                          userProfile
-                                              .data!.languageKnown!.isNotEmpty)
-                                        Text(
-                                            userProfile.data!.languageKnown ??
-                                                "No Language select",
-                                            style: GoogleFonts.roboto(
-                                              fontSize: 14.sp,
-                                              fontWeight: FontWeight.w600,
-                                              color: Colors.black,
-                                            )),
+                                      Text(
+                                        (userProfile.data!.languageKnown ==
+                                                    null ||
+                                                userProfile.data!.languageKnown!
+                                                    .isEmpty)
+                                            ? "No Language"
+                                            : userProfile.data!.languageKnown!,
+                                        style: GoogleFonts.roboto(
+                                          fontSize: 15.sp,
+                                          fontWeight: FontWeight.w600,
+                                          color: const Color(0xff666666),
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ]),
