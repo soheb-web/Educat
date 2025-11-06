@@ -23,8 +23,32 @@ class MentorDetailPage extends ConsumerStatefulWidget {
 
 class _MentorDetailPageState extends ConsumerState<MentorDetailPage> {
   bool isConnected = false;
+  bool isLoading = false;
+
+  // Future<void> sendConnectRequest() async {
+  //   try {
+  //     final body = SendRequestBodyModel(mentorId: widget.id);
+  //     final service = APIStateNetwork(createDio());
+  //     final response = await service.studentSendRequest(body);
+
+  //     if (response.status == true) {
+  //       Fluttertoast.showToast(msg: response.message);
+  //       setState(() {
+  //         isConnected = true;
+  //       });
+  //     } else {
+  //       Fluttertoast.showToast(msg: response.message);
+  //     }
+  //   } catch (e, st) {
+  //     log("${e.toString()} \n $st");
+  //     Fluttertoast.showToast(msg: "No Request sent");
+  //   }
+  // }
 
   Future<void> sendConnectRequest() async {
+    setState(() {
+      isLoading = true;
+    });
     try {
       final body = SendRequestBodyModel(mentorId: widget.id);
       final service = APIStateNetwork(createDio());
@@ -32,6 +56,15 @@ class _MentorDetailPageState extends ConsumerState<MentorDetailPage> {
 
       if (response.status == true) {
         Fluttertoast.showToast(msg: response.message);
+
+        // ✅ Save connected mentor ID in Hive
+        var box = Hive.box('userdata');
+        List connectedMentors = box.get('connectedMentors', defaultValue: []);
+        if (!connectedMentors.contains(widget.id)) {
+          connectedMentors.add(widget.id);
+          box.put('connectedMentors', connectedMentors);
+        }
+
         setState(() {
           isConnected = true;
         });
@@ -41,18 +74,26 @@ class _MentorDetailPageState extends ConsumerState<MentorDetailPage> {
     } catch (e, st) {
       log("${e.toString()} \n $st");
       Fluttertoast.showToast(msg: "No Request sent");
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
-  Future<void> sendDisconnectRequest() async {
-    try {
-      // if you have a disconnect API, call it here
-      Fluttertoast.showToast(msg: "Disconnected successfully");
+  @override
+  void initState() {
+    super.initState();
+    checkConnectionStatus();
+  }
+
+  void checkConnectionStatus() {
+    var box = Hive.box('userdata');
+    List connectedMentors = box.get('connectedMentors', defaultValue: []);
+    if (connectedMentors.contains(widget.id)) {
       setState(() {
-        isConnected = false;
+        isConnected = true;
       });
-    } catch (e) {
-      Fluttertoast.showToast(msg: "Failed to disconnect");
     }
   }
 
@@ -241,49 +282,22 @@ class _MentorDetailPageState extends ConsumerState<MentorDetailPage> {
                                 color: const Color(0xff666666),
                               ),
                             ),
-                          InkWell(
-                            onTap: () async {
-                              if (isConnected) {
-                                await sendDisconnectRequest();
-                              } else {
-                                await sendConnectRequest();
-                              }
-                            },
-                            child: Container(
-                              margin: EdgeInsets.only(
-                                  left: 10.w, top: 10.h, right: 10.w),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Container(
-                                    padding: EdgeInsets.only(
-                                        left: 10.w, right: 10.w),
-                                    height: 50.h,
-                                    width: 140.w,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(20),
-                                      //color: const Color(0xffA8E6CF),
-                                      color: isConnected
-                                          ? const Color(
-                                              0xffFF8A80) // red for disconnect
-                                          : const Color(0xffA8E6CF),
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        isConnected ? "Disconnect" : "Connect",
-                                        style: GoogleFonts.roboto(
-                                          fontSize: 12.sp,
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(width: 20.w),
-                                  GestureDetector(
-                                    onTap: () {
-                                      // Handle message action
-                                    },
+
+                          Container(
+                            margin: EdgeInsets.only(
+                                left: 10.w, top: 10.h, right: 10.w),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                if (isConnected)
+                                  SizedBox()
+                                else
+                                  InkWell(
+                                    onTap: isLoading
+                                        ? null
+                                        : () async {
+                                            await sendConnectRequest();
+                                          },
                                     child: Container(
                                       padding: EdgeInsets.only(
                                           left: 10.w, right: 10.w),
@@ -291,24 +305,62 @@ class _MentorDetailPageState extends ConsumerState<MentorDetailPage> {
                                       width: 140.w,
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(20),
-                                        color: Colors.white,
-                                        border: Border.all(
-                                            color: const Color(0xff008080)),
+                                        //color: const Color(0xffA8E6CF),
+                                        color: isConnected
+                                            ? const Color(
+                                                0xffFF8A80) // red for disconnect
+                                            : const Color(0xffA8E6CF),
                                       ),
                                       child: Center(
-                                        child: Text(
-                                          "Message",
-                                          style: GoogleFonts.roboto(
-                                            fontSize: 12.sp,
-                                            fontWeight: FontWeight.w600,
-                                            color: const Color(0xff008080),
-                                          ),
+                                        child: isLoading
+                                            ? SizedBox(
+                                                width: 20.w,
+                                                height: 20.h,
+                                                child:
+                                                    CircularProgressIndicator(
+                                                  color: Colors.white,
+                                                ),
+                                              )
+                                            : Text(
+                                                "Connect",
+                                                style: GoogleFonts.roboto(
+                                                  fontSize: 12.sp,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                      ),
+                                    ),
+                                  ),
+                                SizedBox(width: 20.w),
+                                GestureDetector(
+                                  onTap: () {
+                                    // Handle message action
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.only(
+                                        left: 10.w, right: 10.w),
+                                    height: 50.h,
+                                    width: 140.w,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                      color: Colors.white,
+                                      border: Border.all(
+                                          color: const Color(0xff008080)),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Message",
+                                        style: GoogleFonts.roboto(
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.w600,
+                                          color: const Color(0xff008080),
                                         ),
                                       ),
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                           SizedBox(

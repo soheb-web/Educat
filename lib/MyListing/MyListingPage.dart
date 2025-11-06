@@ -17,6 +17,9 @@ class MyListing extends ConsumerStatefulWidget {
 class _MyListingState extends ConsumerState<MyListing> {
   int voletId = 0;
   int currentBalance = 0;
+  final searchController = TextEditingController();
+  bool isShow = false;
+
   @override
   Widget build(BuildContext context) {
     var box = Hive.box("userdata");
@@ -67,17 +70,25 @@ class _MyListingState extends ConsumerState<MyListing> {
                       color: Color(0xff008080)),
                 ),
                 Spacer(),
-                Container(
-                  height: 44.h,
-                  width: 44.w,
-                  decoration: BoxDecoration(
-                    color: Color.fromARGB(39, 255, 255, 255),
-                    borderRadius: BorderRadius.circular(500.r),
-                  ),
-                  child: Center(
-                    child: Icon(
-                      Icons.search,
-                      color: const Color.fromARGB(255, 255, 255, 255),
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      isShow = !isShow;
+                      if (!isShow) searchController.clear();
+                    });
+                  },
+                  child: Container(
+                    height: 44.h,
+                    width: 44.w,
+                    decoration: BoxDecoration(
+                      color: Color.fromARGB(39, 255, 255, 255),
+                      borderRadius: BorderRadius.circular(500.r),
+                    ),
+                    child: Center(
+                      child: Icon(
+                        Icons.search,
+                        color: const Color.fromARGB(255, 255, 255, 255),
+                      ),
                     ),
                   ),
                 ),
@@ -86,8 +97,44 @@ class _MyListingState extends ConsumerState<MyListing> {
                 ),
               ],
             ),
+            if (isShow)
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
+                child: TextField(
+                  onChanged: (_) => setState(() {}),
+                  controller: searchController,
+                  style:
+                      GoogleFonts.roboto(color: Colors.white, fontSize: 20.sp),
+                  decoration: InputDecoration(
+                      isDense: true,
+                      contentPadding: EdgeInsets.only(
+                          left: 10.w, right: 10.w, top: 6.h, bottom: 6.h),
+                      hintText: "Search collage...",
+                      hintStyle: GoogleFonts.roboto(
+                          color: Colors.white70, fontSize: 18.sp),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25.r),
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25.r),
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                      prefixIcon: const Icon(Icons.search,
+                          color: Colors.white, size: 20),
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.clear, color: Colors.white),
+                        onPressed: () {
+                          setState(() {
+                            searchController.clear();
+                            isShow = false;
+                          });
+                        },
+                      )),
+                ),
+              ),
             SizedBox(
-              height: 25.h,
+              height: 20.h,
             ),
             Container(
               width: MediaQuery.of(context).size.width,
@@ -99,8 +146,17 @@ class _MyListingState extends ConsumerState<MyListing> {
                       topRight: Radius.circular(40.r))),
               child: myListingProvider.when(
                 data: (myListingData) {
-                  if (myListingData.data.isEmpty) {
-                    return Center(
+                  final query = searchController.text.toLowerCase();
+                  final filteredList = myListingData.data.where((item) {
+                    final name = userType == "Mentor"
+                        ? item.studentName.toLowerCase()
+                        : item.mentorName.toLowerCase();
+                    return name.contains(query);
+                  }).toList();
+
+                  if (filteredList.isEmpty) {
+                    return Container(
+                      margin: EdgeInsets.only(left: 20.w, top: 20.h),
                       child: Text(
                         "No List Available",
                         style: GoogleFonts.inter(
@@ -113,9 +169,9 @@ class _MyListingState extends ConsumerState<MyListing> {
                   return ListView.builder(
                     padding:
                         EdgeInsets.symmetric(vertical: 20.h, horizontal: 16.w),
-                    itemCount: myListingData.data.length,
+                    itemCount: filteredList.length,
                     itemBuilder: (context, index) {
-                      final item = myListingData.data[index];
+                      final item = filteredList[index];
                       return Container(
                         margin: EdgeInsets.only(bottom: 16.h),
                         decoration: BoxDecoration(
@@ -133,7 +189,6 @@ class _MyListingState extends ConsumerState<MyListing> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // 🟩 STATUS TAG
                             Align(
                               alignment: Alignment.topRight,
                               child: Container(
@@ -159,141 +214,60 @@ class _MyListingState extends ConsumerState<MyListing> {
                             ),
                             SizedBox(height: 10.h),
 
-                            // 👩‍🎓 STUDENT SECTION
-                            if (userType == "Mentor") ...[
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(40.r),
-                                    child: Image.network(
-                                      item.studentProfile,
-                                      height: 60.h,
-                                      width: 60.w,
-                                      fit: BoxFit.cover,
-                                    ),
+                            // 👩‍🎓 Student / Mentor section
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(40.r),
+                                  child: Image.network(
+                                    userType == "Mentor"
+                                        ? item.studentProfile
+                                        : item.mentorProfile,
+                                    height: 60.h,
+                                    width: 60.w,
+                                    fit: BoxFit.cover,
                                   ),
-                                  SizedBox(width: 12.w),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        // Label
-                                        // Container(
-                                        //   padding: EdgeInsets.symmetric(
-                                        //       vertical: 3.h, horizontal: 8.w),
-                                        //   decoration: BoxDecoration(
-                                        //     color: Colors.blue.withOpacity(0.1),
-                                        //     borderRadius:
-                                        //         BorderRadius.circular(6.r),
-                                        //   ),
-                                        //   child: Text(
-                                        //     "Student",
-                                        //     style: GoogleFonts.roboto(
-                                        //       color: Colors.blue[700],
-                                        //       fontSize: 12.sp,
-                                        //       fontWeight: FontWeight.w600,
-                                        //     ),
-                                        //   ),
-                                        // ),
-                                        SizedBox(height: 5.h),
-                                        Text(
-                                          item.studentName,
-                                          style: GoogleFonts.roboto(
-                                            fontSize: 18.sp,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.black,
-                                          ),
+                                ),
+                                SizedBox(width: 12.w),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        userType == "Mentor"
+                                            ? item.studentName
+                                            : item.mentorName,
+                                        style: GoogleFonts.roboto(
+                                          fontSize: 18.sp,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.black,
                                         ),
-                                        Text(
-                                          item.studentEmail,
-                                          style: GoogleFonts.roboto(
-                                            fontSize: 14.sp,
-                                            fontWeight: FontWeight.w400,
-                                            color: Colors.grey[700],
-                                          ),
+                                      ),
+                                      Text(
+                                        userType == "Mentor"
+                                            ? item.studentEmail
+                                            : item.mentorEmail,
+                                        style: GoogleFonts.roboto(
+                                          fontSize: 14.sp,
+                                          color: Colors.grey[700],
                                         ),
-                                        Text(
-                                          item.studentPhone,
-                                          style: GoogleFonts.roboto(
-                                            fontSize: 13.sp,
-                                            color: Colors.grey[600],
-                                          ),
+                                      ),
+                                      Text(
+                                        userType == "Mentor"
+                                            ? item.studentPhone
+                                            : item.mentorPhone,
+                                        style: GoogleFonts.roboto(
+                                          fontSize: 13.sp,
+                                          color: Colors.grey[600],
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              )
-                            ] else ...[
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(40.r),
-                                    child: Image.network(
-                                      item.mentorProfile,
-                                      height: 60.h,
-                                      width: 60.w,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                  SizedBox(width: 12.w),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        // Label
-                                        Container(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 3.h, horizontal: 8.w),
-                                          decoration: BoxDecoration(
-                                            color:
-                                                Colors.purple.withOpacity(0.1),
-                                            borderRadius:
-                                                BorderRadius.circular(6.r),
-                                          ),
-                                          child: Text(
-                                            "Mentor",
-                                            style: GoogleFonts.roboto(
-                                              color: Colors.purple[700],
-                                              fontSize: 12.sp,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(height: 5.h),
-                                        Text(
-                                          item.mentorName,
-                                          style: GoogleFonts.roboto(
-                                            fontSize: 18.sp,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                        Text(
-                                          item.mentorEmail,
-                                          style: GoogleFonts.roboto(
-                                            fontSize: 14.sp,
-                                            fontWeight: FontWeight.w400,
-                                            color: Colors.grey[700],
-                                          ),
-                                        ),
-                                        Text(
-                                          item.mentorPhone,
-                                          style: GoogleFonts.roboto(
-                                            fontSize: 13.sp,
-                                            color: Colors.grey[600],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              )
-                            ]
+                                ),
+                              ],
+                            )
                           ],
                         ),
                       );

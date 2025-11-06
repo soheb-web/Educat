@@ -48,9 +48,9 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 
   final List<Widget> _pages = [
-    const HomePageContent(), // Home page content (extracted below)
-    const Chatinbox(),
-    const MyListing(),
+    HomePageContent(), // Home page content (extracted below)
+    Chatinbox(),
+    MyListing(),
     ProfilePage(),
   ];
 
