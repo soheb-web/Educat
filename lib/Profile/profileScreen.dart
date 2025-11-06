@@ -199,58 +199,58 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                               ],
                             ),
                           ),
-                          Container(
-                            margin: EdgeInsets.only(
-                                left: 10.w, top: 20.h, right: 10.w),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  padding: EdgeInsets.only(
-                                      left: 15.w,
-                                      right: 15.w,
-                                      top: 15.h,
-                                      bottom: 15.h),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20.r),
-                                    color: Color(0xffA8E6CF),
-                                  ),
-                                  child: Text(
-                                    "Placement Expert",
-                                    style: GoogleFonts.roboto(
-                                      fontSize: 14.sp,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(width: 20.w),
-                                GestureDetector(
-                                  onTap: () {},
-                                  child: Container(
-                                    height: 50.h,
-                                    width: 140.w,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(20.r),
-                                      color: Colors.white,
-                                      border:
-                                          Border.all(color: Color(0xff008080)),
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        "Message",
-                                        style: GoogleFonts.roboto(
-                                          fontSize: 14.sp,
-                                          fontWeight: FontWeight.w600,
-                                          color: const Color(0xff008080),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                          // Container(
+                          //   margin: EdgeInsets.only(
+                          //       left: 10.w, top: 20.h, right: 10.w),
+                          //   child: Row(
+                          //     mainAxisAlignment: MainAxisAlignment.center,
+                          //     children: [
+                          //       Container(
+                          //         padding: EdgeInsets.only(
+                          //             left: 15.w,
+                          //             right: 15.w,
+                          //             top: 15.h,
+                          //             bottom: 15.h),
+                          //         decoration: BoxDecoration(
+                          //           borderRadius: BorderRadius.circular(20.r),
+                          //           color: Color(0xffA8E6CF),
+                          //         ),
+                          //         child: Text(
+                          //           "Placement Expert",
+                          //           style: GoogleFonts.roboto(
+                          //             fontSize: 14.sp,
+                          //             fontWeight: FontWeight.w600,
+                          //             color: Colors.black,
+                          //           ),
+                          //         ),
+                          //       ),
+                          //       SizedBox(width: 20.w),
+                          //       GestureDetector(
+                          //         onTap: () {},
+                          //         child: Container(
+                          //           height: 50.h,
+                          //           width: 140.w,
+                          //           decoration: BoxDecoration(
+                          //             borderRadius: BorderRadius.circular(20.r),
+                          //             color: Colors.white,
+                          //             border:
+                          //                 Border.all(color: Color(0xff008080)),
+                          //           ),
+                          //           child: Center(
+                          //             child: Text(
+                          //               "Message",
+                          //               style: GoogleFonts.roboto(
+                          //                 fontSize: 14.sp,
+                          //                 fontWeight: FontWeight.w600,
+                          //                 color: const Color(0xff008080),
+                          //               ),
+                          //             ),
+                          //           ),
+                          //         ),
+                          //       ),
+                          //     ],
+                          //   ),
+                          // ),
                           SizedBox(
                             height: 30.h,
                           ),
