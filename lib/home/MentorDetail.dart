@@ -57,7 +57,10 @@ class _MentorDetailPageState extends ConsumerState<MentorDetailPage> {
 
       if (response.status == true) {
         Fluttertoast.showToast(msg: response.message);
-        ref.invalidate(getRequestStudentController);
+        ref.invalidate(getRequestStudentController); // keep this
+        ref.read(requestRefreshTrigger.notifier).state =
+            !ref.read(requestRefreshTrigger); // toggle to trigger rebuild
+
         // ✅ Save connected mentor ID in Hive
         var box = Hive.box('userdata');
         List connectedMentors = box.get('connectedMentors', defaultValue: []);
@@ -315,11 +318,12 @@ class _MentorDetailPageState extends ConsumerState<MentorDetailPage> {
                                       child: Center(
                                         child: isLoading
                                             ? SizedBox(
-                                                width: 20.w,
-                                                height: 20.h,
+                                                width: 30.w,
+                                                height: 30.h,
                                                 child:
                                                     CircularProgressIndicator(
                                                   color: Colors.white,
+                                                  strokeWidth: 2.w,
                                                 ),
                                               )
                                             : Text(

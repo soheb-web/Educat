@@ -351,9 +351,11 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
               ),
               child: Center(
                 child: isLoading
-                    ? Padding(
-                        padding: EdgeInsets.all(4.0.w),
-                        child: const CircularProgressIndicator(
+                    ? SizedBox(
+                        width: 30.w,
+                        height: 30.h,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.w,
                           valueColor:
                               AlwaysStoppedAnimation<Color>(Colors.black),
                         ),

@@ -50,6 +50,11 @@ class _WalletPageState extends ConsumerState<WalletPage> {
   }
 
   bool _isLoading = false;
+  String? addCoins;
+
+  List<String> coinsList = ["50", "100", "150", "200"];
+
+  int? selectCoins;
 
   @override
   Widget build(BuildContext context) {
@@ -321,8 +326,58 @@ class _WalletPageState extends ConsumerState<WalletPage> {
                                     )
                                   ],
                                 ),
-                                SizedBox(height: 8.h),
+                                // SizedBox(height: 8.h),
+                                // DropdownButtonFormField(
+                                //   hint: Text("Select coin type",
+                                //       style:
+                                //           GoogleFonts.inter(fontSize: 14.sp)),
+                                //   decoration: InputDecoration(
+                                //     focusedBorder: OutlineInputBorder(
+                                //       borderSide:
+                                //           const BorderSide(color: Colors.grey),
+                                //       borderRadius: BorderRadius.circular(10.r),
+                                //     ),
+                                //     border: OutlineInputBorder(
+                                //       borderSide:
+                                //           const BorderSide(color: Colors.grey),
+                                //       borderRadius: BorderRadius.circular(10.r),
+                                //     ),
+                                //     enabledBorder: OutlineInputBorder(
+                                //       borderSide:
+                                //           const BorderSide(color: Colors.grey),
+                                //       borderRadius: BorderRadius.circular(10.r),
+                                //     ),
+                                //   ),
+                                //   items: coinsList
+                                //       .map(
+                                //         (e) => DropdownMenuItem(
+                                //           value: e,
+                                //           child: Text(
+                                //             e,
+                                //             style: GoogleFonts.inter(
+                                //                 fontSize: 15.sp,
+                                //                 fontWeight: FontWeight.w400,
+                                //                 color: Colors.black),
+                                //           ),
+                                //         ),
+                                //       )
+                                //       .toList(),
+                                //   onChanged: (value) {
+                                //     setState(() {
+                                //       setState(() {
+                                //         addCoins = value;
+                                //       });
+                                //     });
+                                //   },
+                                // ),
+                                SizedBox(height: 10.h),
                                 TextFormField(
+                                  onChanged: (value) {
+                                    // When user types manually, unselect the buttons
+                                    setState(() {
+                                      selectCoins = int.tryParse(value);
+                                    });
+                                  },
                                   controller: _amountController,
                                   keyboardType: TextInputType.number,
                                   decoration: InputDecoration(
@@ -344,6 +399,53 @@ class _WalletPageState extends ConsumerState<WalletPage> {
                                     ),
                                   ),
                                 ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [50, 100, 150, 200].map((amount) {
+                                    final bool isSelected =
+                                        selectCoins == amount;
+
+                                    return InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          selectCoins = amount;
+                                          _amountController.text =
+                                              amount.toString();
+                                        });
+                                      },
+                                      child: Container(
+                                        height: 50.h,
+                                        width: 80.w,
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey.shade200,
+                                          borderRadius:
+                                              BorderRadius.circular(20.r),
+                                          boxShadow: [
+                                            BoxShadow(
+                                                color: Colors.white,
+                                                blurRadius: 4,
+                                                offset: Offset(1, 2),
+                                                spreadRadius: 0),
+                                          ],
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            "$amount",
+                                            style: GoogleFonts.inter(
+                                                fontSize: 15.sp,
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.black),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+
                                 SizedBox(height: 25.h),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
@@ -448,9 +550,10 @@ class _WalletPageState extends ConsumerState<WalletPage> {
                                             'payment_id':
                                                 '1', // Verify this is valid
                                           };
-                                          Navigator.pop(context);
+
                                           _handleBuyCoins(
                                               payload); // Use handler for error handling
+                                          Navigator.pop(context);
                                         },
                                   child: Container(
                                     height: 52.h,
@@ -653,12 +756,15 @@ class _WalletPageState extends ConsumerState<WalletPage> {
                                               fontWeight: FontWeight.w600,
                                               color: Color(0xFF1B1B1B)),
                                         ),
-                                        Text(
-                                          trans.description?.toString() ?? '',
-                                          style: GoogleFonts.inter(
-                                              fontSize: 14.sp,
-                                              fontWeight: FontWeight.w400,
-                                              color: Color(0xFF666666)),
+                                        SizedBox(
+                                          width: 240.w,
+                                          child: Text(
+                                            trans.description?.toString() ?? '',
+                                            style: GoogleFonts.inter(
+                                                fontSize: 14.sp,
+                                                fontWeight: FontWeight.w400,
+                                                color: Color(0xFF666666)),
+                                          ),
                                         )
                                       ],
                                     ),

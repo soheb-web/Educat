@@ -1,5 +1,5 @@
 // import 'dart:developer';
-// import 'package:educationapp/firebaseOption.dart';
+// import 'package:educationapp/firebase_options.dart';
 // import 'package:educationapp/home/home.page.dart';
 // import 'package:educationapp/splash/splash.page.dart';
 // import 'package:firebase_core/firebase_core.dart';
@@ -16,7 +16,9 @@
 
 // Future<void> main() async {
 //   WidgetsFlutterBinding.ensureInitialized();
-//   await Firebase.initializeApp();
+//   await Firebase.initializeApp(
+//     options: DefaultFirebaseOptions.currentPlatform,
+//   );
 
 //   await Hive.initFlutter();
 //   await Hive.openBox('userdata');
