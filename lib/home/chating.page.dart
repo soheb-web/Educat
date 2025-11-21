@@ -107,8 +107,27 @@ class _ChatingPageState extends State<ChatingPage> {
                   ],
                 ),
                 Spacer(),
-                GestureDetector(
-                  onTap: () {},
+                PopupMenuButton<String>(
+                  onSelected: (value) {
+                    if (value == "report") {
+                      print("Report clicked");
+                    } else if (value == "block") {
+                      print("Block clicked");
+                    }
+                  },
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: "report",
+                      child: Text("Report"),
+                    ),
+                    PopupMenuItem(
+                      value: "block",
+                      child: Text("Block"),
+                    ),
+                  ],
                   child: Container(
                     height: 48.w,
                     width: 50.w,

@@ -757,7 +757,7 @@ class _WalletPageState extends ConsumerState<WalletPage> {
                                               color: Color(0xFF1B1B1B)),
                                         ),
                                         SizedBox(
-                                          width: 240.w,
+                                          width: 235.w,
                                           child: Text(
                                             trans.description?.toString() ?? '',
                                             style: GoogleFonts.inter(

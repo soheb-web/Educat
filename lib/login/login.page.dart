@@ -1,7 +1,6 @@
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:educationapp/coreFolder/Model/login.body.model.dart';
-import 'package:educationapp/coreFolder/Model/login.rsponse.model.dart';
 import 'package:educationapp/coreFolder/network/api.state.dart';
 import 'package:educationapp/coreFolder/utils/preety.dio.dart';
 import 'package:educationapp/home/home.page.dart';
@@ -14,9 +13,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
-import '../complete/complete.page.dart';
-import '../coreFolder/auth/login.auth.dart';
-import '../register/register.page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

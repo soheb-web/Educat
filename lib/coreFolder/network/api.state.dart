@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:educationapp/coreFolder/Model/getProfileUserModel.dart';
 import 'package:educationapp/coreFolder/Model/getStudentRequestResModel.dart';
@@ -148,4 +147,5 @@ abstract class APIStateNetwork {
 
   @GET("/mylist")
   Future<MyListingResModel> myListing();
+  
 }

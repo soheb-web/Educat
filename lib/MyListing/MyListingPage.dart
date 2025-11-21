@@ -27,116 +27,115 @@ class _MyListingState extends ConsumerState<MyListing> {
     final myListingProvider = ref.watch(myListingController);
     return Scaffold(
       backgroundColor: Color(0xFF1B1B1B),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 70.h,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: 30.w,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Container(
-                    height: 44.h,
-                    width: 44.w,
-                    decoration: BoxDecoration(
-                        color: Color(0xFF1B1B1B),
-                        borderRadius: BorderRadius.circular(500.r)),
-                    child: Center(
-                      child: Icon(
-                        Icons.arrow_back_ios,
-                        color: Color(0xFF1B1B1B),
-                        size: 15.w,
-                      ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(
+            height: 70.h,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 30.w,
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  height: 44.h,
+                  width: 44.w,
+                  decoration: BoxDecoration(
+                      color: Color(0xFF1B1B1B),
+                      borderRadius: BorderRadius.circular(500.r)),
+                  child: Center(
+                    child: Icon(
+                      Icons.arrow_back_ios,
+                      color: Color(0xFF1B1B1B),
+                      size: 15.w,
                     ),
                   ),
-                ),
-                Spacer(),
-                Text(
-                  "My Listing",
-                  style: GoogleFonts.roboto(
-                      fontSize: 18.w,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xff008080)),
-                ),
-                Spacer(),
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      isShow = !isShow;
-                      if (!isShow) searchController.clear();
-                    });
-                  },
-                  child: Container(
-                    height: 44.h,
-                    width: 44.w,
-                    decoration: BoxDecoration(
-                      color: Color.fromARGB(39, 255, 255, 255),
-                      borderRadius: BorderRadius.circular(500.r),
-                    ),
-                    child: Center(
-                      child: Icon(
-                        Icons.search,
-                        color: const Color.fromARGB(255, 255, 255, 255),
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: 30.w,
-                ),
-              ],
-            ),
-            if (isShow)
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
-                child: TextField(
-                  onChanged: (_) => setState(() {}),
-                  controller: searchController,
-                  style:
-                      GoogleFonts.roboto(color: Colors.white, fontSize: 20.sp),
-                  decoration: InputDecoration(
-                      isDense: true,
-                      contentPadding: EdgeInsets.only(
-                          left: 10.w, right: 10.w, top: 6.h, bottom: 6.h),
-                      hintText: "Search collage...",
-                      hintStyle: GoogleFonts.roboto(
-                          color: Colors.white70, fontSize: 18.sp),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25.r),
-                        borderSide: BorderSide(color: Colors.white),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25.r),
-                        borderSide: BorderSide(color: Colors.white),
-                      ),
-                      prefixIcon: const Icon(Icons.search,
-                          color: Colors.white, size: 20),
-                      suffixIcon: IconButton(
-                        icon: const Icon(Icons.clear, color: Colors.white),
-                        onPressed: () {
-                          setState(() {
-                            searchController.clear();
-                            isShow = false;
-                          });
-                        },
-                      )),
                 ),
               ),
-            SizedBox(
-              height: 20.h,
+              Spacer(),
+              Text(
+                "My Listing",
+                style: GoogleFonts.roboto(
+                    fontSize: 18.w,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xff008080)),
+              ),
+              Spacer(),
+              InkWell(
+                onTap: () {
+                  setState(() {
+                    isShow = !isShow;
+                    if (!isShow) searchController.clear();
+                  });
+                },
+                child: Container(
+                  height: 44.h,
+                  width: 44.w,
+                  decoration: BoxDecoration(
+                    color: Color.fromARGB(39, 255, 255, 255),
+                    borderRadius: BorderRadius.circular(500.r),
+                  ),
+                  child: Center(
+                    child: Icon(
+                      Icons.search,
+                      color: const Color.fromARGB(255, 255, 255, 255),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 30.w,
+              ),
+            ],
+          ),
+          if (isShow)
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
+              child: TextField(
+                onChanged: (_) => setState(() {}),
+                controller: searchController,
+                style: GoogleFonts.roboto(color: Colors.white, fontSize: 20.sp),
+                decoration: InputDecoration(
+                    isDense: true,
+                    contentPadding: EdgeInsets.only(
+                        left: 10.w, right: 10.w, top: 6.h, bottom: 6.h),
+                    hintText: "Search collage...",
+                    hintStyle: GoogleFonts.roboto(
+                        color: Colors.white70, fontSize: 18.sp),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(25.r),
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(25.r),
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    prefixIcon:
+                        const Icon(Icons.search, color: Colors.white, size: 20),
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.clear, color: Colors.white),
+                      onPressed: () {
+                        setState(() {
+                          searchController.clear();
+                          isShow = false;
+                        });
+                      },
+                    )),
+              ),
             ),
-            Container(
+          SizedBox(
+            height: 20.h,
+          ),
+          Expanded(
+            child: Container(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               decoration: BoxDecoration(
@@ -173,7 +172,7 @@ class _MyListingState extends ConsumerState<MyListing> {
                     itemBuilder: (context, index) {
                       final item = filteredList[index];
                       return Container(
-                        margin: EdgeInsets.only(bottom: 16.h),
+                        margin: EdgeInsets.only(bottom: 10.h, top: 6.h),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(20.r),
@@ -290,9 +289,9 @@ class _MyListingState extends ConsumerState<MyListing> {
                   child: CircularProgressIndicator(),
                 ),
               ),
-            )
-          ],
-        ),
+            ),
+          )
+        ],
       ),
     );
   }

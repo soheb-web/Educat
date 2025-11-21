@@ -534,6 +534,7 @@ class _ProfileCompletionWidgetState extends ConsumerState<ProfileCompletionWidge
 
 import 'dart:developer';
 import 'dart:io';
+import 'package:dotted_border/dotted_border.dart';
 import 'package:educationapp/coreFolder/Controller/getProfileUserProvider.dart';
 import 'package:educationapp/coreFolder/Controller/getSkillProvider.dart';
 import 'package:educationapp/coreFolder/Model/getProfileUserModel.dart';
@@ -548,6 +549,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 // import '../coreFolder/Model/profileGetModel.dart'; // Removed old import
 
@@ -605,6 +608,63 @@ class _ProfileCompletionWidgetState
         resumeFile = File(result.files.single.path!);
       });
     }
+  }
+
+  File? _image;
+  final picker = ImagePicker();
+
+  Future pickImageFromGallery() async {
+    var status = await Permission.camera.request();
+    if (status.isGranted) {
+      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        setState(() {
+          _image = File(pickedFile.path);
+        });
+      }
+    } else {
+      Fluttertoast.showToast(msg: "Gallery permission denied");
+    }
+  }
+
+  Future pickImageFromCamera() async {
+    var status = await Permission.camera.request();
+    if (status.isGranted) {
+      final pickedFile = await picker.pickImage(source: ImageSource.camera);
+      if (pickedFile != null) {
+        setState(() {
+          _image = File(pickedFile.path);
+        });
+      }
+    } else {
+      Fluttertoast.showToast(msg: "Camera permission denied");
+    }
+  }
+
+  Future showImage() async {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) {
+        return CupertinoActionSheet(
+          actions: [
+            CupertinoActionSheetAction(
+              onPressed: () {
+                Navigator.pop(context);
+                pickImageFromGallery();
+              },
+              child: const Text("Gallery"),
+            ),
+            CupertinoActionSheetAction(
+              onPressed: () {
+                Navigator.pop(context);
+                pickImageFromCamera();
+              },
+              child: const Text("Camera"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> updateProfile() async {
@@ -723,98 +783,98 @@ class _ProfileCompletionWidgetState
     }
 
     final skillsProvider = ref.watch(getSkillProvider);
-    return skillsProvider.when(
-      data: (snapshot) {
-        return Scaffold(
-          body: Form(
-            key: _formKey,
-            child: Container(
-              decoration: BoxDecoration(color: Color(0xff008080)),
-              child: Column(
+    return Scaffold(
+      body: Form(
+        key: _formKey,
+        child: Container(
+          decoration: BoxDecoration(color: Color(0xff008080)),
+          child: Column(
+            children: [
+              Stack(
+                alignment: AlignmentDirectional.topCenter,
                 children: [
-                  Stack(
-                    alignment: AlignmentDirectional.topCenter,
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            height: 103.h,
-                            width: 392.w,
-                            decoration: BoxDecoration(
-                              color: Color(0xff008080),
-                              // image: DecorationImage(
-                              //   image: AssetImage("assets/loginBack.png"),
-                              // ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            margin: EdgeInsets.only(top: 30.h),
-                            height: 70.h,
-                            width: 250.w,
-                            decoration: const BoxDecoration(
-                              image: DecorationImage(
-                                image: AssetImage("assets/whitevector.png"),
-                                fit: BoxFit.fill,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Positioned(
-                        top: 55.h,
-                        left: 20.w,
-                        child: Row(
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                              child: Container(
-                                  width: 40.w,
-                                  height: 40.h,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Color.fromARGB(25, 0, 0, 0),
-                                  ),
-                                  child: Icon(
-                                    Icons.arrow_back,
-                                    color: Colors.white,
-                                  )),
-                            ),
-                            SizedBox(
-                              width: 20.w,
-                            ),
-                            Text(
-                              "Complete your Profile",
-                              style: GoogleFonts.roboto(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 25.w,
-                                  letterSpacing: -0.95,
-                                  color: Colors.white),
-                            ),
-                          ],
+                      Container(
+                        height: 103.h,
+                        width: 392.w,
+                        decoration: BoxDecoration(
+                          color: Color(0xff008080),
+                          // image: DecorationImage(
+                          //   image: AssetImage("assets/loginBack.png"),
+                          // ),
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 20.h),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Container(
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(20.sp),
-                                topRight: Radius.circular(20.sp))),
-                        child: Column(
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(top: 30.h),
+                        height: 70.h,
+                        width: 250.w,
+                        decoration: const BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage("assets/whitevector.png"),
+                            fit: BoxFit.fill,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Positioned(
+                    top: 55.h,
+                    left: 20.w,
+                    child: Row(
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: Container(
+                              width: 40.w,
+                              height: 40.h,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Color.fromARGB(25, 0, 0, 0),
+                              ),
+                              child: Icon(
+                                Icons.arrow_back,
+                                color: Colors.white,
+                              )),
+                        ),
+                        SizedBox(
+                          width: 20.w,
+                        ),
+                        Text(
+                          "Complete your Profile",
+                          style: GoogleFonts.roboto(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 25.w,
+                              letterSpacing: -0.95,
+                              color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20.h),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20.sp),
+                            topRight: Radius.circular(20.sp))),
+                    child: skillsProvider.when(
+                      data: (snapshot) {
+                        return Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
@@ -1024,10 +1084,52 @@ class _ProfileCompletionWidgetState
                             ),
                             RegisterField(
                               controller: aboutController,
-                              maxLine: 3,
+                              maxLine: 2,
                               label: 'About',
                               validator: (value) =>
                                   value!.isEmpty ? 'About is required' : null,
+                            ),
+                            InkWell(
+                              onTap: () {
+                                showImage();
+                              },
+                              child: Center(
+                                child: Container(
+                                  width: 400.w,
+                                  height: 220.h,
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.circular(20.r),
+                                  ),
+                                  child: _image == null
+                                      ? Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Icon(
+                                              Icons.upload_sharp,
+                                              color: Color(0xFF008080),
+                                              size: 30.sp,
+                                            ),
+                                            SizedBox(
+                                              height: 10.h,
+                                            ),
+                                          ],
+                                        )
+                                      : ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(20.r),
+                                          child: Image.file(
+                                            _image!,
+                                            fit: BoxFit.cover,
+                                            width: 400.w,
+                                            height: 220.h,
+                                          ),
+                                        ),
+                                ),
+                              ),
                             ),
                             SizedBox(height: 10.h),
                             GestureDetector(
@@ -1059,18 +1161,28 @@ class _ProfileCompletionWidgetState
                             ),
                             SizedBox(height: 10.h),
                           ],
+                        );
+                      },
+                      error: (error, stackTrace) {
+                        return Center(
+                          child: Text(error.toString()),
+                        );
+                      },
+                      loading: () => SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height,
+                        child: Center(
+                          child: CircularProgressIndicator(),
                         ),
                       ),
                     ),
                   ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
-        );
-      },
-      loading: () => Center(child: const CircularProgressIndicator()),
-      error: (error, stack) => Text('Error: $error'),
+        ),
+      ),
     );
   }
 }

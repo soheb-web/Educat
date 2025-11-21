@@ -5,6 +5,8 @@ import 'package:educationapp/coreFolder/Controller/reviewController.dart';
 import 'package:educationapp/coreFolder/Model/sendRequestBodyModel.dart';
 import 'package:educationapp/coreFolder/network/api.state.dart';
 import 'package:educationapp/coreFolder/utils/preety.dio.dart';
+import 'package:educationapp/home/chating.page.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -98,6 +100,34 @@ class _MentorDetailPageState extends ConsumerState<MentorDetailPage> {
       setState(() {
         isConnected = true;
       });
+    }
+  }
+
+  String? requestStatus;
+
+  String _getStatusText(String? status) {
+    switch (status) {
+      case "pending":
+        return "Pending";
+      case "sent":
+        return "Request Sent";
+      case "accepted":
+        return "Accepted";
+      default:
+        return "Connect";
+    }
+  }
+
+  Color _getStatusColor(String? status) {
+    switch (status) {
+      case "pending":
+        return Colors.orangeAccent;
+      case "sent":
+        return Colors.blueAccent;
+      case "accepted":
+        return Colors.greenAccent;
+      default:
+        return const Color(0xffA8E6CF);
     }
   }
 
@@ -293,54 +323,54 @@ class _MentorDetailPageState extends ConsumerState<MentorDetailPage> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                if (isConnected)
-                                  SizedBox()
-                                else
-                                  InkWell(
-                                    onTap: isLoading
-                                        ? null
-                                        : () async {
-                                            await sendConnectRequest();
-                                          },
-                                    child: Container(
-                                      padding: EdgeInsets.only(
-                                          left: 10.w, right: 10.w),
-                                      height: 50.h,
-                                      width: 140.w,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(20),
-                                        //color: const Color(0xffA8E6CF),
-                                        color: isConnected
-                                            ? const Color(
-                                                0xffFF8A80) // red for disconnect
-                                            : const Color(0xffA8E6CF),
-                                      ),
-                                      child: Center(
-                                        child: isLoading
-                                            ? SizedBox(
-                                                width: 30.w,
-                                                height: 30.h,
-                                                child:
-                                                    CircularProgressIndicator(
-                                                  color: Colors.white,
-                                                  strokeWidth: 2.w,
-                                                ),
-                                              )
-                                            : Text(
-                                                "Connect",
-                                                style: GoogleFonts.roboto(
-                                                  fontSize: 12.sp,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: Colors.black,
-                                                ),
+                                InkWell(
+                                  onTap: isLoading
+                                      ? null
+                                      : () async {
+                                          if (requestStatus == null) {
+                                            await sendConnectRequest(); // only when NOT connected
+                                          }
+                                        },
+                                  child: Container(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 10.w),
+                                    height: 50.h,
+                                    width: 140.w,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                      color: _getStatusColor(requestStatus),
+                                    ),
+                                    child: Center(
+                                      child: isLoading
+                                          ? SizedBox(
+                                              width: 30.w,
+                                              height: 30.h,
+                                              child: CircularProgressIndicator(
+                                                color: Colors.white,
+                                                strokeWidth: 2.w,
                                               ),
-                                      ),
+                                            )
+                                          : Text(
+                                              _getStatusText(requestStatus),
+                                              style: GoogleFonts.roboto(
+                                                fontSize: 12.sp,
+                                                fontWeight: FontWeight.w600,
+                                                color: Colors.black,
+                                              ),
+                                            ),
                                     ),
                                   ),
+                                ),
                                 SizedBox(width: 20.w),
                                 GestureDetector(
                                   onTap: () {
-                                    // Handle message action
+                                    Navigator.push(
+                                        context,
+                                        CupertinoPageRoute(
+                                          builder: (context) => ChatingPage(
+                                              name:
+                                                  profile.fullName.toString()),
+                                        ));
                                   },
                                   child: Container(
                                     padding: EdgeInsets.only(

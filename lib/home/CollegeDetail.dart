@@ -1,10 +1,11 @@
 // Updated widget
+import 'dart:developer';
+import 'package:educationapp/home/webView.page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import '../coreFolder/Controller/reviewController.dart';
 import '../coreFolder/Model/ReviewGetModel.dart';
 import 'AllReviewPage.dart';
@@ -71,13 +72,43 @@ class _CollegeDetailPageState extends ConsumerState<CollegeDetailPage> {
                           ),
                           Padding(
                             padding: EdgeInsets.only(left: 15.w, right: 15.w),
-                            child: Text(
-                              textAlign: TextAlign.center,
-                              snap.collage!.website.toString(),
-                              style: GoogleFonts.roboto(
-                                fontSize: 15.sp,
-                                fontWeight: FontWeight.w600,
-                                color: const Color(0xff666666),
+                            child: InkWell(
+                              onTap: () async {
+                                String url =
+                                    snap.collage!.website.toString().trim();
+
+                                if (url.isEmpty) return;
+
+                                if (!url.startsWith("http://") &&
+                                    !url.startsWith("https://")) {
+                                  url = "https://$url";
+                                }
+
+                                final uri = Uri.tryParse(url);
+
+                                if (uri == null) {
+                                  log("Invalid URL: $url");
+                                  return;
+                                }
+
+                                // OPEN WEBVIEW PAGE
+                                Navigator.push(
+                                  context,
+                                  CupertinoPageRoute(
+                                    builder: (context) => WebViewPage(url: url),
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                textAlign: TextAlign.center,
+                                snap.collage!.website.toString(),
+                                style: GoogleFonts.roboto(
+                                  fontSize: 17.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.blue, // clickable color
+                                  decoration: TextDecoration
+                                      .underline, // highlight clickable effect
+                                ),
                               ),
                             ),
                           ),
