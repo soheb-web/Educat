@@ -206,10 +206,11 @@ class _ChatinboxState extends ConsumerState<Chatinbox> {
                                           otherUesrid: data
                                               .inbox![index].otherUser!.id
                                               .toString(),
-                                          id: data.egedUser?.id.toString(),
+                                          id: data.egedUser!.id.toString(),
                                           name: data.inbox![index].otherUser!
                                                   .name ??
                                               "N/A",
+
                                         ),
                                       ));
                                 },

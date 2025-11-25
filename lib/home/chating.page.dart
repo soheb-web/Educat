@@ -14,9 +14,10 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 
 class ChatingPage extends ConsumerStatefulWidget {
   final String name;
-  final String? id;
-  final String? otherUesrid;
-  const ChatingPage({super.key, required this.name, this.id, this.otherUesrid});
+  final String id;
+  final String otherUesrid;
+  const ChatingPage(
+      {super.key, required this.name, required this.id, required this.otherUesrid});
 
   @override
   ConsumerState<ChatingPage> createState() => _ChatingPageState();
@@ -132,6 +133,8 @@ class _ChatingPageState extends ConsumerState<ChatingPage>
   @override
   Widget build(BuildContext context) {
     final hsitoryData = ref.watch(chatHistoryController(widget.otherUesrid));
+    log("otherUserId: ${widget.otherUesrid}");
+    log("Id : ${widget.id}");
     final box = Hive.box("userdata");
     final userid = box.get("userid");
 

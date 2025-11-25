@@ -1074,14 +1074,33 @@ class _HomePageContentState extends ConsumerState<HomePageContent> {
                                                   .acceptedStudents![index];
                                               return InkWell(
                                                 onTap: () {
+                                                  log(box
+                                                      .get("userid")
+                                                      .toString());
+                                                  log(
+                                                    mentorData
+                                                        .data!
+                                                        .acceptedStudents![
+                                                            index]
+                                                        .id
+                                                        .toString(),
+                                                  );
                                                   Navigator.push(
                                                       context,
                                                       CupertinoPageRoute(
-                                                        builder: (context) =>
-                                                            ChatingPage(
-                                                                name: student
-                                                                        .fullName ??
-                                                                    "No Name"),
+                                                        builder: (context) => ChatingPage(
+                                                            id: box
+                                                                .get("userid")
+                                                                .toString(),
+                                                            otherUesrid: mentorData
+                                                                .data!
+                                                                .acceptedStudents![
+                                                                    index]
+                                                                .id
+                                                                .toString(),
+                                                            name: student
+                                                                    .fullName ??
+                                                                "No Name"),
                                                       ));
                                                 },
                                                 child: MyContainer(
@@ -1350,7 +1369,8 @@ class _HomePageContentState extends ConsumerState<HomePageContent> {
                                               mentor.serviceType ?? "N/A"
                                             ],
                                             image: mentor.profilePic ?? "",
-                                           // otherUserId: mentor.skillsId.toString(),
+                                            otherUserId:
+                                                mentor.id.toString(),
                                           );
                                         },
                                       ),
@@ -2157,7 +2177,7 @@ class UserTabs extends StatefulWidget {
   final List<String> servicetype;
   final String image;
   final Function callBack;
-  //final String otherUserId;
+  final String otherUserId;
 
   const UserTabs({
     super.key,
@@ -2167,7 +2187,7 @@ class UserTabs extends StatefulWidget {
     required this.servicetype,
     required this.image,
     required this.callBack,
-    //required this.otherUserId,
+    required this.otherUserId,
   });
 
   @override
@@ -2177,6 +2197,7 @@ class UserTabs extends StatefulWidget {
 class _UserTabsState extends State<UserTabs> {
   @override
   Widget build(BuildContext context) {
+    var box = Hive.box("userdata");
     return Container(
       margin: EdgeInsets.all(10.sp),
       height: 300.h,
@@ -2245,12 +2266,14 @@ class _UserTabsState extends State<UserTabs> {
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                   InkWell(
                     onTap: () {
+                      log(box.get("userid").toString());
                       Navigator.push(
                           context,
                           CupertinoPageRoute(
                             builder: (context) => ChatingPage(
+                              id: box.get("userid").toString(),
                               name: widget.fullname,
-                              //otherUesrid: widget.otherUserId,
+                              otherUesrid: widget.otherUserId,
                             ),
                           ));
                     },

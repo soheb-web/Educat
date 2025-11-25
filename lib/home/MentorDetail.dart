@@ -805,7 +805,7 @@ class _MentorDetailPageState extends ConsumerState<MentorDetailPage> {
   @override
   Widget build(BuildContext context) {
     final profileAsync = ref.watch(profileProvider(widget.id));
-
+    var box = Hive.box('userdata');
     return Scaffold(
       body: profileAsync.when(
         data: (profile) {
@@ -1002,6 +1002,11 @@ class _MentorDetailPageState extends ConsumerState<MentorDetailPage> {
                                           context,
                                           CupertinoPageRoute(
                                             builder: (context) => ChatingPage(
+                                                otherUesrid:
+                                                    profile.id.toString(),
+                                                id: box
+                                                    .get("userid")
+                                                    .toString(),
                                                 name: profile.fullName
                                                     .toString()),
                                           ));
