@@ -1,12 +1,18 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:educationapp/coreFolder/Controller/blockListController.dart';
 import 'package:educationapp/coreFolder/Controller/chatController.dart';
+import 'package:educationapp/coreFolder/Model/blockBodyModel.dart';
+import 'package:educationapp/coreFolder/Model/blockListModel.dart';
 import 'package:educationapp/coreFolder/Model/chatHistoryResMdel.dart';
+import 'package:educationapp/coreFolder/network/api.state.dart';
+import 'package:educationapp/coreFolder/utils/preety.dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
@@ -17,7 +23,10 @@ class ChatingPage extends ConsumerStatefulWidget {
   final String id;
   final String otherUesrid;
   const ChatingPage(
-      {super.key, required this.name, required this.id, required this.otherUesrid});
+      {super.key,
+      required this.name,
+      required this.id,
+      required this.otherUesrid});
 
   @override
   ConsumerState<ChatingPage> createState() => _ChatingPageState();
@@ -130,6 +139,9 @@ class _ChatingPageState extends ConsumerState<ChatingPage>
     }
   }
 
+  bool isBlocked = false;
+  bool isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     final hsitoryData = ref.watch(chatHistoryController(widget.otherUesrid));
@@ -152,6 +164,21 @@ class _ChatingPageState extends ConsumerState<ChatingPage>
         });
       }
     });
+
+    final blockListAsync = ref.watch(blockListController);
+
+    if (blockListAsync is AsyncData<BlockListModel>) {
+      isBlocked = blockListAsync.value.data!.any(
+            (block) =>
+                block.blockedId.toString() == widget.otherUesrid &&
+                block.status == true,
+          ) ??
+          false;
+    } else if (blockListAsync is AsyncError) {
+      log("Block list error: ${blockListAsync.error}");
+      // Default to false on error
+    }
+    // On loading, default to false
 
     return Scaffold(
       backgroundColor: Color(0xFF1B1B1B),
@@ -201,11 +228,52 @@ class _ChatingPageState extends ConsumerState<ChatingPage>
                     ),
                     Spacer(),
                     PopupMenuButton<String>(
-                      onSelected: (value) {
+                      onSelected: (value) async {
                         if (value == "report") {
                           print("Report clicked");
                         } else if (value == "block") {
-                          print("Block clicked");
+                          setState(() => isLoading = true);
+
+                          try {
+                            final service = APIStateNetwork(createDio());
+
+                            if (isBlocked == false) {
+                              // -------- BLOCK API ----------
+                              final body =
+                                  BlockbodyModel(blockedId: widget.otherUesrid);
+                              final response = await service.block(body);
+
+                              if (response.data!.status == true) {
+                                Fluttertoast.showToast(
+                                    msg: response.message ?? "User Block");
+                                ref.invalidate(blockListController);
+                              } else {
+                                log(response.message.toString());
+                                Fluttertoast.showToast(
+                                    msg: response.message ?? "Block Failed");
+                              }
+                            } else {
+                              // -------- UNBLOCK API ----------
+                              final body =
+                                  BlockbodyModel(blockedId: widget.otherUesrid);
+                              final response = await service.unblock(body);
+
+                              if (response.data!.status == false) {
+                                Fluttertoast.showToast(
+                                    msg: response.message ?? "User Unblocked");
+                                ref.invalidate(blockListController);
+                              } else {
+                                log(response.message.toString());
+                                Fluttertoast.showToast(
+                                    msg: response.message ?? "Unblock Failed");
+                              }
+                            }
+                          } catch (e, st) {
+                            Fluttertoast.showToast(msg: "API Error: $e");
+                            log("${e.toString()} /n , ${st.toString()}");
+                          } finally {
+                            setState(() => isLoading = false);
+                          }
                         }
                       },
                       shape: RoundedRectangleBorder(
@@ -218,7 +286,20 @@ class _ChatingPageState extends ConsumerState<ChatingPage>
                         ),
                         PopupMenuItem(
                           value: "block",
-                          child: Text("Block"),
+                          child: isLoading
+                              ? Row(
+                                  children: [
+                                    SizedBox(
+                                      height: 16,
+                                      width: 16,
+                                      child: CircularProgressIndicator(
+                                          strokeWidth: 2),
+                                    ),
+                                    SizedBox(width: 10),
+                                    Text("Please wait...")
+                                  ],
+                                )
+                              : Text(isBlocked ? "Unblock" : "Block"),
                         ),
                       ],
                       child: Container(
@@ -262,6 +343,7 @@ class _ChatingPageState extends ConsumerState<ChatingPage>
                                 _messages = List<Chat>.from(newSnap.chat!);
                               });
                             }
+                            ref.invalidate(blockListController);
 
                             _reconnectWebSocket();
                             _scrollToBottom();
@@ -388,34 +470,131 @@ class _ChatingPageState extends ConsumerState<ChatingPage>
                           ),
                         ),
                       ),
-                      MessageInput(
-                        controller: messController,
-                        onSend: () {
-                          if (messController.text.trim().isEmpty) return;
+                      // NEW: Blocked overlay - Show if blocked (using isBlocked state updated by listener)
+                      if (isBlocked)
+                        Container(
+                          color: Colors.white.withOpacity(0.9),
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.block,
+                                  size: 64.sp,
+                                  color: Colors.grey.shade400,
+                                ),
+                                SizedBox(height: 16.h),
+                                Text(
+                                  "You have blocked this user",
+                                  style: GoogleFonts.roboto(
+                                    fontSize: 18.sp,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.grey.shade700,
+                                  ),
+                                ),
+                                SizedBox(height: 8.h),
+                                Text(
+                                  "You can't send messages to blocked users.\nUnblock to continue chatting.",
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.roboto(
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.w400,
+                                    color: Colors.grey.shade600,
+                                  ),
+                                ),
+                                SizedBox(height: 24.h),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    // Use the menu to unblock
+                                    Fluttertoast.showToast(
+                                      msg: "Use the menu to unblock",
+                                      toastLength: Toast.LENGTH_SHORT,
+                                    );
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF008080),
+                                    foregroundColor: Colors.white,
+                                  ),
+                                  child: Text("Got it"),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
 
-                          final msg = messController.text.trim();
-
-                          // Send via socket
-                          channel.sink.add(jsonEncode({
-                            "receiver_id": widget.otherUesrid,
-                            "message": msg,
-                          }));
-
-                          // Add instantly in UI
-                          setState(() {
-                            _messages.add(
-                              Chat(
-                                sender: int.parse(userid.toString()),
-                                message: msg,
-                                timestamp: DateTime.now().toIso8601String(),
+                      // NEW: Conditional input - disabled if blocked
+                      if (isBlocked)
+                        Container(
+                          color: Colors.white,
+                          padding: EdgeInsets.all(16.w),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 16.w, vertical: 12.h),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.shade100,
+                                    borderRadius: BorderRadius.circular(20.r),
+                                  ),
+                                  child: Text(
+                                    "Messages are blocked",
+                                    style: GoogleFonts.inter(
+                                      fontSize: 14.sp,
+                                      color: Colors.grey.shade500,
+                                    ),
+                                  ),
+                                ),
                               ),
-                            );
-                          });
+                              SizedBox(width: 10.w),
+                              Container(
+                                width: 53.w,
+                                height: 53.h,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.grey.shade300,
+                                ),
+                                child: const Center(
+                                  child: Icon(
+                                    Icons.send_sharp,
+                                    color: Colors.grey,
+                                    size: 28,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 15.w),
+                            ],
+                          ),
+                        )
+                      else
+                        MessageInput(
+                          controller: messController,
+                          onSend: () {
+                            if (messController.text.trim().isEmpty) return;
 
-                          messController.clear();
-                          _scrollToBottom();
-                        },
-                      ),
+                            final msg = messController.text.trim();
+
+                            // Send via socket
+                            channel.sink.add(jsonEncode({
+                              "receiver_id": widget.otherUesrid,
+                              "message": msg,
+                            }));
+
+                            // Add instantly in UI
+                            setState(() {
+                              _messages.add(
+                                Chat(
+                                  sender: int.parse(userid.toString()),
+                                  message: msg,
+                                  timestamp: DateTime.now().toIso8601String(),
+                                ),
+                              );
+                            });
+
+                            messController.clear();
+                            _scrollToBottom();
+                          },
+                        ),
                     ],
                   ),
                 ),

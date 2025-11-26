@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:educationapp/coreFolder/Model/blockBodyModel.dart';
+import 'package:educationapp/coreFolder/Model/blockListModel.dart';
 import 'package:educationapp/coreFolder/Model/getProfileUserModel.dart';
 import 'package:educationapp/coreFolder/Model/getStudentRequestResModel.dart';
 import 'package:educationapp/coreFolder/Model/login.body.model.dart';
@@ -148,4 +150,13 @@ abstract class APIStateNetwork {
 
   @GET("/mylist")
   Future<MyListingResModel> myListing();
+
+  @POST("/block")
+  Future<BlockResModel> block(@Body() BlockbodyModel body);
+
+  @POST("/unblock")
+  Future<BlockResModel> unblock(@Body() BlockbodyModel body);
+
+  @GET("/block/list")
+  Future<BlockListModel> getBlockList();
 }
