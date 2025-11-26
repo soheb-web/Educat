@@ -210,7 +210,6 @@ class _ChatinboxState extends ConsumerState<Chatinbox> {
                                           name: data.inbox![index].otherUser!
                                                   .name ??
                                               "N/A",
-
                                         ),
                                       ));
                                 },
@@ -236,7 +235,7 @@ class _ChatinboxState extends ConsumerState<Chatinbox> {
                                         width: 10.w,
                                       ),
                                       Container(
-                                        height: 60.h,
+                                        height: 65.h,
                                         width: 60.w,
                                         decoration: BoxDecoration(
                                             borderRadius:
@@ -247,11 +246,18 @@ class _ChatinboxState extends ConsumerState<Chatinbox> {
                                               .otherUser!
                                               .profilePick
                                               .toString(),
+                                          height: 65.h,
+                                          width: 60.w,
+                                          fit: BoxFit.cover,
                                           errorBuilder:
                                               (context, error, stackTrace) {
-                                            return Icon(
-                                              Icons.image_not_supported_sharp,
-                                              size: 40.sp,
+                                            return ClipOval(
+                                              child: Image.network(
+                                                "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png",
+                                                height: 65.h,
+                                                width: 60.w,
+                                                fit: BoxFit.cover,
+                                              ),
                                             );
                                           },
                                         ),

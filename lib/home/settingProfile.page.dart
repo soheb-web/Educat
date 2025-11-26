@@ -445,16 +445,17 @@ class _SettingProfilePageState extends State<SettingProfilePage> {
                           )
                         ]),
                     child: TextField(
+                      readOnly: true,
                       decoration: InputDecoration(
                           filled: true,
                           fillColor: Colors.white,
                           border: OutlineInputBorder(
                             borderSide: BorderSide.none,
                           ),
-                          label: Text(
+                          hint: Text(
                             "*************",
                             style: GoogleFonts.inter(
-                                fontSize: 14.sp,
+                                fontSize: 16.sp,
                                 fontWeight: FontWeight.w500,
                                 color: Color(0xFF9B9B9B)),
                           )),

@@ -770,6 +770,7 @@ class _MentorDetailPageState extends ConsumerState<MentorDetailPage> {
               ref.invalidate(profileProvider(widget.id));
             },
             child: SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(), // IMPORTANT
               child: Stack(
                 children: [
                   Column(
