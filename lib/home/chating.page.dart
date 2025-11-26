@@ -619,47 +619,68 @@ class _ChatingPageState extends ConsumerState<ChatingPage>
 
                       // NEW: Conditional input - disabled if blocked
                       if (isBlocked)
-                        Container(
-                          color: Colors.white,
-                          padding: EdgeInsets.all(16.w),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 16.w, vertical: 12.h),
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey.shade100,
-                                    borderRadius: BorderRadius.circular(20.r),
-                                  ),
-                                  child: Text(
-                                    "Messages are blocked",
-                                    style: GoogleFonts.inter(
-                                      fontSize: 14.sp,
-                                      color: Colors.grey.shade500,
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                    left: 10.w,
+                                    bottom: 10.h,
+                                    top: 10
+                                        .h), // Added top padding for better spacing
+                                child: TextField(
+                                  readOnly: true,
+                                  decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.only(
+                                      left: 20.w,
+                                      right: 20.w,
+                                      top: 12.h,
+                                      bottom: 12.h,
+                                    ),
+                                    filled: true,
+                                    fillColor: const Color(0xFFF1F2F6),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(100.r),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(100.r),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    hintText: "Type a message ...",
+                                    hintStyle: GoogleFonts.inter(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w600,
+                                      color: const Color(0xFFC8C8C8),
+                                      letterSpacing: -1,
                                     ),
                                   ),
                                 ),
                               ),
-                              SizedBox(width: 10.w),
-                              Container(
+                            ),
+                            SizedBox(width: 10.w),
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 10.h, top: 10.h),
+                              child: Container(
                                 width: 53.w,
                                 height: 53.h,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: Colors.grey.shade300,
+                                  color: const Color(0xFF008080),
                                 ),
                                 child: const Center(
                                   child: Icon(
                                     Icons.send_sharp,
-                                    color: Colors.grey,
+                                    color: Colors.white,
                                     size: 28,
                                   ),
                                 ),
                               ),
-                              SizedBox(width: 15.w),
-                            ],
-                          ),
+                            ),
+                            SizedBox(width: 15.w),
+                          ],
                         )
                       else
                         MessageInput(
