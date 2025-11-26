@@ -727,9 +727,7 @@ class MentorDetailPage extends ConsumerStatefulWidget {
 }
 
 class _MentorDetailPageState extends ConsumerState<MentorDetailPage> {
-  bool isConnected = false;
   bool isLoading = false;
-  String? requestStatus;
 
   Future<void> sendConnectRequest() async {
     setState(() {
@@ -745,7 +743,7 @@ class _MentorDetailPageState extends ConsumerState<MentorDetailPage> {
         ref.invalidate(getRequestStudentController); // keep this
         ref.read(requestRefreshTrigger.notifier).state =
             !ref.read(requestRefreshTrigger); // toggle to trigger rebuild
-        ref.invalidate(profileProvider);
+        ref.invalidate(profileProvider(widget.id));
         // Do not add to connectedMentors or set isConnected here - wait for API refresh to confirm status
       } else {
         Fluttertoast.showToast(msg: response.message);
@@ -761,548 +759,502 @@ class _MentorDetailPageState extends ConsumerState<MentorDetailPage> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    checkConnectionStatus();
-  }
-
-  void checkConnectionStatus() {
-    var box = Hive.box('userdata');
-    List connectedMentors = box.get('connectedMentors', defaultValue: []);
-    if (connectedMentors.contains(widget.id)) {
-      setState(() {
-        isConnected = true;
-      });
-    }
-  }
-
-  String _getStatusText(String? status) {
-    switch (status?.toLowerCase()) {
-      case "pending":
-        return "Pending";
-      case "accepted":
-        return "Accepted";
-      case "connected":
-        return "Connected";
-      default:
-        return "Connect";
-    }
-  }
-
-  Color _getStatusColor(String? status) {
-    switch (status?.toLowerCase()) {
-      case "pending":
-        return Colors.red;
-      case "connected":
-        return Colors.blueAccent;
-      case "accepted":
-        return Colors.greenAccent;
-      default:
-        return const Color(0xffA8E6CF);
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     final profileAsync = ref.watch(profileProvider(widget.id));
     var box = Hive.box('userdata');
     return Scaffold(
       body: profileAsync.when(
         data: (profile) {
-          if (profile == null) {
-            return const Center(
-              child: Text('Mentor not found'),
-            );
-          }
-
-          String? newStatus = profile
-              .status; // Assuming the field is 'status' based on the response log
-          bool statusChanged = requestStatus != newStatus;
-          bool shouldSetConnected = (newStatus?.toLowerCase() == "accepted" ||
-                  newStatus?.toLowerCase() == "connected") &&
-              !isConnected;
-
-          if (statusChanged || shouldSetConnected) {
-            setState(() {
-              requestStatus = newStatus;
-              if (shouldSetConnected) {
-                // Add to connectedMentors only when status is accepted/connected
-                var box = Hive.box('userdata');
-                List connectedMentors =
-                    box.get('connectedMentors', defaultValue: []);
-                if (!connectedMentors.contains(widget.id)) {
-                  connectedMentors.add(widget.id);
-                  box.put('connectedMentors', connectedMentors);
-                }
-                isConnected = true;
-              }
-            });
-          }
-
-          return SingleChildScrollView(
-            child: Stack(
-              children: [
-                Column(
-                  children: [
-                    Container(
-                      height: 220.h,
-                      width: double.infinity,
-                      color: const Color(0xff008080),
-                    ),
-                    Container(
-                      color: Colors.white,
-                      child: Container(
+          return RefreshIndicator(
+            onRefresh: () async {
+              ref.invalidate(profileProvider(widget.id));
+            },
+            child: SingleChildScrollView(
+              child: Stack(
+                children: [
+                  Column(
+                    children: [
+                      Container(
+                        height: 220.h,
                         width: double.infinity,
-                        margin: EdgeInsets.only(top: 100.h),
-                        child: SingleChildScrollView(
-                          child: Column(children: [
-                            SizedBox(
-                              height: 10.h,
-                            ),
-                            Text(
-                              profile.fullName!,
-                              style: GoogleFonts.roboto(
-                                fontSize: 24.sp,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black,
+                        color: const Color(0xff008080),
+                      ),
+                      Container(
+                        color: Colors.white,
+                        child: Container(
+                          width: double.infinity,
+                          margin: EdgeInsets.only(top: 100.h),
+                          child: SingleChildScrollView(
+                            child: Column(children: [
+                              SizedBox(
+                                height: 10.h,
                               ),
-                            ),
-                            Text(
-                              profile.totalExperience ?? 'No experience listed',
-                              style: GoogleFonts.roboto(
-                                fontSize: 15.sp,
-                                fontWeight: FontWeight.w600,
-                                color: const Color(0xff666666),
-                              ),
-                            ),
-                            Text(
-                              'College: ${profile.usersField ?? 'N/A'} - Company: ${profile.companiesWorked?.toString() ?? 'N/A'}',
-                              style: GoogleFonts.roboto(
-                                fontSize: 15.sp,
-                                fontWeight: FontWeight.w600,
-                                color: const Color(0xff666666),
-                              ),
-                            ),
-                            SizedBox(height: 15.w),
-                            if (profile.skills != null)
-                              if (profile.skills is List &&
-                                  profile.skills.isNotEmpty)
-                                Wrap(
-                                  spacing: 10.w,
-                                  runSpacing: 10.h,
-                                  children: (profile.skills as List)
-                                      .map<Widget>(
-                                        (skill) => Container(
-                                          padding: EdgeInsets.only(
-                                              left: 20.w,
-                                              right: 20.w,
-                                              top: 8.h,
-                                              bottom: 8.h),
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(20.r),
-                                            color: const Color(0xffDEDDEC),
-                                          ),
-                                          child: Text(
-                                            skill.toString(),
-                                            style: GoogleFonts.roboto(
-                                              fontSize: 20.sp,
-                                              fontWeight: FontWeight.w600,
-                                              color: Colors.black,
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                      .toList(),
-                                )
-                              else
-                                Container(
-                                  padding: EdgeInsets.only(
-                                      left: 15.w,
-                                      right: 15.w,
-                                      top: 10.h,
-                                      bottom: 10.h),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    color: const Color(0xffDEDDEC),
-                                  ),
-                                  child: Text(
-                                    profile.skills.toString(),
-                                    style: GoogleFonts.roboto(
-                                      fontSize: 14.sp,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                )
-                            else
                               Text(
-                                'No skills listed',
+                                profile.fullName!,
                                 style: GoogleFonts.roboto(
-                                  fontSize: 12.sp,
+                                  fontSize: 24.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              Text(
+                                profile.totalExperience ??
+                                    'No experience listed',
+                                style: GoogleFonts.roboto(
+                                  fontSize: 15.sp,
                                   fontWeight: FontWeight.w600,
                                   color: const Color(0xff666666),
                                 ),
                               ),
-                            Container(
-                              margin: EdgeInsets.only(
-                                  left: 10.w, top: 10.h, right: 10.w),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  InkWell(
-                                    onTap: isLoading
-                                        ? null
-                                        : () async {
-                                            if (requestStatus == null ||
-                                                requestStatus?.toLowerCase() ==
-                                                    "connect") {
-                                              await sendConnectRequest(); // Only when no request or connect
-                                            } else {
-                                              Fluttertoast.showToast(
-                                                  msg:
-                                                      "Request already: $requestStatus");
-                                            }
-                                          },
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 10.w),
-                                      height: 50.h,
-                                      width: 140.w,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(20),
-                                        color: _getStatusColor(requestStatus),
-                                      ),
-                                      child: Center(
-                                        child: isLoading
-                                            ? SizedBox(
-                                                width: 30.w,
-                                                height: 30.h,
-                                                child:
-                                                    CircularProgressIndicator(
-                                                  color: Colors.white,
-                                                  strokeWidth: 2.w,
-                                                ),
-                                              )
-                                            : Text(
-                                                _getStatusText(requestStatus),
-                                                style: GoogleFonts.roboto(
-                                                  fontSize: 12.sp,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: Colors.black,
-                                                ),
-                                              ),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(width: 20.w),
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          CupertinoPageRoute(
-                                            builder: (context) => ChatingPage(
-                                                otherUesrid:
-                                                    profile.id.toString(),
-                                                id: box
-                                                    .get("userid")
-                                                    .toString(),
-                                                name: profile.fullName
-                                                    .toString()),
-                                          ));
-                                    },
-                                    child: Container(
-                                      padding: EdgeInsets.only(
-                                          left: 10.w, right: 10.w),
-                                      height: 50.h,
-                                      width: 140.w,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(20),
-                                        color: Colors.white,
-                                        border: Border.all(
-                                            color: const Color(0xff008080)),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          "Message",
-                                          style: GoogleFonts.roboto(
-                                            fontSize: 12.sp,
-                                            fontWeight: FontWeight.w600,
-                                            color: const Color(0xff008080),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                              Text(
+                                'College: ${profile.usersField ?? 'N/A'} - Company: ${profile.companiesWorked?.toString() ?? 'N/A'}',
+                                style: GoogleFonts.roboto(
+                                  fontSize: 15.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: const Color(0xff666666),
+                                ),
                               ),
-                            ),
-                            SizedBox(
-                              height: 30.h,
-                            ),
-                            Divider(),
-                            Container(
-                              margin: EdgeInsets.only(left: 20.w, top: 15.h),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "About ${profile.fullName}",
-                                        style: GoogleFonts.roboto(
-                                          fontSize: 20.sp,
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                      SizedBox(height: 3.h),
-                                      SizedBox(
-                                        width: 400.w,
-                                        child: Text(
-                                          profile.description ??
-                                              'No description available',
-                                          style: GoogleFonts.roboto(
-                                            fontSize: 15.sp,
-                                            fontWeight: FontWeight.w600,
-                                            color: Color(0xff666666),
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(height: 3.h),
-                                      SizedBox(
-                                        width: 400.w,
-                                        child: Text(
-                                          'College: ${profile.usersField ?? 'N/A'} - Company: ${profile.companiesWorked?.toString() ?? 'N/A'}',
-                                          style: GoogleFonts.roboto(
-                                            fontSize: 15.sp,
-                                            fontWeight: FontWeight.w600,
-                                            color: Color(0xff666666),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(
-                              height: 10.h,
-                            ),
-                            Divider(),
-                            Container(
-                                margin: EdgeInsets.only(left: 20.w, top: 15.h),
-                                child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            "Educations",
-                                            style: GoogleFonts.roboto(
-                                              fontSize: 20.sp,
-                                              fontWeight: FontWeight.w600,
-                                              color: Colors.black,
-                                            ),
-                                          ),
-                                          SizedBox(height: 5.h),
-                                          Text(
-                                            profile.totalExperience ??
-                                                'No education details available',
-                                            style: GoogleFonts.roboto(
-                                              fontSize: 12.sp,
-                                              fontWeight: FontWeight.w600,
-                                              color: const Color(0xff666666),
-                                            ),
-                                          ),
-                                          Text(
-                                            'College: ${profile.usersField ?? 'N/A'} - Company: ${profile.companiesWorked?.toString() ?? 'N/A'}',
-                                            style: GoogleFonts.roboto(
-                                              fontSize: 12.sp,
-                                              fontWeight: FontWeight.w600,
-                                              color: const Color(0xff666666),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ])),
-                            SizedBox(
-                              height: 10.h,
-                            ),
-                            Divider(),
-                            Container(
-                              margin: EdgeInsets.only(left: 20.w, top: 15.h),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Skills",
-                                        style: GoogleFonts.roboto(
-                                          fontSize: 20.sp,
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                      SizedBox(height: 10.h),
-                                      if (profile.skills != null)
-                                        if (profile.skills is List &&
-                                            profile.skills.isNotEmpty)
-                                          Wrap(
-                                            spacing: 10.w,
-                                            runSpacing: 10.h,
-                                            children: (profile.skills as List)
-                                                .map<Widget>(
-                                                  (skill) => Container(
-                                                    padding: EdgeInsets.only(
-                                                        left: 15.w,
-                                                        right: 15.w,
-                                                        top: 10.h,
-                                                        bottom: 10.h),
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20.r),
-                                                      color: const Color(
-                                                          0xffDEDDEC),
-                                                    ),
-                                                    child: Text(
-                                                      skill.toString(),
-                                                      style: GoogleFonts.roboto(
-                                                        fontSize: 15.sp,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        color: Colors.black,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                )
-                                                .toList(),
-                                          )
-                                        else
-                                          Container(
+                              SizedBox(height: 15.w),
+                              if (profile.skills != null)
+                                if (profile.skills is List &&
+                                    profile.skills.isNotEmpty)
+                                  Wrap(
+                                    spacing: 10.w,
+                                    runSpacing: 10.h,
+                                    children: (profile.skills as List)
+                                        .map<Widget>(
+                                          (skill) => Container(
                                             padding: EdgeInsets.only(
-                                                left: 15.w,
-                                                right: 15.w,
-                                                top: 10.h,
-                                                bottom: 10.h),
+                                                left: 20.w,
+                                                right: 20.w,
+                                                top: 8.h,
+                                                bottom: 8.h),
                                             decoration: BoxDecoration(
                                               borderRadius:
-                                                  BorderRadius.circular(20),
+                                                  BorderRadius.circular(20.r),
                                               color: const Color(0xffDEDDEC),
                                             ),
-                                            child: Center(
-                                              child: Text(
-                                                profile.skills.toString(),
-                                                style: GoogleFonts.roboto(
-                                                  fontSize: 14.sp,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: Colors.black,
-                                                ),
+                                            child: Text(
+                                              skill.toString(),
+                                              style: GoogleFonts.roboto(
+                                                fontSize: 20.sp,
+                                                fontWeight: FontWeight.w600,
+                                                color: Colors.black,
                                               ),
                                             ),
-                                          )
-                                      else
-                                        Text(
-                                          'No skills listed',
-                                          style: GoogleFonts.roboto(
-                                            fontSize: 12.sp,
-                                            fontWeight: FontWeight.w600,
-                                            color: const Color(0xff666666),
+                                          ),
+                                        )
+                                        .toList(),
+                                  )
+                                else
+                                  Container(
+                                    padding: EdgeInsets.only(
+                                        left: 15.w,
+                                        right: 15.w,
+                                        top: 10.h,
+                                        bottom: 10.h),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                      color: const Color(0xffDEDDEC),
+                                    ),
+                                    child: Text(
+                                      profile.skills.toString(),
+                                      style: GoogleFonts.roboto(
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  )
+                              else
+                                Text(
+                                  'No skills listed',
+                                  style: GoogleFonts.roboto(
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.w600,
+                                    color: const Color(0xff666666),
+                                  ),
+                                ),
+                              Container(
+                                margin: EdgeInsets.only(
+                                    left: 10.w, top: 10.h, right: 10.w),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    InkWell(
+                                      onTap: isLoading
+                                          ? null
+                                          : () async {
+                                              if (profile.status == null ||
+                                                  profile.status
+                                                          ?.toLowerCase() ==
+                                                      "connected") {
+                                                await sendConnectRequest(); // Only when no request or connect
+                                              } else {
+                                                Fluttertoast.showToast(
+                                                    msg:
+                                                        "Request already: ${profile.status}");
+                                              }
+                                            },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 10.w),
+                                        height: 50.h,
+                                        width: 140.w,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          color: profile.status == "connected"
+                                              ? Color(0xff008080)
+                                              : profile.status == "pending"
+                                                  ? Colors.red
+                                                  : profile.status == "accepted"
+                                                      ? Colors.green
+                                                      : Colors.grey,
+                                        ),
+                                        child: Center(
+                                          child: isLoading
+                                              ? SizedBox(
+                                                  width: 30.w,
+                                                  height: 30.h,
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                    color: Colors.white,
+                                                    strokeWidth: 2.w,
+                                                  ),
+                                                )
+                                              : Text(
+                                                  profile.status == "connected"
+                                                      ? "Send Request"
+                                                      : profile.status ==
+                                                              "pending"
+                                                          ? "Pending"
+                                                          : profile.status ==
+                                                                  "accepted"
+                                                              ? "Accepted"
+                                                              : "",
+                                                  style: GoogleFonts.roboto(
+                                                    fontSize: 14.sp,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(width: 20.w),
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            CupertinoPageRoute(
+                                              builder: (context) => ChatingPage(
+                                                  otherUesrid:
+                                                      profile.id.toString(),
+                                                  id: box
+                                                      .get("userid")
+                                                      .toString(),
+                                                  name: profile.fullName
+                                                      .toString()),
+                                            ));
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.only(
+                                            left: 10.w, right: 10.w),
+                                        height: 50.h,
+                                        width: 140.w,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          color: Colors.white,
+                                          border: Border.all(
+                                              color: const Color(0xff008080)),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            "Message",
+                                            style: GoogleFonts.roboto(
+                                              fontSize: 14.sp,
+                                              fontWeight: FontWeight.w600,
+                                              color: const Color(0xff008080),
+                                            ),
                                           ),
                                         ),
-                                    ],
-                                  ),
-                                ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                            SizedBox(height: 20.h),
-                          ]),
+                              SizedBox(
+                                height: 30.h,
+                              ),
+                              Divider(),
+                              Container(
+                                margin: EdgeInsets.only(left: 20.w, top: 15.h),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "About ${profile.fullName}",
+                                          style: GoogleFonts.roboto(
+                                            fontSize: 20.sp,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                        SizedBox(height: 3.h),
+                                        SizedBox(
+                                          width: 400.w,
+                                          child: Text(
+                                            profile.description ??
+                                                'No description available',
+                                            style: GoogleFonts.roboto(
+                                              fontSize: 15.sp,
+                                              fontWeight: FontWeight.w600,
+                                              color: Color(0xff666666),
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(height: 3.h),
+                                        SizedBox(
+                                          width: 400.w,
+                                          child: Text(
+                                            'College: ${profile.usersField ?? 'N/A'} - Company: ${profile.companiesWorked?.toString() ?? 'N/A'}',
+                                            style: GoogleFonts.roboto(
+                                              fontSize: 15.sp,
+                                              fontWeight: FontWeight.w600,
+                                              color: Color(0xff666666),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10.h,
+                              ),
+                              Divider(),
+                              Container(
+                                  margin:
+                                      EdgeInsets.only(left: 20.w, top: 15.h),
+                                  child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "Educations",
+                                              style: GoogleFonts.roboto(
+                                                fontSize: 20.sp,
+                                                fontWeight: FontWeight.w600,
+                                                color: Colors.black,
+                                              ),
+                                            ),
+                                            SizedBox(height: 5.h),
+                                            Text(
+                                              profile.totalExperience ??
+                                                  'No education details available',
+                                              style: GoogleFonts.roboto(
+                                                fontSize: 12.sp,
+                                                fontWeight: FontWeight.w600,
+                                                color: const Color(0xff666666),
+                                              ),
+                                            ),
+                                            Text(
+                                              'College: ${profile.usersField ?? 'N/A'} - Company: ${profile.companiesWorked?.toString() ?? 'N/A'}',
+                                              style: GoogleFonts.roboto(
+                                                fontSize: 12.sp,
+                                                fontWeight: FontWeight.w600,
+                                                color: const Color(0xff666666),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ])),
+                              SizedBox(
+                                height: 10.h,
+                              ),
+                              Divider(),
+                              Container(
+                                margin: EdgeInsets.only(left: 20.w, top: 15.h),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Skills",
+                                          style: GoogleFonts.roboto(
+                                            fontSize: 20.sp,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                        SizedBox(height: 10.h),
+                                        if (profile.skills != null)
+                                          if (profile.skills is List &&
+                                              profile.skills.isNotEmpty)
+                                            Wrap(
+                                              spacing: 10.w,
+                                              runSpacing: 10.h,
+                                              children: (profile.skills as List)
+                                                  .map<Widget>(
+                                                    (skill) => Container(
+                                                      padding: EdgeInsets.only(
+                                                          left: 15.w,
+                                                          right: 15.w,
+                                                          top: 10.h,
+                                                          bottom: 10.h),
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(20.r),
+                                                        color: const Color(
+                                                            0xffDEDDEC),
+                                                      ),
+                                                      child: Text(
+                                                        skill.toString(),
+                                                        style:
+                                                            GoogleFonts.roboto(
+                                                          fontSize: 15.sp,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          color: Colors.black,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  )
+                                                  .toList(),
+                                            )
+                                          else
+                                            Container(
+                                              padding: EdgeInsets.only(
+                                                  left: 15.w,
+                                                  right: 15.w,
+                                                  top: 10.h,
+                                                  bottom: 10.h),
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                                color: const Color(0xffDEDDEC),
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  profile.skills.toString(),
+                                                  style: GoogleFonts.roboto(
+                                                    fontSize: 14.sp,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Colors.black,
+                                                  ),
+                                                ),
+                                              ),
+                                            )
+                                        else
+                                          Text(
+                                            'No skills listed',
+                                            style: GoogleFonts.roboto(
+                                              fontSize: 12.sp,
+                                              fontWeight: FontWeight.w600,
+                                              color: const Color(0xff666666),
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 20.h),
+                            ]),
+                          ),
                         ),
-                      ),
-                    ),
-                  ],
-                ),
-                Positioned(
-                  top: 60.h,
-                  left: 20.w,
-                  right: 20.w,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: Container(
-                            height: 50.h,
-                            width: 45.w,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white,
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.only(left: 8.w),
-                              child: Icon(Icons.arrow_back_ios),
-                            )),
-                      ),
-                      Text(
-                        "Mentor Details",
-                        style: GoogleFonts.roboto(
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
-                      Container(
-                        height: 50.h,
-                        width: 45.w,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
-                          //color: Colors.white,
-                        ),
-                        //child: const Icon(Icons.search),
                       ),
                     ],
                   ),
-                ),
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  top: 140.h,
-                  child: Center(
-                    child: ClipOval(
-                      child: profile.profilePic != null
-                          ? Image.network(
-                              profile.profilePic!,
-                              height: 182.h,
-                              width: 182.w,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  Image.asset(
+                  Positioned(
+                    top: 60.h,
+                    left: 20.w,
+                    right: 20.w,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: Container(
+                              height: 50.h,
+                              width: 45.w,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white,
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.only(left: 8.w),
+                                child: Icon(Icons.arrow_back_ios),
+                              )),
+                        ),
+                        Text(
+                          "Mentor Details",
+                          style: GoogleFonts.roboto(
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Container(
+                          height: 50.h,
+                          width: 45.w,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30),
+                            //color: Colors.white,
+                          ),
+                          //child: const Icon(Icons.search),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    top: 140.h,
+                    child: Center(
+                      child: ClipOval(
+                        child: profile.profilePic != null
+                            ? Image.network(
+                                profile.profilePic!,
+                                height: 182.h,
+                                width: 182.w,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    Image.asset(
+                                  "assets/girlpic.png",
+                                  height: 182.h,
+                                  width: 182.w,
+                                  fit: BoxFit.cover,
+                                ),
+                              )
+                            : Image.asset(
                                 "assets/girlpic.png",
                                 height: 182.h,
                                 width: 182.w,
                                 fit: BoxFit.cover,
                               ),
-                            )
-                          : Image.asset(
-                              "assets/girlpic.png",
-                              height: 182.h,
-                              width: 182.w,
-                              fit: BoxFit.cover,
-                            ),
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         },

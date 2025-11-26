@@ -52,7 +52,7 @@ class ProfileGetModel {
         linkedinUser: json["linkedin_user"],
         companiesWorked: json["companies_worked"],
         resumeUpload: json["resume_upload"],
-        status: json['statis'],
+        status: json['status'],
       );
 
   Map<String, dynamic> toJson() => {

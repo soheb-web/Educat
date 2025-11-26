@@ -1250,6 +1250,9 @@ class _HomePageContentState extends ConsumerState<HomePageContent> {
                                             requestId:
                                                 requestData.data[index].id);
                                         try {
+                                          setState(() {
+                                            isAccept = true;
+                                          });
                                           final service =
                                               APIStateNetwork(createDio());
                                           final response =
@@ -1369,8 +1372,7 @@ class _HomePageContentState extends ConsumerState<HomePageContent> {
                                               mentor.serviceType ?? "N/A"
                                             ],
                                             image: mentor.profilePic ?? "",
-                                            otherUserId:
-                                                mentor.id.toString(),
+                                            otherUserId: mentor.id.toString(),
                                           );
                                         },
                                       ),
@@ -2632,6 +2634,8 @@ class GetRequestStudentBody extends StatefulWidget {
 }
 
 class _GetRequestStudentBodyState extends State<GetRequestStudentBody> {
+  bool isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -2726,24 +2730,37 @@ class _GetRequestStudentBodyState extends State<GetRequestStudentBody> {
             ),
             Align(
               alignment: Alignment.centerRight,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.greenAccent.shade100,
-                  foregroundColor: Colors.black,
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
-                ),
-                onPressed: () {
-                  widget.callBack();
-                },
-                child: Text(
-                  "Accept",
-                  style: GoogleFonts.inter(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
+              child: isLoading
+                  ? SizedBox(
+                      height: 35.h,
+                      width: 35.w,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.green,
+                      ),
+                    )
+                  : ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.greenAccent.shade100,
+                        foregroundColor: Colors.black,
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 16.w, vertical: 10.h),
+                      ),
+                      onPressed: () async {
+                        setState(() => isLoading = true);
+
+                        await widget.callBack();
+
+                        setState(() => isLoading = false);
+                      },
+                      child: Text(
+                        "Accept",
+                        style: GoogleFonts.inter(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
             ),
           ],
         ),
