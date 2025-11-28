@@ -1,5 +1,7 @@
 import 'dart:developer';
 
+import 'package:educationapp/home/forgot/verify.page.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -45,8 +47,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               Center(
                   child: Image.asset(
                 "assets/appicon.png",
-                width: 200.w,
-                height: 200.h,
+                width: 180.w,
+                height: 180.h,
               )),
               SizedBox(height: 30.h),
               Divider(color: Colors.black12, thickness: 1),
@@ -98,18 +100,23 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () async {
-                    if (emailController.text.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Please enter email")),
-                      );
-                      return;
-                    }
+                    // if (emailController.text.isEmpty) {
+                    //   ScaffoldMessenger.of(context).showSnackBar(
+                    //     SnackBar(content: Text("Please enter email")),
+                    //   );
+                    //   return;
+                    // }
+                    Navigator.push(
+                        context,
+                        CupertinoPageRoute(
+                          builder: (context) => OtpVerifyPage(),
+                        ));
                     setState(() {
                       isLoading = true;
                     });
                   },
                   style: ElevatedButton.styleFrom(
-                    // backgroundColor: _getLoginButtonColor(widget.title),
+                    backgroundColor: Color(0xFFA8E6CF),
                     padding: EdgeInsets.symmetric(vertical: 20.h),
                   ),
                   child: isLoading
@@ -128,28 +135,18 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                           style: GoogleFonts.roboto(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w500,
-                            color: Colors.white,
+                            color: Colors.black,
                           ),
                         ),
                 ),
+              ),
+              SizedBox(
+                height: 10.h,
               ),
             ],
           ),
         ),
       ),
     );
-  }
-
-  Color _getLoginButtonColor(String title) {
-    switch (title.toUpperCase()) {
-      case "MATRIMONY":
-        return const Color(0xFF97144d);
-      case "JOBS":
-        return const Color(0xFF0A66C2);
-      case "REAL ESTATE":
-        return const Color(0xFF00796B);
-      default:
-        return const Color(0xFF97144d);
-    }
   }
 }

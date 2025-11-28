@@ -436,14 +436,43 @@ class _SaveReviewPageState extends ConsumerState<SaveReviewPage> {
                           padding: EdgeInsets.zero,
                           itemCount: data.reviews!.length,
                           itemBuilder: (context, index) {
-                            return Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Text(data.reviews![index].city ?? ""),
-                                  ],
-                                ),
-                              ],
+                            final int rating =
+                                data.reviews![index].count?.clamp(0, 5) ?? 0;
+
+                            return Padding(
+                              padding: EdgeInsets.only(bottom: 10.h),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    data.reviews![index].fullName ?? "N/A",
+                                    style: GoogleFonts.inter(
+                                        fontSize: 18.sp,
+                                        fontWeight: FontWeight.w400,
+                                        color: Colors.black),
+                                  ),
+                                  Spacer(),
+
+                                  // 3. Filled Stars (Full Icons)
+                                  ...List.generate(
+                                    rating, // Number of filled stars
+                                    (i) => const Icon(
+                                      Icons.star, // Filled star icon
+                                      color: Colors.amber,
+                                      size: 20.0,
+                                    ),
+                                  ),
+                                  // 4. Outlined Stars (Empty Icons)
+                                  ...List.generate(
+                                    5 - rating, // Remaining stars (5 - filled stars)
+                                    (i) => const Icon(
+                                      Icons.star_border, // Outlined star icon
+                                      color: Colors
+                                          .amber, // Use the same color for visual consistency
+                                      size: 20.0,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             );
                           },
                         );

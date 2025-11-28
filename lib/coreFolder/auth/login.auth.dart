@@ -259,48 +259,77 @@ class Auth {
     required String linkedinUser,
     required String description,
     required String fullName,
-   required String profilePic,
-    //required String email,
-    // required String phone,
-    // required String password,
-    // required String dateOfBirth,
-    // required String address,
-    // required String gender,
-    // required String semester,
+    File? profileImage,
   }) async {
     try {
       final dio = await createDio();
       final url =
           'https://education.globallywebsolutions.com/api/update-profile';
 
-      final formData = FormData.fromMap({
+      // final formData = FormData.fromMap({
+      //   'user_type': userType,
+      //   'total_experience': totalExperience,
+      //   'users_field': usersField, // Fixed typo
+      //   'skills_id': skillsId,
+      //   'language_known': languageKnown, // Fixed typo
+      //   'linkedin_user': linkedinUser,
+      //   'description': description,
+      //   'full_name': fullName,
+      //   // 'email': email,
+      //   // 'phone': phone,
+      //   // 'password': password,
+      //   // 'date_of_birth': dateOfBirth,
+      //   // 'address': address,
+      //   // 'gender': gender,
+      //   // 'semester': semester,
+      //   if (resumeFile != null)
+      //     'resume_upload': await MultipartFile.fromFile(
+      //       resumeFile.path,
+      //       filename: path.basename(resumeFile.path),
+      //     ),
+      // });
+
+      final Map<String, dynamic> body = {
         'user_type': userType,
         'total_experience': totalExperience,
-        'users_field': usersField, // Fixed typo
+        'users_field': usersField,
         'skills_id': skillsId,
-        'language_known': languageKnown, // Fixed typo
+        'language_known': languageKnown,
         'linkedin_user': linkedinUser,
         'description': description,
         'full_name': fullName,
-        'profilePic' :profilePic,
-        // 'email': email,
-        // 'phone': phone,
-        // 'password': password,
-        // 'date_of_birth': dateOfBirth,
-        // 'address': address,
-        // 'gender': gender,
-        // 'semester': semester,
-        if (resumeFile != null)
-          'resume_upload': await MultipartFile.fromFile(
-            resumeFile.path,
-            filename: path.basename(resumeFile.path),
-          ),
-      });
+      };
 
-      final response = await dio.post(
-        url,
-        data: formData,
-      );
+      // Resume File
+      if (resumeFile != null) {
+        body['resume_upload'] = await MultipartFile.fromFile(
+          resumeFile.path,
+          filename: path.basename(resumeFile.path),
+        );
+      }
+
+      // Profile Image (IMPORTANT)
+      if (profileImage != null) {
+        body['profile_pic'] = await MultipartFile.fromFile(
+          profileImage.path,
+          filename: path.basename(profileImage.path),
+        );
+      }
+
+      final formData = FormData.fromMap(body);
+
+      final response = await dio.post(url, data: formData);
+
+      log("UPLOAD RESPONSE = ${response.data}");
+
+      // final response = await dio.post(
+      //   url,
+      //   data: formData,
+      // );
+      // final formData = FormData.fromMap(data);
+
+      // final response = await dio.post(url, data: formData);
+
       if (response.statusCode == 200) {
         final box = await Hive.openBox('userdata');
         final userId = response.data['data']['id'].toString(); // Corrected

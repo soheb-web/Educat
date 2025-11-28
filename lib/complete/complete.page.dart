@@ -701,7 +701,7 @@ class _ProfileCompletionWidgetState
         linkedinUser: linkedinController.text,
         description: aboutController.text,
         fullName: fullNameController.text,
-        profilePic: _image!.path,
+        profileImage: _image,
       );
       if (mounted) {
         Fluttertoast.showToast(
@@ -785,6 +785,8 @@ class _ProfileCompletionWidgetState
               profileAsync.value!.data!.linkedinUser ?? '';
           aboutController.text = profileAsync.value!.data!.description ?? '';
           _profileLoaded = true;
+          resumeFile = profileAsync.value!.data!.resumeUpload as File?;
+          _image = profileAsync.value!.data!.profilePic as File?;
         });
       });
     }
@@ -1096,48 +1098,6 @@ class _ProfileCompletionWidgetState
                               validator: (value) =>
                                   value!.isEmpty ? 'About is required' : null,
                             ),
-                            // InkWell(
-                            //   onTap: () {
-                            //     showImage();
-                            //   },
-                            //   child: Center(
-                            //     child: Container(
-                            //       margin: EdgeInsets.only(top: 20.h),
-                            //       width: 380.w,
-                            //       height: 220.h,
-                            //       decoration: BoxDecoration(
-                            //           borderRadius: BorderRadius.circular(20.r),
-                            //           border: Border.all(color: Colors.grey)),
-                            //       child: _image == null
-                            //           ? Column(
-                            //               crossAxisAlignment:
-                            //                   CrossAxisAlignment.center,
-                            //               mainAxisAlignment:
-                            //                   MainAxisAlignment.center,
-                            //               children: [
-                            //                 Icon(
-                            //                   Icons.upload_sharp,
-                            //                   color: Color(0xFF008080),
-                            //                   size: 30.sp,
-                            //                 ),
-                            //                 SizedBox(
-                            //                   height: 10.h,
-                            //                 ),
-                            //               ],
-                            //             )
-                            //           : ClipRRect(
-                            //               borderRadius:
-                            //                   BorderRadius.circular(20.r),
-                            //               child: Image.file(
-                            //                 _image!,
-                            //                 fit: BoxFit.cover,
-                            //                 width: 400.w,
-                            //                 height: 220.h,
-                            //               ),
-                            //             ),
-                            //     ),
-                            //   ),
-                            // ),
                             InkWell(
                               onTap: () {
                                 showImage();
