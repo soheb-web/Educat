@@ -1,6 +1,8 @@
 import 'dart:developer';
-
-import 'package:educationapp/home/forgot/changePassword.page.dart';
+import 'package:educationapp/coreFolder/Model/verifyOrChangePassBodyModel.dart';
+import 'package:educationapp/coreFolder/network/api.state.dart';
+import 'package:educationapp/coreFolder/utils/preety.dio.dart';
+import 'package:educationapp/login/login.page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,7 +11,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:otp_pin_field/otp_pin_field.dart';
 
 class OtpVerifyPage extends StatefulWidget {
-  const OtpVerifyPage({super.key, l});
+  final String email;
+  const OtpVerifyPage({super.key, required this.email});
 
   @override
   State<OtpVerifyPage> createState() => _OtpVerifyPageState();
@@ -20,6 +23,9 @@ class _OtpVerifyPageState extends State<OtpVerifyPage> {
   bool isLoading = false;
   bool isResending = false; // Added to track resend OTP loading state
   final _otpPinFieldController = GlobalKey<OtpPinFieldState>();
+  final newpasswordController = TextEditingController();
+  final confirmedPassController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,12 +52,12 @@ class _OtpVerifyPageState extends State<OtpVerifyPage> {
                 },
                 icon: Icon(Icons.arrow_back),
               ),
-              SizedBox(height: 20.h),
+              SizedBox(height: 10.h),
               Center(
                   child: Image.asset(
                 "assets/appicon.png",
-                width: 180.w,
-                height: 180.h,
+                width: 170.w,
+                height: 170.h,
               )),
               SizedBox(height: 30.h),
               Divider(color: Colors.black12, thickness: 1),
@@ -81,70 +87,130 @@ class _OtpVerifyPageState extends State<OtpVerifyPage> {
                 },
                 onChange: (text) {},
               ),
+              SizedBox(height: 20.h),
+              if (otpValue.length == 6)
+                Column(
+                  children: [
+                    Text(
+                      "New Password",
+                      style: GoogleFonts.gothicA1(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w500,
+                        color: const Color(0xFF030016),
+                      ),
+                    ),
+                    SizedBox(height: 12.h),
+                    TextField(
+                      controller: newpasswordController,
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.only(
+                          left: 19.w,
+                          right: 10.w,
+                          top: 15.h,
+                          bottom: 15.h,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20.r),
+                          borderSide:
+                              BorderSide(color: Colors.black, width: 1.w),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20.r),
+                          borderSide: BorderSide(
+                              //  color: _getLoginButtonColor(widget.title),
+                              ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 15.h),
+                    Text(
+                      "Confirmed Password",
+                      style: GoogleFonts.gothicA1(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w500,
+                        color: const Color(0xFF030016),
+                      ),
+                    ),
+                    SizedBox(height: 12.h),
+                    TextField(
+                      controller: confirmedPassController,
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.only(
+                          left: 19.w,
+                          right: 10.w,
+                          top: 15.h,
+                          bottom: 15.h,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20.r),
+                          borderSide:
+                              BorderSide(color: Colors.black, width: 1.w),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20.r),
+                          borderSide: BorderSide(
+                              //color: _getLoginButtonColor(widget.title),
+                              ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               SizedBox(height: 30.h),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () async {
+                    if (newpasswordController.text.trim().isEmpty ||
+                        confirmedPassController.text.trim().isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Please fill in all fields."),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                      return;
+                    }
+                    if (newpasswordController.text.trim() !=
+                        confirmedPassController.text.trim()) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Password do not match"),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                      return;
+                    }
                     setState(() {
                       isLoading = true;
                     });
-                    Navigator.push(
-                      context,
-                      CupertinoPageRoute(
-                        builder: (context) => ChangePasswordPage(),
-                      ),
-                    );
+                    try {
+                      final body = verifyORChangePasswordBodyModel(
+                          email: widget.email,
+                          otp: otpValue,
+                          password: newpasswordController.text,
+                          passwordConfirmation: confirmedPassController.text);
 
-                    // try {
-                    //   final body = VerifyOtpBodyModel(
-                    //     email: widget.email,
-                    //     otp: otpValue,
-                    //   );
-
-                    //   final service = APIStateNetwork(createDio());
-                    //   final response = await service.verifyOTP(body);
-
-                    //   // SUCCESS – status 200
-                    //   if (response != null) {
-                    //     setState(() => isLoading = false);
-
-                    //     Fluttertoast.showToast(
-                    //       msg: "OTP Verified Successfully",
-                    //     );
-
-                    //     Navigator.push(
-                    //       context,
-                    //       CupertinoPageRoute(
-                    //         builder:
-                    //             (context) => ChangePasswordPage(
-                    //               emal: widget.email,
-                    //               widget.title,
-                    //             ),
-                    //       ),
-                    //     );
-                    //   }
-                    //   // RESPONSE FALSE
-                    //   else {
-                    //     setState(() => isLoading = false);
-                    //     _otpPinFieldController.currentState!.controller.clear();
-
-                    //     Fluttertoast.showToast(
-                    //       msg: response?.message ?? "Something went wrong",
-                    //     );
-                    //   }
-                    // } on DioException catch (e) {
-                    //   setState(() => isLoading = false);
-
-                    //   final serverMessage =
-                    //       e.response?.data?["message"] ?? "Invalid OTP";
-
-                    //   Fluttertoast.showToast(msg: serverMessage);
-                    // } catch (e) {
-                    //   setState(() => isLoading = false);
-
-                    //   Fluttertoast.showToast(msg: "Error: $e");
-                    // }
+                      final service = APIStateNetwork(createDio());
+                      final response = await service.verifyORChangePass(body);
+                      if (response != null) {
+                        Fluttertoast.showToast(
+                            msg: "Password Change Sucessfull");
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                      } else {
+                        setState(() {
+                          isLoading = false;
+                        });
+                        Fluttertoast.showToast(msg: "Somethig went wrong");
+                      }
+                    } catch (e, st) {
+                      log("${e.toString()} /n ${st.toString()}");
+                      Fluttertoast.showToast(msg: "APi Error $e");
+                      setState(() {
+                        isLoading = false;
+                      });
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFFA8E6CF),

@@ -1,5 +1,8 @@
 import 'dart:developer';
 
+import 'package:educationapp/coreFolder/Model/sendOTPResModel.dart';
+import 'package:educationapp/coreFolder/network/api.state.dart';
+import 'package:educationapp/coreFolder/utils/preety.dio.dart';
 import 'package:educationapp/home/forgot/verify.page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -100,20 +103,43 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () async {
-                    // if (emailController.text.isEmpty) {
-                    //   ScaffoldMessenger.of(context).showSnackBar(
-                    //     SnackBar(content: Text("Please enter email")),
-                    //   );
-                    //   return;
-                    // }
-                    Navigator.push(
-                        context,
-                        CupertinoPageRoute(
-                          builder: (context) => OtpVerifyPage(),
-                        ));
+                    if (emailController.text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Please enter email")),
+                      );
+                      return;
+                    }
                     setState(() {
                       isLoading = true;
                     });
+                    try {
+                      final body =
+                          sendOTPBodyModel(email: emailController.text);
+                      final service = APIStateNetwork(createDio());
+                      final response = await service.sendOTP(body);
+                      if (response != null) {
+                        Fluttertoast.showToast(msg: "OTP Send to your email");
+                        Navigator.push(
+                            context,
+                            CupertinoPageRoute(
+                              builder: (context) => OtpVerifyPage(email: emailController.text,),
+                            ));
+                        setState(() {
+                          isLoading = false;
+                        });
+                      } else {
+                        setState(() {
+                          isLoading = false;
+                        });
+                        Fluttertoast.showToast(msg: "something went wrong");
+                      }
+                    } catch (e, st) {
+                      setState(() {
+                        isLoading = false;
+                      });
+                      Fluttertoast.showToast(msg: "Api Error : $e");
+                      log("$e, $st");
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFFA8E6CF),

@@ -12,11 +12,13 @@ import 'package:educationapp/coreFolder/Model/passwordChangeBodyModel.dart';
 import 'package:educationapp/coreFolder/Model/passwordChangeResModel.dart';
 import 'package:educationapp/coreFolder/Model/reportResModel.dart';
 import 'package:educationapp/coreFolder/Model/reviewCategoryResModel.dart';
+import 'package:educationapp/coreFolder/Model/sendOTPResModel.dart';
 import 'package:educationapp/coreFolder/Model/sendRequestBodyModel.dart';
 import 'package:educationapp/coreFolder/Model/sendRequestResModel.dart';
 import 'package:educationapp/coreFolder/Model/skillModel.dart';
 import 'package:educationapp/coreFolder/Model/trendingSkillExpertResModel.dart';
 import 'package:educationapp/coreFolder/Model/userProfileResModel.dart';
+import 'package:educationapp/coreFolder/Model/verifyOrChangePassBodyModel.dart';
 import 'package:retrofit/retrofit.dart';
 import '../Model/service.model.dart';
 import '../Model/mentorHomeModel.dart';
@@ -166,5 +168,12 @@ abstract class APIStateNetwork {
   Future<ReportResModel> report(@Body() ReportBodyModel body);
 
   @GET("/reviews/{id}")
-  Future<ReivewCategoryResModel> reviewCategory(@Path('id')String id);
+  Future<ReivewCategoryResModel> reviewCategory(@Path('id') String id);
+
+  @POST("/send-password-update-otp")
+  Future<HttpResponse> sendOTP(@Body() sendOTPBodyModel body);
+
+  @POST("/updates-password")
+  Future<HttpResponse> verifyORChangePass(
+      @Body() verifyORChangePasswordBodyModel body);
 }
