@@ -264,7 +264,7 @@ class Auth {
     try {
       final dio = await createDio();
       final url =
-          'https://education.globallywebsolutions.com/api/update-profile';
+          'https://educatservicesindia.com/admin/api/update-profile';
 
       // final formData = FormData.fromMap({
       //   'user_type': userType,

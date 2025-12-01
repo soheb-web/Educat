@@ -36,7 +36,7 @@ import '../Model/profileGetModel.dart';
 
 part 'api.state.g.dart';
 
-//@RestApi(baseUrl: 'https://education.globallywebsolutions.com/api')
+//@RestApi(baseUrl: 'https://educatservicesindia.com/admin/api')
 @RestApi(baseUrl: 'https://educatservicesindia.com/admin/api')
 abstract class APIStateNetwork {
   factory APIStateNetwork(Dio dio, {String baseUrl}) = _APIStateNetwork;

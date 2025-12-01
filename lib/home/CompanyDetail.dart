@@ -404,7 +404,7 @@ class _CompanyDetailPageState extends ConsumerState<CompanyDetailPage> {
 
   // Widget _buildBody(BuildContext context, ReviewGetModel propertyDetail) {
   //   final collage = propertyDetail.collage!;
-  //   final baseUrl = 'https://education.globallywebsolutions.com';
+  //   final baseUrl = 'https://educatservicesindia.com';
   //   final fullImageUrl = baseUrl + (collage.image ?? '');
 
   //   return Stack(

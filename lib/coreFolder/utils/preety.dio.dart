@@ -152,7 +152,9 @@ Dio createDio() {
   // );
 
   dio.interceptors.add(
+
     InterceptorsWrapper(
+
       onRequest: (options, handler) {
         var box = Hive.box("userdata");
         var token = box.get("token");
@@ -161,8 +163,11 @@ Dio createDio() {
           'Accept': 'application/json',
           if (token != null) 'Authorization': 'Bearer $token',
         });
+
         handler.next(options);
+
       },
+
       onError: (DioException e, handler) async {
         final context = navigatorKey.currentState?.context;
         final statusCode = e.response?.statusCode;
@@ -274,11 +279,15 @@ Dio createDio() {
 
         handler.next(e);
       },
+
       onResponse: (response, handler) {
         handler.next(response);
       },
     ),
+
   );
+
+
   dio.interceptors.add(
     PrettyDioLogger(
       requestBody: true,

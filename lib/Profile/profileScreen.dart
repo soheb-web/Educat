@@ -1,77 +1,29 @@
 import 'dart:developer';
-
 import 'package:educationapp/coreFolder/Controller/userProfileController.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hive/hive.dart';
-import '../../coreFolder/Controller/profileController.dart';
 
 class ProfilePage extends ConsumerStatefulWidget {
   ProfilePage({
     super.key,
   });
-
   @override
   ConsumerState<ProfilePage> createState() => _ProfilePageState();
 }
-
 class _ProfilePageState extends ConsumerState<ProfilePage> {
+
   @override
   Widget build(BuildContext context) {
-    // var box = Hive.box('userdata');
-    // final userId = box.get('user_id');
-    // if (userId == null) {
-    //   Fluttertoast.showToast(
-    //     msg: "Please log in to add a review",
-    //     toastLength: Toast.LENGTH_SHORT,
-    //     gravity: ToastGravity.TOP,
-    //     backgroundColor: Colors.red,
-    //     textColor: Colors.white,
-    //     fontSize: 12.0,
-    //   );
-    //   return Scaffold(
-    //     body: Center(
-    //       child: Text(
-    //         'Please log in to view profile',
-    //         style: GoogleFonts.roboto(fontSize: 16.sp),
-    //       ),
-    //     ),
-    //   );
-    // }
-
-    // // Parse userId to int for the provider (with safety check)
-    // final int parsedUserId;
-
-    // try {
-    //   parsedUserId = int.parse(userId.toString());
-    // } catch (e) {
-    //   // Fallback: Show error and retry option
-    //   return Scaffold(
-    //     body: Center(
-    //       child: Column(
-    //         mainAxisAlignment: MainAxisAlignment.center,
-    //         children: [
-    //           Text('Invalid user ID format: $e'),
-    //           ElevatedButton(
-    //             onPressed: () => setState(() {}), // Rebuild to retry Hive read
-    //             child: const Text('Retry'),
-    //           ),
-    //         ],
-    //       ),
-    //     ),
-    //   );
-    // }
-    // final profileAsync = ref.watch(profileProvider(parsedUserId));
-
     final userProfileProvider = ref.watch(userProfileController);
     return Scaffold(
       body: userProfileProvider.when(
+
         data: (userProfile) => SingleChildScrollView(
           child: Stack(
             children: [
+
               Column(
                 children: [
                   Container(
@@ -199,58 +151,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                               ],
                             ),
                           ),
-                          // Container(
-                          //   margin: EdgeInsets.only(
-                          //       left: 10.w, top: 20.h, right: 10.w),
-                          //   child: Row(
-                          //     mainAxisAlignment: MainAxisAlignment.center,
-                          //     children: [
-                          //       Container(
-                          //         padding: EdgeInsets.only(
-                          //             left: 15.w,
-                          //             right: 15.w,
-                          //             top: 15.h,
-                          //             bottom: 15.h),
-                          //         decoration: BoxDecoration(
-                          //           borderRadius: BorderRadius.circular(20.r),
-                          //           color: Color(0xffA8E6CF),
-                          //         ),
-                          //         child: Text(
-                          //           "Placement Expert",
-                          //           style: GoogleFonts.roboto(
-                          //             fontSize: 14.sp,
-                          //             fontWeight: FontWeight.w600,
-                          //             color: Colors.black,
-                          //           ),
-                          //         ),
-                          //       ),
-                          //       SizedBox(width: 20.w),
-                          //       GestureDetector(
-                          //         onTap: () {},
-                          //         child: Container(
-                          //           height: 50.h,
-                          //           width: 140.w,
-                          //           decoration: BoxDecoration(
-                          //             borderRadius: BorderRadius.circular(20.r),
-                          //             color: Colors.white,
-                          //             border:
-                          //                 Border.all(color: Color(0xff008080)),
-                          //           ),
-                          //           child: Center(
-                          //             child: Text(
-                          //               "Message",
-                          //               style: GoogleFonts.roboto(
-                          //                 fontSize: 14.sp,
-                          //                 fontWeight: FontWeight.w600,
-                          //                 color: const Color(0xff008080),
-                          //               ),
-                          //             ),
-                          //           ),
-                          //         ),
-                          //       ),
-                          //     ],
-                          //   ),
-                          // ),
+
                           SizedBox(
                             height: 30.h,
                           ),
@@ -481,20 +382,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // GestureDetector(
-                    //   onTap: () {},
-                    //   child: Container(
-                    //       height: 50.h,
-                    //       width: 45.w,
-                    //       decoration: BoxDecoration(
-                    //         shape: BoxShape.circle,
-                    //         color: Colors.white,
-                    //       ),
-                    //       child: Padding(
-                    //         padding:  EdgeInsets.all(8.0),
-                    //         child: Icon(Icons.arrow_back_ios),
-                    //       )),
-                    // ),
+
                     Text(
                       "Profile",
                       style: GoogleFonts.roboto(
@@ -503,15 +391,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                         color: Colors.white,
                       ),
                     ),
-                    // Container(
-                    //   height: 50.h,
-                    //   width: 50.w,
-                    //   decoration: BoxDecoration(
-                    //     borderRadius: BorderRadius.circular(30),
-                    //     color: Colors.white,
-                    //   ),
-                    //   child: const Icon(Icons.search),
-                    // ),
+
                   ],
                 ),
               ),
@@ -542,10 +422,13 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                   ),
                 ),
               ),
+
             ],
           ),
         ),
+
         loading: () => const Center(child: CircularProgressIndicator()),
+
         error: (error, stack) {
           log(stack.toString());
           log(error.toString());
@@ -562,6 +445,8 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             ),
           );
         },
+
+
       ),
     );
   }
