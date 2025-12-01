@@ -308,6 +308,29 @@ class _ChatingPageState extends ConsumerState<ChatingPage>
       backgroundColor: Color(0xFF1B1B1B),
       body: historyData.when(
         data: (snap) {
+          // Compute status text based on last message from the other user
+          String statusText = "online";
+          final myId = int.parse(userid.toString());
+          final otherMessages =
+              _messages.where((m) => m.sender != myId).toList();
+          if (otherMessages.isNotEmpty) {
+            try {
+              final sortedOther = List<Chat>.from(otherMessages)
+                ..sort((a, b) => a.timestamp!.compareTo(b.timestamp!));
+              final lastOtherTime = sortedOther.last.timestamp!;
+              final lastTime = DateTime.parse(lastOtherTime);
+              final diff = DateTime.now().difference(lastTime);
+              if (diff.inMinutes < 5) {
+                statusText = "online";
+              } else {
+                statusText =
+                    "Last seen ${DateFormat('MMM d, h:mm a').format(lastTime)}";
+              }
+            } catch (e) {
+              statusText = "online";
+            }
+          }
+
           final sortedMessages = List<Chat>.from(_messages)
             ..sort((a, b) => a.timestamp!.compareTo(b.timestamp!));
 
@@ -335,11 +358,20 @@ class _ChatingPageState extends ConsumerState<ChatingPage>
                       ),
                     ),
                     Spacer(),
-                    Text(widget.name,
-                        style: GoogleFonts.roboto(
-                            fontSize: 20.sp,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white)),
+                    Column(
+                      children: [
+                        Text(widget.name,
+                            style: GoogleFonts.roboto(
+                                fontSize: 20.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white)),
+                        Text(statusText,
+                            style: GoogleFonts.roboto(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFFA8E6CF))),
+                      ],
+                    ),
                     Spacer(),
                     PopupMenuButton<String>(
                       onSelected: (value) async {
@@ -578,6 +610,8 @@ class ChatBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final formattedTime = _formatTime(dateTime);
+
     return Align(
       alignment: isSender ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
@@ -604,7 +638,7 @@ class ChatBubble extends StatelessWidget {
                     fontSize: 16.sp,
                     color: isSender ? Colors.white : Color(0xFF2B2B2B))),
             SizedBox(height: 4.h),
-            Text(_formatTime(dateTime),
+            Text(formattedTime,
                 style: GoogleFonts.dmSans(
                     fontSize: 10.sp,
                     color: isSender ? Colors.white70 : Colors.grey.shade600)),

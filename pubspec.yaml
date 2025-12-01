@@ -67,6 +67,8 @@ dependencies:
   webview_flutter: ^4.13.0
   flutter_image_compress: ^2.4.0
   otp_pin_field: ^1.4.1
+  connectivity_plus: ^7.0.0
+ 
   
 
   
@@ -113,7 +115,7 @@ flutter:
     - assets/cuate.png
     - assets/
     - assets/Ellipse2.png
-  #   - images/a_dot_ham.jpeg
+    
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
