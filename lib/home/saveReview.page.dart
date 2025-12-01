@@ -55,8 +55,8 @@ class _SaveReviewPageState extends ConsumerState<SaveReviewPage> {
     reviewTitleController.dispose();
     super.dispose();
   }
-  bool _isLoading = false;
 
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +68,8 @@ class _SaveReviewPageState extends ConsumerState<SaveReviewPage> {
     //     ref.watch(reviewCategoryController(widget.collageCategoryId));
 
     final reviewAsync = ref.watch(reviewProvider(widget.id));
-    final reviewCategory = ref.watch(reviewCategoryController(widget.collageCategoryId));
+    final reviewCategory =
+        ref.watch(reviewCategoryController(widget.collageCategoryId));
     return Scaffold(
       backgroundColor: Color(0xff1B1B1B),
       body: Column(
@@ -168,7 +169,6 @@ class _SaveReviewPageState extends ConsumerState<SaveReviewPage> {
                     SizedBox(
                       height: 20.h,
                     ),
-
                     Text(
                       "Description",
                       style: GoogleFonts.roboto(
@@ -229,6 +229,8 @@ class _SaveReviewPageState extends ConsumerState<SaveReviewPage> {
                                     saveReviewProvider(reviewPayload).future);
                                 // Refresh the reviews list
                                 ref.invalidate(reviewProvider(widget.id));
+                                ref.invalidate(reviewCategoryController(
+                                    widget.collageCategoryId));
                                 // Reset form
                                 setState(() => selectedRating = 0);
                                 _descriptionController.clear();
@@ -264,12 +266,22 @@ class _SaveReviewPageState extends ConsumerState<SaveReviewPage> {
                               ),
                             ),
                     ),
-
                     SizedBox(
                       height: 20.h,
                     ),
                     reviewCategory.when(
                       data: (data) {
+                        if (data.reviews!.isEmpty) {
+                          return Center(
+                            child: Text(
+                              "No reviews yet",
+                              style: GoogleFonts.roboto(
+                                fontSize: 14.sp,
+                                color: const Color(0xff666666),
+                              ),
+                            ),
+                          );
+                        }
                         return ListView.builder(
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
@@ -334,8 +346,6 @@ class _SaveReviewPageState extends ConsumerState<SaveReviewPage> {
           ),
         ],
       ),
-
     );
   }
-
 }

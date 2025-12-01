@@ -262,6 +262,7 @@ class _CollegeDetailPageState extends ConsumerState<CollegeDetailPage> {
                           ),
                           SizedBox(height: 20.h),
                           ListView.builder(
+                            reverse: true,
                             padding: EdgeInsets.zero,
                             shrinkWrap: true,
                             physics: NeverScrollableScrollPhysics(),
