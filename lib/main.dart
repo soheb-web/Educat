@@ -123,6 +123,7 @@ import 'package:educationapp/home/noInternetScreen.dart';
 import 'package:educationapp/login/login.page.dart';
 import 'package:educationapp/splash/splash.page.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -167,35 +168,24 @@ class _MyAppState extends State<MyApp> {
   void _setupConnectivityListener() {
     _subscription = Connectivity().onConnectivityChanged.listen(
       (List<ConnectivityResult> results) {
-        // समस्या यहाँ थी: results.isEmpty की जगह results.first == ConnectivityResult.none
-        // 'results.isEmpty' हमेशा false होगा क्योंकि 'results' में कम से कम एक ConnectivityResult होगी।
-        // 'results.first != ConnectivityResult.none' का मतलब है कि इंटरनेट है।
-
         final bool hasNoInternet = results.contains(ConnectivityResult.none);
 
         if (hasNoInternet) {
           log("⚠️ No Internet connection detected - navigating to NoInternetScreen");
-          // Pushing the route to show the No Internet screen
-          // Use 'pushNamed' instead of 'push' for named routes
-          navigatorKey.currentState?.pushNamed("/NoInternetScreen");
+
+          navigatorKey.currentState?.pushNamedAndRemoveUntil(
+            "/NoInternetScreen",
+            (route) => false, // 🔥 All previous routes removed
+          );
         } else {
           log("✅ Internet connection restored - popping NoInternetScreen if it's on top");
-          // Check if the current route is NoInternetScreen before popping
-          // A safer check is to simply pop, as it won't crash if it can't pop.
-          // However, using canPop and ensuring we're not popping the main route is good practice.
-
-          // You may need a better check than just 'canPop' to ensure you're popping *only* the NoInternetScreen,
-          // but for simplicity, we'll use a delayed pop.
 
           Future.delayed(
             const Duration(
                 seconds:
                     1), // Delay to ensure the pop happens after the route is fully built
             () {
-              // This logic should ideally pop the specific route if it's the one we pushed.
-              // Since routes are pushed on top, a simple check to see if we can pop is often enough in a simple setup.
               if (navigatorKey.currentState?.canPop() == true) {
-                // Pop the last route (which is expected to be NoInternetScreen)
                 navigatorKey.currentState?.pop();
               }
             },
