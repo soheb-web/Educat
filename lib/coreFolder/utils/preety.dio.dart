@@ -1,129 +1,3 @@
-// // import 'dart:developer';
-// // import 'package:dio/dio.dart';
-// // import 'package:educationapp/login/login.page.dart';
-// // import 'package:flutter/cupertino.dart';
-// // import 'package:flutter/material.dart';
-// // import 'package:flutter_riverpod/flutter_riverpod.dart';
-// // import 'package:fluttertoast/fluttertoast.dart';
-// // import 'package:hive/hive.dart';
-// // import 'package:pretty_dio_logger/pretty_dio_logger.dart';
-// // import 'globalroute.key.dart';
-
-// // final dioProvider = FutureProvider<Dio>((ref) async {
-// //   return await createDio();
-// // });
-
-// // Dio createDio() {
-// //   final dio = Dio();
-
-// //   // ✅ Add Logging
-// //   dio.interceptors.add(
-// //     PrettyDioLogger(
-// //       requestBody: true,
-// //       requestHeader: true,
-// //       responseBody: true,
-// //       responseHeader: false,
-// //     ),
-// //   );
-
-// //   var box = Hive.box("userdata");
-// //   var token = box.get("token");
-
-// //   dio.interceptors.add(
-// //     InterceptorsWrapper(
-// //       onRequest: (options, handler) {
-// //         options.headers.addAll({
-// //           'Accept': 'application/json',
-// //           if (token != null) 'Authorization': 'Bearer $token',
-// //         });
-// //         handler.next(options);
-// //       },
-// //       onResponse: (response, handler) => handler.next(response),
-// //       onError: (DioException e, handler) async {
-// //         final context = navigatorKey.currentContext;
-// //         log("❌ Dio Error: ${e.response?.statusCode} - ${e.response?.data}");
-
-// //         void showToast(String msg, {Color? color}) {
-// //           Fluttertoast.showToast(
-// //             msg: msg,
-// //             gravity: ToastGravity.BOTTOM,
-// //             toastLength: Toast.LENGTH_LONG,
-// //             backgroundColor: color ?? Colors.red.shade600,
-// //             textColor: Colors.white,
-// //             fontSize: 16.0,
-// //           );
-// //         }
-
-// //         // ✅ Token Expired
-// //         if (e.response?.statusCode == 401) {
-// //           showToast("Session expired. Please log in again.", color: Colors.red);
-
-// //           await box.delete('token'); // Remove token before redirect
-
-// //           // ✅ Prevent multiple navigations if already on login page
-// //           final currentRoute =
-// //               ModalRoute.of(context ?? navigatorKey.currentContext!)
-// //                   ?.settings
-// //                   .name;
-// //           if (currentRoute != '/login') {
-// //             Future.microtask(() {
-// //               if (navigatorKey.currentState != null) {
-// //                 navigatorKey.currentState!.pushAndRemoveUntil(
-// //                   CupertinoPageRoute(builder: (_) => LoginPage()),
-// //                   (route) => false,
-// //                 );
-// //               } else {
-// //                 log("⚠️ navigatorKey.currentState was null — retrying...");
-// //                 Future.delayed(const Duration(milliseconds: 500), () {
-// //                   navigatorKey.currentState?.pushAndRemoveUntil(
-// //                     CupertinoPageRoute(builder: (_) => LoginPage()),
-// //                     (route) => false,
-// //                   );
-// //                 });
-// //               }
-// //             });
-// //           }
-// //         }
-
-// //         // ✅ Validation error (422)
-// //         else if (e.response?.statusCode == 422) {
-// //           String errorMessage = "Please enter valid data";
-// //           final data = e.response?.data;
-// //           if (data is Map<String, dynamic> && data['errors'] is Map) {
-// //             final errors = data['errors'] as Map;
-// //             final firstError = errors.values.first;
-// //             if (firstError is List && firstError.isNotEmpty) {
-// //               errorMessage = firstError.first;
-// //             }
-// //           }
-// //           showToast(errorMessage, color: Colors.redAccent);
-// //         }
-
-// //         // ✅ Not found (404)
-// //         else if (e.response?.statusCode == 404) {
-// //           showToast("Data not found", color: Colors.amber.shade700);
-// //         }
-
-// //         // ✅ Forbidden (403)
-// //         else if (e.response?.statusCode == 403) {
-// //           showToast("Access denied", color: Colors.deepOrange);
-// //         }
-
-// //         // ✅ Fallback
-// //         else {
-// //           showToast("Something went wrong. Please try again later.");
-// //         }
-
-// //         return handler.next(e);
-// //       },
-// //     ),
-// //   );
-
-// //   return dio;
-// // }
-
-// ///////////////////////////////////// My Pretty dio ///////////////////////////////////
-
 // import 'dart:developer';
 // import 'package:dio/dio.dart';
 // import 'package:educationapp/login/login.page.dart';
@@ -152,9 +26,7 @@
 //   // );
 
 //   dio.interceptors.add(
-
 //     InterceptorsWrapper(
-
 //       onRequest: (options, handler) {
 //         var box = Hive.box("userdata");
 //         var token = box.get("token");
@@ -165,9 +37,7 @@
 //         });
 
 //         handler.next(options);
-
 //       },
-
 //       onError: (DioException e, handler) async {
 //         final context = navigatorKey.currentState?.context;
 //         final statusCode = e.response?.statusCode;
@@ -279,14 +149,11 @@
 
 //         handler.next(e);
 //       },
-
 //       onResponse: (response, handler) {
 //         handler.next(response);
 //       },
 //     ),
-
 //   );
-
 
 //   dio.interceptors.add(
 //     PrettyDioLogger(
@@ -299,7 +166,6 @@
 
 //   return dio;
 // }
-
 
 import 'dart:developer';
 import 'package:dio/dio.dart';
@@ -320,7 +186,8 @@ Dio createDio() {
   final dio = Dio();
 
   // Helper function for Toast
-  void showToast(String msg, {Color? color, ToastGravity gravity = ToastGravity.TOP}) {
+  void showToast(String msg,
+      {Color? color, ToastGravity gravity = ToastGravity.TOP}) {
     Fluttertoast.showToast(
       msg: msg,
       toastLength: Toast.LENGTH_LONG,
@@ -344,9 +211,7 @@ Dio createDio() {
         });
         handler.next(options);
       },
-
       onResponse: (response, handler) => handler.next(response),
-
       onError: (DioException e, handler) async {
         final statusCode = e.response?.statusCode;
         final path = e.requestOptions.path;
@@ -379,21 +244,25 @@ Dio createDio() {
           if (!path.contains('/login') && !path.contains('/refresh')) {
             final box = Hive.box("userdata");
             // Token delete करने से पहले toast दिखाएँ
-            showToast("Session expired, please login again", color: Colors.orange, gravity: ToastGravity.BOTTOM);
-            
+            showToast("Session expired, please login again",
+                color: Colors.orange, gravity: ToastGravity.BOTTOM);
+
             await box.delete("token");
             await box.flush();
             log("Token cleared due to 401 error.");
-
 
             // **✅ सुधार 3: Navigator को मुख्य thread पर और सुरक्षित तरीके से चलाएँ**
             Future.microtask(() {
               final navState = navigatorKey.currentState;
               // सुनिश्चित करें कि हम पहले से ही LoginPage पर नहीं जा रहे हैं।
               // क्योंकि 401 error एक साथ कई जगह से आ सकता है।
-              final isNavigatingToLogin = navState?.context.findAncestorWidgetOfExactType<LoginPage>() != null;
+              final isNavigatingToLogin = navState?.context
+                      .findAncestorWidgetOfExactType<LoginPage>() !=
+                  null;
 
-              if (navState != null && navState.context.mounted && !isNavigatingToLogin) {
+              if (navState != null &&
+                  navState.context.mounted &&
+                  !isNavigatingToLogin) {
                 log("✅ Redirecting to login page...");
                 navState.pushAndRemoveUntil(
                   CupertinoPageRoute(builder: (_) => const LoginPage()),
@@ -408,12 +277,12 @@ Dio createDio() {
           // ताकि calling function को error न मिले और UI पर कोई असर न पड़े।
           // लेकिन Dio Interceptor API के अनुसार, हमें 'handler.next' कॉल करना चाहिए।
         }
-        
+
         // --- General Error Toast ---
-        // 401 Unauthorized error के लिए हमने Toast ऊपर दिखा दिया है, 
+        // 401 Unauthorized error के लिए हमने Toast ऊपर दिखा दिया है,
         // इसलिए बाकि errors के लिए Toast दिखाएँ:
         if (statusCode != 401) {
-            showToast(errorMessage);
+          showToast(errorMessage);
         }
 
         // एरर को आगे बढ़ाएँ (calling function में error throw होगा)

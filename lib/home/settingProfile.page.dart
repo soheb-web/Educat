@@ -53,235 +53,240 @@ class _SettingProfilePageState extends State<SettingProfilePage> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(25.r)),
       ),
       builder: (context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-            left: 20.w,
-            right: 20.w,
-            top: 20.h,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Sheet Header
-              Center(
-                child: Container(
-                  width: 50.w,
-                  height: 4.h,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[400],
-                    borderRadius: BorderRadius.circular(10.r),
-                  ),
-                ),
+        return StatefulBuilder(
+          builder: (BuildContext context, setState) {
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+                left: 20.w,
+                right: 20.w,
+                top: 20.h,
               ),
-              SizedBox(height: 20.h),
-
-              Center(
-                child: Text(
-                  "Password Change",
-                  style: GoogleFonts.roboto(
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-              SizedBox(height: 20.h),
-
-              // Old Password
-              Container(
-                decoration: BoxDecoration(
-                    color: Color(0xFFFFFFFF),
-                    borderRadius: BorderRadius.circular(10.r),
-                    boxShadow: [
-                      BoxShadow(
-                        offset: Offset(0, 1),
-                        blurRadius: 8,
-                        spreadRadius: 0,
-                        color: Color.fromARGB(12, 0, 0, 0),
-                      )
-                    ]),
-                child: TextField(
-                  controller: oldPasswordController,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    hintText: "Old Password",
-                    hintStyle: GoogleFonts.roboto(fontSize: 14.sp),
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Sheet Header
+                  Center(
+                    child: Container(
+                      width: 50.w,
+                      height: 4.h,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[400],
+                        borderRadius: BorderRadius.circular(10.r),
+                      ),
                     ),
                   ),
-                ),
-              ),
-              SizedBox(height: 5.h),
-              Align(
-                alignment: AlignmentGeometry.centerRight,
-                child: TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          CupertinoPageRoute(
-                            builder: (context) => ForgotPasswordPage(),
-                          ));
-                    },
+                  SizedBox(height: 20.h),
+
+                  Center(
                     child: Text(
-                      "Forgot Password?",
-                      style: GoogleFonts.inter(
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xFF9B9B9B)),
-                    )),
-              ),
-              SizedBox(height: 5.h),
-              // New Password
-              Container(
-                decoration: BoxDecoration(
-                    color: Color(0xFFFFFFFF),
-                    borderRadius: BorderRadius.circular(10.r),
-                    boxShadow: [
-                      BoxShadow(
-                        offset: Offset(0, 1),
-                        blurRadius: 8,
-                        spreadRadius: 0,
-                        color: Color.fromARGB(12, 0, 0, 0),
-                      )
-                    ]),
-                child: TextField(
-                  controller: newPasswordController,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    hintText: "New Password",
-                    hintStyle: GoogleFonts.roboto(fontSize: 14.sp),
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
+                      "Password Change",
+                      style: GoogleFonts.roboto(
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
+                      ),
                     ),
                   ),
-                ),
-              ),
-              SizedBox(height: 15.h),
+                  SizedBox(height: 20.h),
 
-              // Repeat New Password
-              Container(
-                decoration: BoxDecoration(
-                    color: Color(0xFFFFFFFF),
-                    borderRadius: BorderRadius.circular(10.r),
-                    boxShadow: [
-                      BoxShadow(
-                        offset: Offset(0, 1),
-                        blurRadius: 8,
-                        spreadRadius: 0,
-                        color: Color.fromARGB(12, 0, 0, 0),
-                      )
-                    ]),
-                child: TextField(
-                  controller: repeatPasswordController,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    hintText: "Repeat New Password",
-                    hintStyle: GoogleFonts.roboto(fontSize: 14.sp),
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 25.h),
-
-              // Save Password Button
-              SizedBox(
-                width: double.infinity,
-                height: 50.h,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xff008080),
-                  ),
-                  onPressed: isChange
-                      ? null
-                      : () async {
-                          final oldPass = oldPasswordController.text.trim();
-                          final newPass = newPasswordController.text.trim();
-                          final repeatPass =
-                              repeatPasswordController.text.trim();
-
-                          if (oldPass.isEmpty ||
-                              newPass.isEmpty ||
-                              repeatPass.isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("Please fill all fields"),
-                                backgroundColor: Colors.red,
-                              ),
-                            );
-                            return;
-                          }
-
-                          if (newPass != repeatPass) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("Passwords do not match"),
-                                backgroundColor: Colors.red,
-                              ),
-                            );
-                            return;
-                          }
-                          try {
-                            setState(() {
-                              isChange = true;
-                            });
-                            final body = PasswordChangeBodyModel(
-                                oldPassword: oldPass,
-                                newPassword: newPass,
-                                newPasswordConfirmation: repeatPass);
-                            final service = APIStateNetwork(createDio());
-                            final response = await service.passwordChange(body);
-                            if (response != null) {
-                              Fluttertoast.showToast(msg: response.message);
-                              Navigator.pop(context);
-                            } else {
-                              Fluttertoast.showToast(msg: response.message);
-                            }
-                          } catch (e, st) {
-                            setState(() {
-                              isChange = false;
-                            });
-                            log(e.toString());
-                          } finally {
-                            setState(() {
-                              isChange = false;
-                            });
-                          }
-                        },
-                  child: isChange
-                      ? Center(
-                          child: SizedBox(
-                            width: 20.w,
-                            height: 20.h,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2.w,
-                            ),
-                          ),
-                        )
-                      : Text(
-                          "Save Password",
-                          style: GoogleFonts.roboto(
-                            color: Colors.white,
-                            fontSize: 15.sp,
-                            fontWeight: FontWeight.w600,
-                          ),
+                  // Old Password
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Color(0xFFFFFFFF),
+                        borderRadius: BorderRadius.circular(10.r),
+                        boxShadow: [
+                          BoxShadow(
+                            offset: Offset(0, 1),
+                            blurRadius: 8,
+                            spreadRadius: 0,
+                            color: Color.fromARGB(12, 0, 0, 0),
+                          )
+                        ]),
+                    child: TextField(
+                      controller: oldPasswordController,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        hintText: "Old Password",
+                        hintStyle: GoogleFonts.roboto(fontSize: 14.sp),
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide.none,
                         ),
-                ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 5.h),
+                  Align(
+                    alignment: AlignmentGeometry.centerRight,
+                    child: TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              CupertinoPageRoute(
+                                builder: (context) => ForgotPasswordPage(),
+                              ));
+                        },
+                        child: Text(
+                          "Forgot Password?",
+                          style: GoogleFonts.inter(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xFF9B9B9B)),
+                        )),
+                  ),
+                  SizedBox(height: 5.h),
+                  // New Password
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Color(0xFFFFFFFF),
+                        borderRadius: BorderRadius.circular(10.r),
+                        boxShadow: [
+                          BoxShadow(
+                            offset: Offset(0, 1),
+                            blurRadius: 8,
+                            spreadRadius: 0,
+                            color: Color.fromARGB(12, 0, 0, 0),
+                          )
+                        ]),
+                    child: TextField(
+                      controller: newPasswordController,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        hintText: "New Password",
+                        hintStyle: GoogleFonts.roboto(fontSize: 14.sp),
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 15.h),
+
+                  // Repeat New Password
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Color(0xFFFFFFFF),
+                        borderRadius: BorderRadius.circular(10.r),
+                        boxShadow: [
+                          BoxShadow(
+                            offset: Offset(0, 1),
+                            blurRadius: 8,
+                            spreadRadius: 0,
+                            color: Color.fromARGB(12, 0, 0, 0),
+                          )
+                        ]),
+                    child: TextField(
+                      controller: repeatPasswordController,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        hintText: "Repeat New Password",
+                        hintStyle: GoogleFonts.roboto(fontSize: 14.sp),
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 25.h),
+
+                  // Save Password Button
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50.h,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xff008080),
+                      ),
+                      onPressed: isChange
+                          ? null
+                          : () async {
+                              final oldPass = oldPasswordController.text.trim();
+                              final newPass = newPasswordController.text.trim();
+                              final repeatPass =
+                                  repeatPasswordController.text.trim();
+
+                              if (oldPass.isEmpty ||
+                                  newPass.isEmpty ||
+                                  repeatPass.isEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("Please fill all fields"),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                                return;
+                              }
+
+                              if (newPass != repeatPass) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("Passwords do not match"),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                                return;
+                              }
+                              try {
+                                setState(() {
+                                  isChange = true;
+                                });
+                                final body = PasswordChangeBodyModel(
+                                    oldPassword: oldPass,
+                                    newPassword: newPass,
+                                    newPasswordConfirmation: repeatPass);
+                                final service = APIStateNetwork(createDio());
+                                final response =
+                                    await service.passwordChange(body);
+                                if (response != null) {
+                                  Fluttertoast.showToast(msg: response.message);
+                                  Navigator.pop(context);
+                                } else {
+                                  Fluttertoast.showToast(msg: response.message);
+                                }
+                              } catch (e, st) {
+                                setState(() {
+                                  isChange = false;
+                                });
+                                log(e.toString());
+                              } finally {
+                                setState(() {
+                                  isChange = false;
+                                });
+                              }
+                            },
+                      child: isChange
+                          ? Center(
+                              child: SizedBox(
+                                width: 20.w,
+                                height: 20.h,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2.w,
+                                ),
+                              ),
+                            )
+                          : Text(
+                              "Save Password",
+                              style: GoogleFonts.roboto(
+                                color: Colors.white,
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                    ),
+                  ),
+                  SizedBox(height: 15.h),
+                ],
               ),
-              SizedBox(height: 15.h),
-            ],
-          ),
+            );
+          },
         );
       },
     );
@@ -473,34 +478,34 @@ class _SettingProfilePageState extends State<SettingProfilePage> {
                           )),
                     ),
                   ),
-                  SizedBox(
-                    height: 35.h,
-                  ),
-                  Text(
-                    "Notifications",
-                    style: GoogleFonts.inter(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xFF222222)),
-                  ),
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                  MySwitchButton(
-                    name: "Sales",
-                  ),
+                  // SizedBox(
+                  //   height: 35.h,
+                  // ),
+                  // Text(
+                  //   "Notifications",
+                  //   style: GoogleFonts.inter(
+                  //       fontSize: 16.sp,
+                  //       fontWeight: FontWeight.w500,
+                  //       color: Color(0xFF222222)),
+                  // ),
                   SizedBox(
                     height: 20.h,
                   ),
                   MySwitchButton(
-                    name: "New arrivals",
+                    name: "Notifications",
                   ),
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                  MySwitchButton(
-                    name: "Delivery status changes",
-                  ),
+                  // SizedBox(
+                  //   height: 20.h,
+                  // ),
+                  // MySwitchButton(
+                  //   name: "New arrivals",
+                  // ),
+                  // SizedBox(
+                  //   height: 20.h,
+                  // ),
+                  // MySwitchButton(
+                  //   name: "Delivery status changes",
+                  // ),
                 ],
               ),
             ))

@@ -34,6 +34,7 @@ final userProfileController = FutureProvider.autoDispose<UserProfileResModel>(
       'total_experience': response.data?.totalExperience,
       'users_field': response.data?.usersField,
       'service_type': response.data?.serviceType,
+      'dob': response.data?.dob,
     };
     box.put('profile', newData);
 

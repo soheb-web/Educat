@@ -87,7 +87,6 @@ class _AllReviewPageState extends ConsumerState<AllReviewPage> {
                           MaterialPageRoute(
                               builder: (context) => SaveReviewPage(
                                     id: id,
-                                    collageCategoryId: widget.id.toString(),
                                   )));
                     },
                     child: Container(
@@ -253,7 +252,6 @@ class _AllReviewPageState extends ConsumerState<AllReviewPage> {
                               ),
                             )
                           : ListView.builder(
-                              reverse: true,
                               padding: EdgeInsets.symmetric(
                                   horizontal: 20.w, vertical: 20.h),
                               itemCount: reviewData.reviews?.length ?? 0,

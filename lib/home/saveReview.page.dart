@@ -14,11 +14,9 @@ import '../coreFolder/Model/ReviewGetModel.dart';
 
 class SaveReviewPage extends ConsumerStatefulWidget {
   int id;
-  final String collageCategoryId;
   SaveReviewPage({
     super.key,
     required this.id,
-    required this.collageCategoryId,
   });
 
   @override
@@ -45,7 +43,6 @@ class _SaveReviewPageState extends ConsumerState<SaveReviewPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     // Page open hone par fresh data fetch karne ke liye
-    ref.invalidate(reviewCategoryController(widget.collageCategoryId));
     ref.invalidate(reviewProvider(widget.id));
   }
 
@@ -56,6 +53,21 @@ class _SaveReviewPageState extends ConsumerState<SaveReviewPage> {
     super.dispose();
   }
 
+  String? collage;
+  List<String> collageFeatureList = [
+    "Infrastructure",
+    "Labs",
+    "Faculty & Teaching",
+    "Research",
+    "Startup Innovation",
+    "Sports facilities",
+    "Placements",
+    "Management",
+    "Canteens & Hygiene",
+    "Ragging Prohibition",
+    "Co-circular activities",
+  ];
+
   bool _isLoading = false;
 
   @override
@@ -63,13 +75,8 @@ class _SaveReviewPageState extends ConsumerState<SaveReviewPage> {
     var box = Hive.box("userdata");
     var userId = box.get("userid");
 
-    // final reviewAsync = ref.watch(reviewProvider(widget.id));
-    // final reviewCategory =
-    //     ref.watch(reviewCategoryController(widget.collageCategoryId));
-
     final reviewAsync = ref.watch(reviewProvider(widget.id));
-    final reviewCategory =
-        ref.watch(reviewCategoryController(widget.collageCategoryId));
+
     return Scaffold(
       backgroundColor: Color(0xff1B1B1B),
       body: Column(
@@ -167,6 +174,51 @@ class _SaveReviewPageState extends ConsumerState<SaveReviewPage> {
                       }),
                     ),
                     SizedBox(
+                      height: 15.h,
+                    ),
+                    DropdownButtonFormField(
+                      value: collage,
+                      decoration: InputDecoration(
+                        labelText: "Select College Feature",
+                        labelStyle: GoogleFonts.roboto(
+                          fontSize: 13.w,
+                          fontWeight: FontWeight.w400,
+                          color: const Color(0xFF4D4D4D),
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30.sp),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30.sp),
+                          borderSide: const BorderSide(color: Colors.grey),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30.sp),
+                          borderSide: const BorderSide(color: Colors.black),
+                        ),
+                      ),
+                      items: collageFeatureList.map(
+                        (e) {
+                          return DropdownMenuItem(
+                              value: e,
+                              child: Text(
+                                e,
+                                style: GoogleFonts.roboto(
+                                    fontSize: 15.sp,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black),
+                              ));
+                        },
+                      ).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          collage = value;
+                        });
+                      },
+                      validator: (value) =>
+                          value == null ? 'Skill is required' : null,
+                    ),
+                    SizedBox(
                       height: 20.h,
                     ),
                     Text(
@@ -211,6 +263,7 @@ class _SaveReviewPageState extends ConsumerState<SaveReviewPage> {
                                 "count": selectedRating.toString(),
                                 "description":
                                     _descriptionController.text.trim(),
+                                "name": collage,
                               };
                               if (reviewPayload["description"]!.isEmpty) {
                                 Fluttertoast.showToast(
@@ -229,12 +282,11 @@ class _SaveReviewPageState extends ConsumerState<SaveReviewPage> {
                                     saveReviewProvider(reviewPayload).future);
                                 // Refresh the reviews list
                                 ref.invalidate(reviewProvider(widget.id));
-                                ref.invalidate(reviewCategoryController(
-                                    widget.collageCategoryId));
+
                                 // Reset form
                                 setState(() => selectedRating = 0);
                                 _descriptionController.clear();
-                                Navigator.pop(context);
+                                // Navigator.pop(context);
                               } catch (e) {
                                 Fluttertoast.showToast(
                                   msg: "Failed to save review: $e",
@@ -269,9 +321,17 @@ class _SaveReviewPageState extends ConsumerState<SaveReviewPage> {
                     SizedBox(
                       height: 20.h,
                     ),
-                    reviewCategory.when(
+                    Text(
+                      "Rate our platform",
+                      style: GoogleFonts.roboto(
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF1B1B1B),
+                          letterSpacing: -1),
+                    ),
+                    reviewAsync.when(
                       data: (data) {
-                        if (data.reviews!.isEmpty) {
+                        if (data.collage!.nameWiseRating!.isEmpty) {
                           return Center(
                             child: Text(
                               "No reviews yet",
@@ -286,21 +346,27 @@ class _SaveReviewPageState extends ConsumerState<SaveReviewPage> {
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
                           padding: EdgeInsets.zero,
-                          itemCount: data.reviews!.length,
+                          itemCount: data.collage!.nameWiseRating!.length,
                           itemBuilder: (context, index) {
-                            final int rating =
-                                data.reviews![index].count?.clamp(0, 5) ?? 0;
+                            final list = data.collage?.nameWiseRating;
+                            final inde = list![index];
+                            // FIX: average rating null-safe
+                            final double avg = double.tryParse(
+                                    inde.averageRating?.toString() ?? "0") ??
+                                0.0;
+                            final int rating = avg.clamp(0, 5).toInt();
 
                             return Padding(
                               padding: EdgeInsets.only(bottom: 10.h),
                               child: Row(
                                 children: [
                                   Text(
-                                    data.reviews![index].fullName ?? "N/A",
+                                    inde.name ?? "N/A",
                                     style: GoogleFonts.inter(
-                                        fontSize: 18.sp,
+                                        fontSize: 16.sp,
                                         fontWeight: FontWeight.w400,
-                                        color: Colors.black),
+                                        color: Colors.black,
+                                        letterSpacing: -1),
                                   ),
                                   Spacer(),
 

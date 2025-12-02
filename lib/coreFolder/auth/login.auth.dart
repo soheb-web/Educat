@@ -259,12 +259,12 @@ class Auth {
     required String linkedinUser,
     required String description,
     required String fullName,
+    required String dob,
     File? profileImage,
   }) async {
     try {
       final dio = await createDio();
-      final url =
-          'https://educatservicesindia.com/admin/api/update-profile';
+      final url = 'https://educatservicesindia.com/admin/api/update-profile';
 
       // final formData = FormData.fromMap({
       //   'user_type': userType,
@@ -298,6 +298,7 @@ class Auth {
         'linkedin_user': linkedinUser,
         'description': description,
         'full_name': fullName,
+        'dob': dob,
       };
 
       // Resume File
