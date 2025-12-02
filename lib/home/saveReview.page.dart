@@ -286,6 +286,7 @@ class _SaveReviewPageState extends ConsumerState<SaveReviewPage> {
                                 // Reset form
                                 setState(() => selectedRating = 0);
                                 _descriptionController.clear();
+                                collageFeatureList.clear();
                                 // Navigator.pop(context);
                               } catch (e) {
                                 Fluttertoast.showToast(

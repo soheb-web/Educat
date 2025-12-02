@@ -8,14 +8,11 @@
 // import 'package:hive/hive.dart';
 // import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 // import 'globalroute.key.dart';
-
 // final dioProvider = FutureProvider<Dio>((ref) async {
 //   return await createDio();
 // });
-
 // Dio createDio() {
 //   final dio = Dio();
-
 //   // dio.interceptors.add(
 //   //   PrettyDioLogger(
 //   //     requestBody: true,
@@ -24,33 +21,27 @@
 //   //     responseHeader: false,
 //   //   ),
 //   // );
-
 //   dio.interceptors.add(
 //     InterceptorsWrapper(
 //       onRequest: (options, handler) {
 //         var box = Hive.box("userdata");
 //         var token = box.get("token");
-
 //         options.headers.addAll({
 //           'Accept': 'application/json',
 //           if (token != null) 'Authorization': 'Bearer $token',
 //         });
-
 //         handler.next(options);
 //       },
 //       onError: (DioException e, handler) async {
 //         final context = navigatorKey.currentState?.context;
 //         final statusCode = e.response?.statusCode;
 //         final errorData = e.response?.data;
-
 //         String errorMessage = "Something went wrong";
-
 //         if (errorData is Map<String, dynamic>) {
 //           // Check for Laravel-like validation error format
 //           if (errorData.containsKey('errors')) {
 //             final errors = errorData['errors'] as Map<String, dynamic>;
 //             final allMessages = <String>[];
-
 //             errors.forEach((key, value) {
 //               if (value is List) {
 //                 allMessages.addAll(value.map((v) => "$v"));
@@ -58,14 +49,12 @@
 //                 allMessages.add(value.toString());
 //               }
 //             });
-
 //             // Join all messages with newline
 //             errorMessage = allMessages.join('\n');
 //           } else if (errorData.containsKey('message')) {
 //             errorMessage = errorData['message'].toString();
 //           }
 //         }
-
 //         log("API ERROR: ($statusCode) : $errorMessage");
 //         Fluttertoast.showToast(
 //           msg: errorMessage,
@@ -75,7 +64,6 @@
 //           textColor: Colors.white,
 //           fontSize: 13.0,
 //         );
-
 //         if (statusCode == 401) {
 //           // final box = Hive.box("userdata");
 //           // await box.delete("token");
@@ -109,7 +97,6 @@
 //           //     });
 //           //   }
 //           // });
-
 //           final path = e.requestOptions.path;
 //           // ✅ Skip handling for login API (only handle post-login token expiry)
 //           if (!path.contains('/login')) {
@@ -120,7 +107,6 @@
 //               msg: "Session expired, please login again",
 //               backgroundColor: Colors.orange,
 //             );
-
 //             Future.microtask(() {
 //               final navState = navigatorKey.currentState;
 //               if (navState != null) {
@@ -146,7 +132,6 @@
 //             });
 //           }
 //         }
-
 //         handler.next(e);
 //       },
 //       onResponse: (response, handler) {
@@ -154,7 +139,6 @@
 //       },
 //     ),
 //   );
-
 //   dio.interceptors.add(
 //     PrettyDioLogger(
 //       requestBody: true,
@@ -163,9 +147,10 @@
 //       responseHeader: false,
 //     ),
 //   );
-
 //   return dio;
 // }
+
+
 
 import 'dart:developer';
 import 'package:dio/dio.dart';
