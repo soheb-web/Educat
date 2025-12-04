@@ -1486,44 +1486,83 @@ class _ProfileCompletionWidgetState
                                       borderRadius: BorderRadius.circular(20.r),
                                       border: Border.all(color: Colors.grey)),
                                   child: _image != null
-                                      ? ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(20.r),
-                                          child: Image.file(
-                                            _image!,
-                                            fit: BoxFit.cover,
-                                            width: 400.w,
-                                            height: 220.h,
-                                          ),
-                                        )
-                                      : (_profileData?.profilePic != null
-                                          ? ClipRRect(
+                                      ? Stack(
+                                          children: [
+                                            ClipRRect(
                                               borderRadius:
                                                   BorderRadius.circular(20.r),
-                                              child: Image.network(
-                                                _profileData!.profilePic!,
+                                              child: Image.file(
+                                                _image!,
                                                 fit: BoxFit.cover,
                                                 width: 400.w,
                                                 height: 220.h,
-                                                errorBuilder: (context, error,
-                                                        stackTrace) =>
-                                                    Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    Icon(
-                                                      Icons.upload_sharp,
-                                                      color: Color(0xFF008080),
-                                                      size: 30.sp,
-                                                    ),
-                                                    SizedBox(
-                                                      height: 10.h,
-                                                    ),
-                                                  ],
-                                                ),
                                               ),
+                                            ),
+                                            Align(
+                                              alignment: Alignment.bottomRight,
+                                              child: IconButton(
+                                                  style: IconButton.styleFrom(
+                                                      backgroundColor:
+                                                          Color(0xFFA8E6CF)),
+                                                  onPressed: () {
+                                                    showImage();
+                                                  },
+                                                  icon: Icon(Icons.edit,
+                                                      color: Colors.black)),
+                                            )
+                                          ],
+                                        )
+                                      : (_profileData?.profilePic != null
+                                          ? Stack(
+                                              children: [
+                                                ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          20.r),
+                                                  child: Image.network(
+                                                    _profileData!.profilePic!,
+                                                    fit: BoxFit.cover,
+                                                    width: 400.w,
+                                                    height: 220.h,
+                                                    errorBuilder: (context,
+                                                            error,
+                                                            stackTrace) =>
+                                                        Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Icon(
+                                                          Icons.upload_sharp,
+                                                          color:
+                                                              Color(0xFF008080),
+                                                          size: 30.sp,
+                                                        ),
+                                                        SizedBox(
+                                                          height: 10.h,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                                Align(
+                                                  alignment:
+                                                      Alignment.bottomRight,
+                                                  child: IconButton(
+                                                      style: IconButton.styleFrom(
+                                                          backgroundColor:
+                                                              Color(
+                                                                  0xFFA8E6CF)),
+                                                      onPressed: () {
+                                                        showImage();
+                                                      },
+                                                      icon: Icon(Icons.edit,
+                                                          color: Colors.black)),
+                                                )
+                                              ],
                                             )
                                           : Column(
                                               crossAxisAlignment:

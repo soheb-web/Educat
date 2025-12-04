@@ -205,53 +205,57 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
   // }
 
   Future<String> fcmGetToken() async {
-  const int maxRetries = 5; // प्रयासों की संख्या बढ़ाएँ
-  const Duration initialDelay = Duration(seconds: 2); // पहला विलंब 2 सेकंड का रखें
-  const Duration maxTotalWait = Duration(seconds: 15); // अधिकतम 15 सेकंड इंतजार करें
-  DateTime startTime = DateTime.now();
+    const int maxRetries = 5; // प्रयासों की संख्या बढ़ाएँ
+    const Duration initialDelay =
+        Duration(seconds: 2); // पहला विलंब 2 सेकंड का रखें
+    const Duration maxTotalWait =
+        Duration(seconds: 15); // अधिकतम 15 सेकंड इंतजार करें
+    DateTime startTime = DateTime.now();
 
-  // अनुमति केवल पहले प्रयास में
-  NotificationSettings settings = await FirebaseMessaging.instance.requestPermission();
-  if (settings.authorizationStatus != AuthorizationStatus.authorized) {
+    // अनुमति केवल पहले प्रयास में
+    NotificationSettings settings =
+        await FirebaseMessaging.instance.requestPermission();
+    if (settings.authorizationStatus != AuthorizationStatus.authorized) {
       return "no_permission";
-  }
-  
-  for (int attempt = 1; attempt <= maxRetries; attempt++) {
-    // ⏳ चेक करें कि क्या कुल प्रतीक्षा समय पार हो गया है
-    if (DateTime.now().difference(startTime) > maxTotalWait) {
-      log('FCM Token fetching aborted after 15 seconds.');
-      break; // लूप तोड़ दें
     }
-    
-    // हर प्रयास से पहले एक्सपोनेंशियल विलंब (2s, 4s, 6s, आदि)
-    await Future.delayed(initialDelay * attempt); 
 
-    try {
-      String? Fcmtoken = await FirebaseMessaging.instance.getToken();
-      
-      if (Fcmtoken != null) {
-        log('FCM Token (Attempt $attempt): $Fcmtoken');
-        return Fcmtoken; // ✅ सफलता
+    for (int attempt = 1; attempt <= maxRetries; attempt++) {
+      // ⏳ चेक करें कि क्या कुल प्रतीक्षा समय पार हो गया है
+      if (DateTime.now().difference(startTime) > maxTotalWait) {
+        log('FCM Token fetching aborted after 15 seconds.');
+        break; // लूप तोड़ दें
       }
-      
-      log('FCM Token is null on attempt $attempt. Retrying...');
 
-    } catch (e) {
-      log('FCM Token Error on attempt $attempt: $e');
+      // हर प्रयास से पहले एक्सपोनेंशियल विलंब (2s, 4s, 6s, आदि)
+      await Future.delayed(initialDelay * attempt);
 
-      if (attempt == maxRetries || DateTime.now().difference(startTime) > maxTotalWait) {
-        // 🛑 अंतिम विफलता, उपयोगकर्ता को Play Services ठीक करने का निर्देश दें
-        Fluttertoast.showToast(
-          msg: "Notification Error. Play Services busy. Please clear Google Play Services data/cache or restart your phone.",
-          toastLength: Toast.LENGTH_LONG,
-          backgroundColor: Colors.red,
-        );
-        return "error_fetching_token";
+      try {
+        String? Fcmtoken = await FirebaseMessaging.instance.getToken();
+
+        if (Fcmtoken != null) {
+          log('FCM Token (Attempt $attempt): $Fcmtoken');
+          return Fcmtoken; // ✅ सफलता
+        }
+
+        log('FCM Token is null on attempt $attempt. Retrying...');
+      } catch (e) {
+        log('FCM Token Error on attempt $attempt: $e');
+
+        if (attempt == maxRetries ||
+            DateTime.now().difference(startTime) > maxTotalWait) {
+          // 🛑 अंतिम विफलता, उपयोगकर्ता को Play Services ठीक करने का निर्देश दें
+          Fluttertoast.showToast(
+            msg:
+                "Notification Error. Play Services busy. Please clear Google Play Services data/cache or restart your phone.",
+            toastLength: Toast.LENGTH_LONG,
+            backgroundColor: Colors.red,
+          );
+          return "error_fetching_token";
+        }
       }
     }
+    return "error_fetching_token";
   }
-  return "error_fetching_token";
-}
 
   Future<void> _handleLogin() async {
     if (_formKey.currentState?.validate() ?? false) {

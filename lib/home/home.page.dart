@@ -123,8 +123,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   Widget drawerWidget(Box box) {
     final userType = box.get('userType');
-    // final profileImage = box.get('profile') ?? {};
-    // final profile = box.get("profile");
+
     final asyncProfile = ref.watch(userProfileController);
 
     // 2. Hive StateProvider से डेटा पढ़ें (यह अपडेट होने पर UI को री-रेंडर करेगा)
@@ -444,12 +443,12 @@ class _HomePageContentState extends ConsumerState<HomePageContent> {
   @override
   Widget build(BuildContext context) {
     var box = Hive.box('userdata');
-    final profileImage = box.get('profile') ?? {};
-    final profile = box.get("profile");
+
     final asyncProfile = ref.watch(userProfileController);
 
     // 2. Hive StateProvider से डेटा पढ़ें (यह अपडेट होने पर UI को री-रेंडर करेगा)
-    final profileData = ref.watch(hiveProfileProvider);
+
+    final profile = ref.watch(hiveProfileProvider);
 
     final getHomeStudentData = ref.watch(getHomeStudentDataProvider);
     final getHomeMentorData = ref.watch(getHomeMentorDataProvider);
@@ -870,8 +869,7 @@ class _HomePageContentState extends ConsumerState<HomePageContent> {
                             getHomeMentorData.when(
                               data: (mentorData) {
                                 return Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     InkWell(
                                       onTap: () {
@@ -879,8 +877,7 @@ class _HomePageContentState extends ConsumerState<HomePageContent> {
                                             context,
                                             CupertinoPageRoute(
                                               builder: (context) =>
-                                                  ProfileCompletionWidget(
-                                                      true),
+                                                  ProfileCompletionWidget(true),
                                             ));
                                       },
                                       child: Container(
@@ -910,15 +907,12 @@ class _HomePageContentState extends ConsumerState<HomePageContent> {
                                               decoration: BoxDecoration(
                                                 color: Colors.white,
                                                 borderRadius:
-                                                    BorderRadius.circular(
-                                                        10.r),
+                                                    BorderRadius.circular(10.r),
                                               ),
                                               child: ClipRRect(
                                                 borderRadius:
-                                                    BorderRadius.circular(
-                                                        10.r),
-                                                child:
-                                                    LinearProgressIndicator(
+                                                    BorderRadius.circular(10.r),
+                                                child: LinearProgressIndicator(
                                                   // value: profileCompletion.clamp(
                                                   //     0.0, 1.0),
                                                   value: (((mentorData.data!
@@ -939,8 +933,8 @@ class _HomePageContentState extends ConsumerState<HomePageContent> {
                                             ),
                                             SizedBox(height: 12.h),
                                             Container(
-                                              margin: EdgeInsets.only(
-                                                  right: 16.w),
+                                              margin:
+                                                  EdgeInsets.only(right: 16.w),
                                               child: Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment
@@ -952,8 +946,7 @@ class _HomePageContentState extends ConsumerState<HomePageContent> {
                                                             horizontal: 20.w),
                                                     child: Text(
                                                       "Profile Completed",
-                                                      style:
-                                                          GoogleFonts.roboto(
+                                                      style: GoogleFonts.roboto(
                                                         fontSize: 14.sp,
                                                         fontWeight:
                                                             FontWeight.w600,
@@ -996,8 +989,7 @@ class _HomePageContentState extends ConsumerState<HomePageContent> {
                                                       errorBuilder: (context,
                                                           error, stackTrace) {
                                                         return ClipOval(
-                                                          child:
-                                                              Image.network(
+                                                          child: Image.network(
                                                             "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png",
                                                             fit: BoxFit.cover,
                                                             height: 50.w,
@@ -1016,8 +1008,8 @@ class _HomePageContentState extends ConsumerState<HomePageContent> {
                                                       Text(
                                                         // "Mike Pena",
                                                         "${mentorData.data!.fullName ?? "Mentor"}!",
-                                                        style: GoogleFonts
-                                                            .roboto(
+                                                        style:
+                                                            GoogleFonts.roboto(
                                                           fontSize: 16.sp,
                                                           fontWeight:
                                                               FontWeight.w400,
@@ -1026,8 +1018,8 @@ class _HomePageContentState extends ConsumerState<HomePageContent> {
                                                       ),
                                                       Text(
                                                         "Placement | Interview",
-                                                        style: GoogleFonts
-                                                            .roboto(
+                                                        style:
+                                                            GoogleFonts.roboto(
                                                           fontSize: 14.sp,
                                                           fontWeight:
                                                               FontWeight.w400,
@@ -1050,8 +1042,7 @@ class _HomePageContentState extends ConsumerState<HomePageContent> {
                                                 // "in top companies like Google, TCS, and Deloitte. "
                                                 // "My sessions focus on mock interviews, resume building, "
                                                 // "and effective communication",
-                                                mentorData
-                                                        .data!.description ??
+                                                mentorData.data!.description ??
                                                     "No descripion",
                                                 style: GoogleFonts.roboto(
                                                   fontSize: 15.sp,
@@ -1094,8 +1085,8 @@ class _HomePageContentState extends ConsumerState<HomePageContent> {
                                             padding: EdgeInsets.zero,
                                             physics:
                                                 NeverScrollableScrollPhysics(),
-                                            itemCount: mentorData.data!
-                                                .acceptedStudents!.length,
+                                            itemCount: mentorData
+                                                .data!.acceptedStudents!.length,
                                             itemBuilder: (context, index) {
                                               final student = mentorData.data!
                                                   .acceptedStudents![index];
@@ -1133,18 +1124,17 @@ class _HomePageContentState extends ConsumerState<HomePageContent> {
                                                 child: MyContainer(
                                                   image: student.profilePic ??
                                                       "https://flutter.github.io/assets-for-api-docs/assets/widgets/puffin.jpg",
-                                                  title: student.fullName ??
-                                                      "N/A",
+                                                  title:
+                                                      student.fullName ?? "N/A",
                                                   email: student.email ??
                                                       "No Email",
                                                   description:
-                                                      student.description ??
-                                                          "",
+                                                      student.description ?? "",
                                                 ),
                                               );
                                             },
                                           ),
-                      
+
                                     SizedBox(height: 10.h),
                                     // Container(
                                     //   margin:
@@ -1246,7 +1236,7 @@ class _HomePageContentState extends ConsumerState<HomePageContent> {
                                         requestData.data.length.toString();
                                   });
                                 });
-                      
+
                                 if (requestData.data.isEmpty) {
                                   return Center(
                                     child: Text(
@@ -1258,7 +1248,7 @@ class _HomePageContentState extends ConsumerState<HomePageContent> {
                                     ),
                                   );
                                 }
-                      
+
                                 return ListView.builder(
                                   padding: EdgeInsets.zero,
                                   shrinkWrap: true,
@@ -1283,8 +1273,8 @@ class _HomePageContentState extends ConsumerState<HomePageContent> {
                                           });
                                           final service =
                                               APIStateNetwork(createDio());
-                                          final response = await service
-                                              .acceptRequest(body);
+                                          final response =
+                                              await service.acceptRequest(body);
                                           if (response.status == true) {
                                             Fluttertoast.showToast(
                                                 msg: response.message);
@@ -1292,8 +1282,7 @@ class _HomePageContentState extends ConsumerState<HomePageContent> {
                                                 getHomeMentorDataProvider);
                                             ref.invalidate(
                                                 getRequestStudentController);
-                                            ref.invalidate(
-                                                myListingController);
+                                            ref.invalidate(myListingController);
                                           } else {
                                             Fluttertoast.showToast(
                                                 msg: response.message);
