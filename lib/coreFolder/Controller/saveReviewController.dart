@@ -5,7 +5,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import '../network/api.state.dart';
 import '../utils/preety.dio.dart';
 
-final saveReviewProvider = FutureProvider.family.autoDispose<void, Map<String, dynamic>>((ref, data) async {
+final saveReviewProvider = FutureProvider.family
+    .autoDispose<void, Map<String, dynamic>>((ref, data) async {
   final dio = await createDio();
   final service = APIStateNetwork(dio);
   final response = await service.saveReview(data);

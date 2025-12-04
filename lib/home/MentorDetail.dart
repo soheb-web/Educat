@@ -1292,17 +1292,17 @@ class _MentorDetailPageState extends ConsumerState<MentorDetailPage> {
                                 width: 182.w,
                                 fit: BoxFit.cover,
                                 errorBuilder: (context, error, stackTrace) =>
-                                    Image.asset(
-                                  "assets/girlpic.png",
+                                    Image.network(
+                                  "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png",
                                   height: 182.w,
                                   width: 182.w,
                                   fit: BoxFit.cover,
                                 ),
                               )
-                            : Image.asset(
-                                "assets/girlpic.png",
+                            : Image.network(
+                                "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png",
                                 height: 182.h,
-                                width: 182.w,
+                                width: 182.h,
                                 fit: BoxFit.cover,
                               ),
                       ),
