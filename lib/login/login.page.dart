@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:dio/dio.dart';
+import 'package:educationapp/coreFolder/Controller/themeController.dart';
 import 'package:educationapp/coreFolder/Model/login.body.model.dart';
 import 'package:educationapp/coreFolder/network/api.state.dart';
 import 'package:educationapp/coreFolder/utils/preety.dio.dart';
@@ -14,20 +15,18 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  ConsumerState<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends ConsumerState<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
     final screenHeight = MediaQuery.of(context).size.height;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    Color bg = isDark ? Color(0xFF1B1B1B) : Colors.white;
+    final themeMode = ref.watch(themeProvider);
 
     return Scaffold(
       //  resizeToAvoidBottomInset: false,
@@ -81,7 +80,10 @@ class _LoginPageState extends State<LoginPage> {
               child: Container(
                 width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  //color: Colors.white,
+                  color: themeMode == ThemeMode.light
+                      ? Colors.black
+                      : Colors.white,
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(40.w),
                     topRight: Radius.circular(40.w),
@@ -129,7 +131,6 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
   // Future<String> fcmGetToken() async {
   //   // 💡 500ms Delay यहाँ भी रखें
   //   await Future.delayed(const Duration(milliseconds: 500));
-
   //   try {
   //     // ✅ Now request notification permissions
   //     NotificationSettings settings =
@@ -205,7 +206,7 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
   // }
 
   Future<String> fcmGetToken() async {
-    const int maxRetries = 5; // प्रयासों की संख्या बढ़ाएँ
+    const int maxRetries = 6; // प्रयासों की संख्या बढ़ाएँ
     const Duration initialDelay =
         Duration(seconds: 2); // पहला विलंब 2 सेकंड का रखें
     const Duration maxTotalWait =
@@ -328,7 +329,7 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
   @override
   Widget build(BuildContext context) {
     var box = Hive.box('userdata');
-
+    final themeMode = ref.watch(themeProvider);
     return Form(
       key: _formKey,
       child: Column(
@@ -339,10 +340,14 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
           Text(
             "Welcome Back !",
             style: GoogleFonts.roboto(
-              fontWeight: FontWeight.w600,
-              fontSize: 26.w,
-              letterSpacing: -0.95,
-            ),
+                fontWeight: FontWeight.w600,
+                fontSize: 26.w,
+                letterSpacing: -0.95,
+                color: themeMode == ThemeMode.light
+                    ? Colors.white
+                    : Color(
+                        0xFF1B1B1B,
+                      )),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -354,6 +359,11 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                   fontWeight: FontWeight.w700,
                   fontSize: 15.w,
                   letterSpacing: -0.50,
+                  color: themeMode == ThemeMode.light
+                      ? Colors.white
+                      : Color(
+                          0xFF1B1B1B,
+                        ),
                 ),
               ),
               GestureDetector(
@@ -411,13 +421,21 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                       style: GoogleFonts.roboto(
                         fontSize: 13.w,
                         fontWeight: FontWeight.w400,
-                        color: const Color(0xFF4D4D4D),
+                        // color: const Color(0xFF4D4D4D),
+                        color: themeMode == ThemeMode.dark
+                            ? Color(0xFF4D4D4D)
+                            : Colors.white,
                       ),
                     ),
                   ],
                 ),
                 SizedBox(height: 10.h),
                 TextFormField(
+                  style: TextStyle(
+                    color: themeMode == ThemeMode.dark
+                        ? Color(0xFF4D4D4D)
+                        : Colors.white,
+                  ),
                   controller: passwordController,
                   obscureText: secure,
                   decoration: InputDecoration(
@@ -431,12 +449,18 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                         },
                         child: Icon(
                           secure ? Icons.visibility_off : Icons.visibility,
-                          color: const Color(0xFF4D4D4D),
+                          color: themeMode == ThemeMode.dark
+                              ? Color(0xFF4D4D4D)
+                              : Colors.white,
                         ),
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.black),
+                      borderSide: BorderSide(
+                        color: themeMode == ThemeMode.dark
+                            ? Colors.grey
+                            : Colors.white,
+                      ),
                       borderRadius: BorderRadius.circular(40.r),
                     ),
                     border: OutlineInputBorder(
@@ -504,7 +528,7 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
   }
 }
 
-class RegisterField extends StatelessWidget {
+class RegisterField extends ConsumerStatefulWidget {
   final String label;
   final TextEditingController controller;
   final TextInputType? type;
@@ -523,7 +547,13 @@ class RegisterField extends StatelessWidget {
   });
 
   @override
+  ConsumerState<RegisterField> createState() => _RegisterFieldState();
+}
+
+class _RegisterFieldState extends ConsumerState<RegisterField> {
+  @override
   Widget build(BuildContext context) {
+    final themeMode = ref.watch(themeProvider);
     return Padding(
       padding: EdgeInsets.only(top: 10.h, right: 28.w, left: 28.w),
       child: Column(
@@ -533,36 +563,54 @@ class RegisterField extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                label,
+                widget.label,
                 style: GoogleFonts.roboto(
                   fontSize: 13.w,
                   fontWeight: FontWeight.w400,
-                  color: const Color(0xFF4D4D4D),
+                  // color: const Color(0xFF4D4D4D),
+                  color: themeMode == ThemeMode.dark
+                      ? Color(0xFF4D4D4D)
+                      : Colors.white,
                 ),
               ),
             ],
           ),
           SizedBox(height: 10.h),
           TextFormField(
-            controller: controller,
-            obscureText: obscureText,
-            maxLines: maxLine,
-            keyboardType: type,
+            style: TextStyle(
+              color: themeMode == ThemeMode.dark
+                  ? Color(0xFF4D4D4D)
+                  : Colors.white,
+            ),
+            controller: widget.controller,
+            obscureText: widget.obscureText,
+            maxLines: widget.maxLine,
+            keyboardType: widget.type,
             decoration: InputDecoration(
               focusedBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: Colors.black),
+                borderSide: BorderSide(
+                  // color: Colors.black,
+                  color: themeMode == ThemeMode.dark
+                      ? const Color(0xFF4D4D4D)
+                      : Colors.white,
+                ),
                 borderRadius: BorderRadius.circular(40.r),
               ),
               border: OutlineInputBorder(
-                borderSide: const BorderSide(color: Colors.grey),
+                borderSide: BorderSide(
+                  color: Colors.grey,
+                ),
                 borderRadius: BorderRadius.circular(40.r),
               ),
               enabledBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: Colors.grey),
+                borderSide: BorderSide(
+                  //color: Colors.grey
+                  color: Colors.grey,
+                ),
                 borderRadius: BorderRadius.circular(40.r),
               ),
             ),
-            validator: validator,
+            validator: widget.validator,
           ),
         ],
       ),

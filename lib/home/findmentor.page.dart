@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:educationapp/coreFolder/Controller/themeController.dart';
 import 'package:educationapp/home/MentorDetail.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -109,8 +110,12 @@ class _FindMentorPageState extends ConsumerState<FindMentorPage> {
     final dropDownData = ref.watch(getDropDownProvider);
     final queryParams = ref.watch(mentorQueryParamsProvider);
     final mentorProvider = ref.watch(searchMentorProvider);
+    final themeMode = ref.watch(themeProvider);
     return Scaffold(
-      backgroundColor: const Color(0xFF1B1B1B),
+      // backgroundColor: const Color(0xFF1B1B1B),
+      backgroundColor: themeMode == ThemeMode.dark
+          ? const Color(0xFF1B1B1B)
+          : Color(0xFF008080),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -332,7 +337,10 @@ class _FindMentorPageState extends ConsumerState<FindMentorPage> {
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
-                color: Colors.white,
+                // color: Colors.white,
+                color: themeMode == ThemeMode.dark
+                    ? Colors.white
+                    : const Color(0xFF1B1B1B),
                 borderRadius: BorderRadius.circular(30.r),
               ),
               child: mentorProvider.when(
@@ -395,6 +403,7 @@ class _FindMentorPageState extends ConsumerState<FindMentorPage> {
   }
 
   Widget _appBar() {
+    final themeMode = ref.watch(themeProvider);
     return Container(
       margin: EdgeInsets.only(left: 15.w, right: 15.w),
       child: Row(
@@ -429,7 +438,12 @@ class _FindMentorPageState extends ConsumerState<FindMentorPage> {
               Text(
                 "Find a ",
                 style: GoogleFonts.roboto(
-                    fontSize: 24.sp, color: const Color(0xff008080)),
+                  fontSize: 24.sp,
+                  // color: const Color(0xff008080),
+                  color: themeMode == ThemeMode.light
+                      ? Color(0xff008080)
+                      : Colors.white,
+                ),
               ),
               Text(
                 "Mentor",

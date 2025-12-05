@@ -704,6 +704,7 @@ import 'dart:developer';
 
 import 'package:educationapp/coreFolder/Controller/getRequestStudentController.dart';
 import 'package:educationapp/coreFolder/Controller/reviewController.dart';
+import 'package:educationapp/coreFolder/Controller/themeController.dart';
 import 'package:educationapp/coreFolder/Model/sendRequestBodyModel.dart';
 import 'package:educationapp/coreFolder/network/api.state.dart';
 import 'package:educationapp/coreFolder/utils/preety.dio.dart';
@@ -761,6 +762,7 @@ class _MentorDetailPageState extends ConsumerState<MentorDetailPage> {
   @override
   Widget build(BuildContext context) {
     final profileAsync = ref.watch(profileProvider(widget.id));
+    final themeMode = ref.watch(themeProvider);
     var box = Hive.box('userdata');
     return Scaffold(
       body: profileAsync.when(
@@ -787,21 +789,27 @@ class _MentorDetailPageState extends ConsumerState<MentorDetailPage> {
                         color: const Color(0xff008080),
                       ),
                       Container(
-                        color: Colors.white,
+                        //   color: Colors.white,
+                        color: themeMode == ThemeMode.light
+                            ? Color(0xFF1B1B1B)
+                            : Colors.white,
                         child: Container(
                           width: double.infinity,
                           margin: EdgeInsets.only(top: 100.h),
                           child: SingleChildScrollView(
                             child: Column(children: [
                               SizedBox(
-                                height: 10.h,
+                                height: 15.h,
                               ),
                               Text(
                                 profile.fullName!,
                                 style: GoogleFonts.roboto(
                                   fontSize: 24.sp,
                                   fontWeight: FontWeight.w600,
-                                  color: Colors.black,
+                                  //color: Colors.black,
+                                  color: themeMode == ThemeMode.dark
+                                      ? Color(0xFF1B1B1B)
+                                      : Colors.white,
                                 ),
                               ),
                               Text(
@@ -1058,7 +1066,9 @@ class _MentorDetailPageState extends ConsumerState<MentorDetailPage> {
                                           style: GoogleFonts.roboto(
                                             fontSize: 20.sp,
                                             fontWeight: FontWeight.w600,
-                                            color: Colors.black,
+                                            color: themeMode == ThemeMode.dark
+                                                ? Color(0xFF1B1B1B)
+                                                : Colors.white,
                                           ),
                                         ),
                                         SizedBox(height: 3.h),
@@ -1111,7 +1121,10 @@ class _MentorDetailPageState extends ConsumerState<MentorDetailPage> {
                                               style: GoogleFonts.roboto(
                                                 fontSize: 20.sp,
                                                 fontWeight: FontWeight.w600,
-                                                color: Colors.black,
+                                                color:
+                                                    themeMode == ThemeMode.dark
+                                                        ? Color(0xFF1B1B1B)
+                                                        : Colors.white,
                                               ),
                                             ),
                                             SizedBox(height: 5.h),
@@ -1153,7 +1166,9 @@ class _MentorDetailPageState extends ConsumerState<MentorDetailPage> {
                                           style: GoogleFonts.roboto(
                                             fontSize: 20.sp,
                                             fontWeight: FontWeight.w600,
-                                            color: Colors.black,
+                                            color: themeMode == ThemeMode.dark
+                                                ? Color(0xFF1B1B1B)
+                                                : Colors.white,
                                           ),
                                         ),
                                         SizedBox(height: 10.h),
@@ -1256,7 +1271,10 @@ class _MentorDetailPageState extends ConsumerState<MentorDetailPage> {
                               ),
                               child: Padding(
                                 padding: EdgeInsets.only(left: 8.w),
-                                child: Icon(Icons.arrow_back_ios),
+                                child: Icon(
+                                  Icons.arrow_back_ios,
+                                  color: Colors.black,
+                                ),
                               )),
                         ),
                         Text(

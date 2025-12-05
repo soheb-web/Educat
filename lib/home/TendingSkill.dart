@@ -379,6 +379,7 @@
 // }
 
 import 'dart:async';
+import 'package:educationapp/coreFolder/Controller/themeController.dart';
 import 'package:educationapp/home/findmentor.page.dart';
 import 'package:educationapp/home/trendingExprt.page.dart';
 import 'package:flutter/cupertino.dart';
@@ -484,8 +485,12 @@ class _FindSkillPageState extends ConsumerState<FindSkillPage> {
     final dropDownData = ref.watch(getDropDownProvider);
     final queryParams = ref.watch(queryParamsProvider);
     final skillProvider = ref.watch(searchSkillProvider);
+    final themeMode = ref.watch(themeProvider);
     return Scaffold(
-      backgroundColor: const Color(0xFF1B1B1B),
+      // backgroundColor: const Color(0xFF1B1B1B),
+      backgroundColor: themeMode == ThemeMode.dark
+          ? const Color(0xFF1B1B1B)
+          : Color(0xFF008080),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -653,8 +658,12 @@ class _FindSkillPageState extends ConsumerState<FindSkillPage> {
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(30.r),
+                color: themeMode == ThemeMode.dark
+                    ? Colors.white
+                    : const Color(0xFF1B1B1B),
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(30.r),
+                    topRight: Radius.circular(30.r)),
               ),
               child: skillProvider.when(
                 data: (skill) {
@@ -843,6 +852,7 @@ class _FindSkillPageState extends ConsumerState<FindSkillPage> {
   }
 
   Widget _appBar() {
+    final themeMode = ref.watch(themeProvider);
     return Container(
       margin: EdgeInsets.only(left: 10.w, right: 10.w),
       child: Row(
@@ -875,7 +885,11 @@ class _FindSkillPageState extends ConsumerState<FindSkillPage> {
               Text(
                 "Trending ",
                 style: GoogleFonts.roboto(
-                    fontSize: 24.sp, color: const Color(0xff008080)),
+                  fontSize: 24.sp,
+                  color: themeMode == ThemeMode.dark
+                      ? Color(0xff008080)
+                      : Colors.white,
+                ),
               ),
               Text(
                 "Skills",

@@ -1,4 +1,5 @@
 import 'package:educationapp/coreFolder/Controller/myListingController.dart';
+import 'package:educationapp/coreFolder/Controller/themeController.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -26,9 +27,12 @@ class _MyListingState extends ConsumerState<MyListing> {
     final type = box.get("userType");
     log("userType listing page : $type");
     final myListingProvider = ref.watch(myListingController);
+    final themeMode = ref.watch(themeProvider);
 
     return Scaffold(
-      backgroundColor: Color(0xFF1B1B1B),
+      // backgroundColor: Color(0xFF1B1B1B),
+      backgroundColor:
+          themeMode == ThemeMode.dark ? Color(0xFF1B1B1B) : Color(0xFF008080),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -43,32 +47,35 @@ class _MyListingState extends ConsumerState<MyListing> {
               SizedBox(
                 width: 30.w,
               ),
-              GestureDetector(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: Container(
-                  height: 44.h,
-                  width: 44.w,
-                  decoration: BoxDecoration(
-                      color: Color(0xFF1B1B1B),
-                      borderRadius: BorderRadius.circular(500.r)),
-                  child: Center(
-                    child: Icon(
-                      Icons.arrow_back_ios,
-                      color: Color(0xFF1B1B1B),
-                      size: 15.w,
-                    ),
-                  ),
-                ),
-              ),
+              // GestureDetector(
+              //   onTap: () {
+              //     Navigator.pop(context);
+              //   },
+              //   child: Container(
+              //     height: 44.h,
+              //     width: 44.w,
+              //     decoration: BoxDecoration(
+              //         color: Color(0xFF1B1B1B),
+              //         borderRadius: BorderRadius.circular(500.r)),
+              //     child: Center(
+              //       child: Icon(
+              //         Icons.arrow_back_ios,
+              //         color: Color(0xFF1B1B1B),
+              //         size: 15.w,
+              //       ),
+              //     ),
+              //   ),
+              // ),
               Spacer(),
               Text(
                 "My Listing",
                 style: GoogleFonts.roboto(
-                    fontSize: 18.w,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xff008080)),
+                  fontSize: 18.w,
+                  fontWeight: FontWeight.w600,
+                  color: themeMode == ThemeMode.dark
+                      ? Color(0xff008080)
+                      : Colors.white,
+                ),
               ),
               Spacer(),
               InkWell(
@@ -141,7 +148,9 @@ class _MyListingState extends ConsumerState<MyListing> {
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               decoration: BoxDecoration(
-                  color: Colors.white,
+                  // color: Colors.white,
+                  color:
+                      themeMode == ThemeMode.dark ? Colors.white : Colors.black,
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(40.r),
                       topRight: Radius.circular(40.r))),

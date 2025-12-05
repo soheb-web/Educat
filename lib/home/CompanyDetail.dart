@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:educationapp/coreFolder/Controller/themeController.dart';
 import 'package:educationapp/home/webView.page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,7 @@ class _CompanyDetailPageState extends ConsumerState<CompanyDetailPage> {
   @override
   Widget build(BuildContext context) {
     final reviewAsync = ref.watch(reviewProvider(widget.id));
+    final themeMode = ref.watch(themeProvider);
 
     // return Scaffold(
     //   body: reviewAsync.when(
@@ -44,7 +46,10 @@ class _CompanyDetailPageState extends ConsumerState<CompanyDetailPage> {
                     color: const Color(0xff008080),
                   ),
                   Container(
-                    color: Colors.white,
+                    height: MediaQuery.of(context).size.height,
+                    color: themeMode == ThemeMode.light
+                        ? Color(0xFF1B1B1B)
+                        : Colors.white,
                     child: Container(
                       width: double.infinity,
                       margin: EdgeInsets.only(top: 100.h),
@@ -58,7 +63,9 @@ class _CompanyDetailPageState extends ConsumerState<CompanyDetailPage> {
                             style: GoogleFonts.roboto(
                               fontSize: 24.sp,
                               fontWeight: FontWeight.w600,
-                              color: Colors.black,
+                              color: themeMode == ThemeMode.dark
+                                  ? Color(0xFF1B1B1B)
+                                  : Colors.white,
                             ),
                           ),
                           Text(
@@ -128,7 +135,9 @@ class _CompanyDetailPageState extends ConsumerState<CompanyDetailPage> {
                                     bottom: 8.h),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(20.r),
-                                  color: const Color(0xffDEDDEC),
+                                  color: themeMode == ThemeMode.light
+                                      ? Color(0xFF008080)
+                                      : Color(0xffDEDDEC),
                                 ),
                                 child: Row(
                                   children: [
@@ -138,7 +147,9 @@ class _CompanyDetailPageState extends ConsumerState<CompanyDetailPage> {
                                       style: GoogleFonts.roboto(
                                         fontSize: 14.sp,
                                         fontWeight: FontWeight.w600,
-                                        color: Colors.black,
+                                        color: themeMode == ThemeMode.light
+                                            ? Colors.white
+                                            : Colors.black,
                                       ),
                                     ),
                                   ],
@@ -155,14 +166,18 @@ class _CompanyDetailPageState extends ConsumerState<CompanyDetailPage> {
                                     bottom: 8.h),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(20.r),
-                                  color: const Color(0xffDEDDEC),
+                                  color: themeMode == ThemeMode.light
+                                      ? Color(0xFF008080)
+                                      : Color(0xffDEDDEC),
                                 ),
                                 child: Row(
                                   children: [
                                     Icon(
                                       Icons.star,
                                       size: 16.sp,
-                                      color: const Color(0xff008080),
+                                      color: themeMode == ThemeMode.light
+                                          ? Colors.white
+                                          : Colors.black,
                                     ),
                                     SizedBox(width: 5.w),
                                     Text(
@@ -170,7 +185,9 @@ class _CompanyDetailPageState extends ConsumerState<CompanyDetailPage> {
                                       style: GoogleFonts.roboto(
                                         fontSize: 14.sp,
                                         fontWeight: FontWeight.w600,
-                                        color: Colors.black,
+                                        color: themeMode == ThemeMode.light
+                                            ? Colors.white
+                                            : Colors.black,
                                       ),
                                     ),
                                   ],
@@ -185,7 +202,9 @@ class _CompanyDetailPageState extends ConsumerState<CompanyDetailPage> {
                                     bottom: 8.h),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(20.r),
-                                  color: const Color(0xffDEDDEC),
+                                  color: themeMode == ThemeMode.light
+                                      ? Color(0xFF008080)
+                                      : Color(0xffDEDDEC),
                                 ),
                                 child: Row(
                                   children: [
@@ -195,7 +214,9 @@ class _CompanyDetailPageState extends ConsumerState<CompanyDetailPage> {
                                       style: GoogleFonts.roboto(
                                         fontSize: 14.sp,
                                         fontWeight: FontWeight.w600,
-                                        color: Colors.black,
+                                        color: themeMode == ThemeMode.light
+                                            ? Colors.white
+                                            : Colors.black,
                                       ),
                                     ),
                                   ],
@@ -220,7 +241,9 @@ class _CompanyDetailPageState extends ConsumerState<CompanyDetailPage> {
                                   style: GoogleFonts.roboto(
                                     fontSize: 18.sp,
                                     fontWeight: FontWeight.w600,
-                                    color: const Color(0xff1B1B1B),
+                                    color: themeMode == ThemeMode.light
+                                        ? Color(0xffDEDDEC)
+                                        : Color(0xFF008080),
                                   ),
                                 ),
                                 GestureDetector(
@@ -239,13 +262,17 @@ class _CompanyDetailPageState extends ConsumerState<CompanyDetailPage> {
                                         style: GoogleFonts.roboto(
                                           fontSize: 16.sp,
                                           fontWeight: FontWeight.w600,
-                                          color: const Color(0xff008080),
+                                          color: themeMode == ThemeMode.light
+                                              ? Color(0xffDEDDEC)
+                                              : Color(0xFF008080),
                                         ),
                                       ),
                                       Icon(
                                         Icons.arrow_forward_ios,
                                         size: 20.sp,
-                                        color: Color(0xff008080),
+                                        color: themeMode == ThemeMode.light
+                                            ? Color(0xffDEDDEC)
+                                            : Color(0xFF008080),
                                       )
                                     ],
                                   ),
@@ -268,8 +295,11 @@ class _CompanyDetailPageState extends ConsumerState<CompanyDetailPage> {
                                     top: 16.h,
                                     bottom: 16.h),
                                 decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20.r),
-                                    color: Color(0xFFF1F2F6)),
+                                  borderRadius: BorderRadius.circular(20.r),
+                                  color: themeMode == ThemeMode.dark
+                                      ? Color(0xffDEDDEC)
+                                      : Color(0xFF008080),
+                                ),
                                 margin: EdgeInsets.only(
                                     bottom: 20.h, left: 15.w, right: 15.w),
                                 child: Column(
@@ -279,7 +309,9 @@ class _CompanyDetailPageState extends ConsumerState<CompanyDetailPage> {
                                       children: [
                                         Icon(
                                           Icons.star,
-                                          color: const Color(0xff008080),
+                                          color: themeMode == ThemeMode.light
+                                              ? Color(0xffDEDDEC)
+                                              : Color(0xFF008080),
                                           size: 16.sp,
                                         ),
                                         SizedBox(width: 5.w),
@@ -288,6 +320,9 @@ class _CompanyDetailPageState extends ConsumerState<CompanyDetailPage> {
                                           style: GoogleFonts.roboto(
                                             fontSize: 16.sp,
                                             fontWeight: FontWeight.w600,
+                                            color: themeMode == ThemeMode.light
+                                                ? Color(0xffDEDDEC)
+                                                : Color(0xFF666666),
                                           ),
                                         ),
                                       ],
@@ -297,14 +332,18 @@ class _CompanyDetailPageState extends ConsumerState<CompanyDetailPage> {
                                       review.description ?? '',
                                       style: GoogleFonts.roboto(
                                         fontSize: 16.sp,
-                                        color: const Color(0xff666666),
+                                        color: themeMode == ThemeMode.light
+                                            ? Color(0xffDEDDEC)
+                                            : Color(0xFF666666),
                                       ),
                                     ),
                                     Text(
                                       "Posted on ${review.createdAt?.toString().split(' ')[0] ?? ''}",
                                       style: GoogleFonts.roboto(
                                         fontSize: 14.sp,
-                                        color: Colors.grey,
+                                        color: themeMode == ThemeMode.light
+                                            ? Color(0xffDEDDEC)
+                                            : Color(0xFF666666),
                                       ),
                                     ),
                                   ],
@@ -312,8 +351,6 @@ class _CompanyDetailPageState extends ConsumerState<CompanyDetailPage> {
                               );
                             },
                           ),
-                          Divider(),
-                          SizedBox(height: 20.h),
                         ]),
                       ),
                     ),

@@ -1,5 +1,6 @@
 // Updated widget
 import 'dart:developer';
+import 'package:educationapp/coreFolder/Controller/themeController.dart';
 import 'package:educationapp/home/webView.page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,7 @@ class _CollegeDetailPageState extends ConsumerState<CollegeDetailPage> {
   @override
   Widget build(BuildContext context) {
     final reviewAsync = ref.watch(reviewProvider(widget.id));
+    final themeMode = ref.watch(themeProvider);
     return Scaffold(
       body: reviewAsync.when(
         data: (snap) => SingleChildScrollView(
@@ -35,7 +37,9 @@ class _CollegeDetailPageState extends ConsumerState<CollegeDetailPage> {
                     color: const Color(0xff008080),
                   ),
                   Container(
-                    color: Colors.white,
+                    color: themeMode == ThemeMode.light
+                        ? Color(0xFF1B1B1B)
+                        : Colors.white,
                     child: Container(
                       width: double.infinity,
                       margin: EdgeInsets.only(top: 100.h),
@@ -49,7 +53,9 @@ class _CollegeDetailPageState extends ConsumerState<CollegeDetailPage> {
                             style: GoogleFonts.roboto(
                               fontSize: 24.sp,
                               fontWeight: FontWeight.w600,
-                              color: Colors.black,
+                              color: themeMode == ThemeMode.dark
+                                  ? Color(0xFF1B1B1B)
+                                  : Colors.white,
                             ),
                           ),
                           Text(
@@ -135,7 +141,11 @@ class _CollegeDetailPageState extends ConsumerState<CollegeDetailPage> {
                                     bottom: 8.h),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(20.r),
-                                  color: const Color(0xffDEDDEC),
+
+                                  /// color: const Color(0xffDEDDEC),
+                                  color: themeMode == ThemeMode.light
+                                      ? Color(0xFF008080)
+                                      : Color(0xffDEDDEC),
                                 ),
                                 child: Row(
                                   children: [
@@ -145,7 +155,9 @@ class _CollegeDetailPageState extends ConsumerState<CollegeDetailPage> {
                                       style: GoogleFonts.roboto(
                                         fontSize: 14.sp,
                                         fontWeight: FontWeight.w600,
-                                        color: Colors.black,
+                                        color: themeMode == ThemeMode.light
+                                            ? Colors.white
+                                            : Colors.black,
                                       ),
                                     ),
                                   ],
@@ -162,14 +174,18 @@ class _CollegeDetailPageState extends ConsumerState<CollegeDetailPage> {
                                     bottom: 8.h),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(20.r),
-                                  color: const Color(0xffDEDDEC),
+                                  color: themeMode == ThemeMode.light
+                                      ? Color(0xFF008080)
+                                      : Color(0xffDEDDEC),
                                 ),
                                 child: Row(
                                   children: [
                                     Icon(
                                       Icons.star,
                                       size: 16.sp,
-                                      color: const Color(0xff008080),
+                                      color: themeMode == ThemeMode.light
+                                          ? Colors.white
+                                          : Colors.black,
                                     ),
                                     SizedBox(width: 5.w),
                                     Text(
@@ -177,7 +193,9 @@ class _CollegeDetailPageState extends ConsumerState<CollegeDetailPage> {
                                       style: GoogleFonts.roboto(
                                         fontSize: 14.sp,
                                         fontWeight: FontWeight.w600,
-                                        color: Colors.black,
+                                        color: themeMode == ThemeMode.light
+                                            ? Colors.white
+                                            : Colors.black,
                                       ),
                                     ),
                                   ],
@@ -192,7 +210,9 @@ class _CollegeDetailPageState extends ConsumerState<CollegeDetailPage> {
                                     bottom: 8.h),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(20.r),
-                                  color: const Color(0xffDEDDEC),
+                                  color: themeMode == ThemeMode.light
+                                      ? Color(0xFF008080)
+                                      : Color(0xffDEDDEC),
                                 ),
                                 child: Row(
                                   children: [
@@ -202,7 +222,9 @@ class _CollegeDetailPageState extends ConsumerState<CollegeDetailPage> {
                                       style: GoogleFonts.roboto(
                                         fontSize: 14.sp,
                                         fontWeight: FontWeight.w600,
-                                        color: Colors.black,
+                                        color: themeMode == ThemeMode.light
+                                            ? Colors.white
+                                            : Colors.black,
                                       ),
                                     ),
                                   ],
@@ -227,7 +249,9 @@ class _CollegeDetailPageState extends ConsumerState<CollegeDetailPage> {
                                   style: GoogleFonts.roboto(
                                     fontSize: 18.sp,
                                     fontWeight: FontWeight.w600,
-                                    color: const Color(0xff1B1B1B),
+                                    color: themeMode == ThemeMode.light
+                                        ? Color(0xffDEDDEC)
+                                        : Color(0xFF008080),
                                   ),
                                 ),
                                 GestureDetector(
@@ -246,13 +270,17 @@ class _CollegeDetailPageState extends ConsumerState<CollegeDetailPage> {
                                         style: GoogleFonts.roboto(
                                           fontSize: 16.sp,
                                           fontWeight: FontWeight.w600,
-                                          color: const Color(0xff008080),
+                                          color: themeMode == ThemeMode.light
+                                              ? Color(0xffDEDDEC)
+                                              : Color(0xFF008080),
                                         ),
                                       ),
                                       Icon(
                                         Icons.arrow_forward_ios,
                                         size: 20.sp,
-                                        color: Color(0xff008080),
+                                        color: themeMode == ThemeMode.light
+                                            ? Color(0xffDEDDEC)
+                                            : Color(0xFF008080),
                                       )
                                     ],
                                   ),
@@ -276,8 +304,12 @@ class _CollegeDetailPageState extends ConsumerState<CollegeDetailPage> {
                                     top: 16.h,
                                     bottom: 16.h),
                                 decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20.r),
-                                    color: Color(0xFFF1F2F6)),
+                                  borderRadius: BorderRadius.circular(20.r),
+                                  // color: Color(0xFFF1F2F6),
+                                  color: themeMode == ThemeMode.dark
+                                      ? Color(0xffF1F2F6)
+                                      : Color(0xFF008080),
+                                ),
                                 margin: EdgeInsets.only(
                                     bottom: 20.h, left: 15.w, right: 15.w),
                                 child: Column(
@@ -287,7 +319,9 @@ class _CollegeDetailPageState extends ConsumerState<CollegeDetailPage> {
                                       children: [
                                         Icon(
                                           Icons.star,
-                                          color: const Color(0xff008080),
+                                          color: themeMode == ThemeMode.light
+                                              ? Color(0xffDEDDEC)
+                                              : Color(0xFF008080),
                                           size: 16.sp,
                                         ),
                                         SizedBox(width: 5.w),
@@ -296,6 +330,9 @@ class _CollegeDetailPageState extends ConsumerState<CollegeDetailPage> {
                                           style: GoogleFonts.roboto(
                                             fontSize: 16.sp,
                                             fontWeight: FontWeight.w600,
+                                            color: themeMode == ThemeMode.light
+                                                ? Color(0xffDEDDEC)
+                                                : Color(0xFF666666),
                                           ),
                                         ),
                                       ],
@@ -305,14 +342,18 @@ class _CollegeDetailPageState extends ConsumerState<CollegeDetailPage> {
                                       review.description ?? '',
                                       style: GoogleFonts.roboto(
                                         fontSize: 16.sp,
-                                        color: const Color(0xff666666),
+                                        color: themeMode == ThemeMode.light
+                                            ? Color(0xffDEDDEC)
+                                            : Color(0xFF666666),
                                       ),
                                     ),
                                     Text(
                                       "Posted on ${review.createdAt?.toString().split(' ')[0] ?? ''}",
                                       style: GoogleFonts.roboto(
                                         fontSize: 14.sp,
-                                        color: Colors.grey,
+                                        color: themeMode == ThemeMode.light
+                                            ? Color(0xffDEDDEC)
+                                            : Color(0xFF666666),
                                       ),
                                     ),
                                   ],
@@ -320,8 +361,6 @@ class _CollegeDetailPageState extends ConsumerState<CollegeDetailPage> {
                               );
                             },
                           ),
-                          Divider(),
-                          SizedBox(height: 20.h),
                         ]),
                       ),
                     ),

@@ -802,6 +802,7 @@ import 'dart:io';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:educationapp/coreFolder/Controller/getProfileUserProvider.dart';
 import 'package:educationapp/coreFolder/Controller/getSkillProvider.dart';
+import 'package:educationapp/coreFolder/Controller/themeController.dart';
 import 'package:educationapp/coreFolder/Controller/userProfileController.dart';
 import 'package:educationapp/coreFolder/Model/getProfileUserModel.dart';
 import 'package:educationapp/coreFolder/auth/login.auth.dart';
@@ -1100,6 +1101,8 @@ class _ProfileCompletionWidgetState
     }
 
     final skillsProvider = ref.watch(getSkillProvider);
+    final themeMode = ref.watch(themeProvider);
+
     return Scaffold(
       body: Form(
         key: _formKey,
@@ -1185,7 +1188,10 @@ class _ProfileCompletionWidgetState
                 child: SingleChildScrollView(
                   child: Container(
                     decoration: BoxDecoration(
-                        color: Colors.white,
+                        // color: Colors.white,
+                        color: themeMode == ThemeMode.dark
+                            ? Colors.white
+                            : const Color(0xFF1B1B1B),
                         borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(30.sp),
                             topRight: Radius.circular(30.sp))),
@@ -1215,7 +1221,10 @@ class _ProfileCompletionWidgetState
                                   style: GoogleFonts.roboto(
                                     fontSize: 13.w,
                                     fontWeight: FontWeight.w400,
-                                    color: const Color(0xFF4D4D4D),
+                                    //color: const Color(0xFF4D4D4D),
+                                    color: themeMode == ThemeMode.dark
+                                        ? Color(0xFF4D4D4D)
+                                        : Colors.white,
                                   ),
                                 ),
                               ],
@@ -1301,7 +1310,11 @@ class _ProfileCompletionWidgetState
                                                           .last,
                                                       style: GoogleFonts.roboto(
                                                         fontSize: 12.w,
-                                                        color: Colors.black,
+                                                        // color: Colors.black,
+                                                        color: themeMode ==
+                                                                ThemeMode.dark
+                                                            ? Color(0xFF4D4D4D)
+                                                            : Colors.white,
                                                         fontWeight:
                                                             FontWeight.w500,
                                                       ),
@@ -1351,7 +1364,10 @@ class _ProfileCompletionWidgetState
                                     style: GoogleFonts.roboto(
                                       fontSize: 13.w,
                                       fontWeight: FontWeight.w400,
-                                      color: const Color(0xFF4D4D4D),
+                                      //color: const Color(0xFF4D4D4D),
+                                      color: themeMode == ThemeMode.dark
+                                          ? Color(0xFF4D4D4D)
+                                          : Colors.white,
                                     ),
                                   ),
                                   SizedBox(height: 10.h),
@@ -1360,6 +1376,11 @@ class _ProfileCompletionWidgetState
                                       pickDate();
                                     },
                                     controller: dateController,
+                                    style: TextStyle(
+                                      color: themeMode == ThemeMode.dark
+                                          ? Color(0xFF4D4D4D)
+                                          : Colors.white,
+                                    ),
                                     readOnly: true,
                                     decoration: InputDecoration(
                                       contentPadding: EdgeInsets.only(
@@ -1390,7 +1411,9 @@ class _ProfileCompletionWidgetState
                                       hintStyle: GoogleFonts.inter(
                                         fontSize: 15.sp,
                                         fontWeight: FontWeight.w600,
-                                        color: Color(0xFFC8C8C8),
+                                        color: themeMode == ThemeMode.dark
+                                            ? Colors.black
+                                            : Colors.white,
                                       ),
                                     ),
                                     validator: (value) {
@@ -1407,13 +1430,19 @@ class _ProfileCompletionWidgetState
                             Container(
                               margin: EdgeInsets.symmetric(horizontal: 28.w),
                               child: DropdownButtonFormField<int>(
+                                dropdownColor: themeMode == ThemeMode.light
+                                    ? Colors.black
+                                    : Colors.white,
                                 value: selectedSkill,
                                 decoration: InputDecoration(
                                   labelText: 'Skill',
                                   labelStyle: GoogleFonts.roboto(
                                     fontSize: 13.w,
                                     fontWeight: FontWeight.w400,
-                                    color: const Color(0xFF4D4D4D),
+                                    // color: const Color(0xFF4D4D4D),
+                                    color: themeMode == ThemeMode.dark
+                                        ? Colors.black
+                                        : Colors.white,
                                   ),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(30.sp),
@@ -1436,6 +1465,9 @@ class _ProfileCompletionWidgetState
                                             skill.title,
                                             style: GoogleFonts.roboto(
                                               fontSize: 14.w,
+                                              color: themeMode == ThemeMode.dark
+                                                  ? Color(0xFF4D4D4D)
+                                                  : Colors.white,
                                             ),
                                           ),
                                         ))

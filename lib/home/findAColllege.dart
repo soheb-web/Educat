@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:educationapp/coreFolder/Controller/themeController.dart';
 import 'package:educationapp/home/CollegeDetail.dart';
 import 'package:educationapp/home/findmentor.page.dart';
 import 'package:flutter/material.dart';
@@ -105,9 +106,13 @@ class _FindCollegePageState extends ConsumerState<FindCollegePage> {
   Widget build(BuildContext context) {
     final dropDownData = ref.watch(getDropDownProvider);
     final collegeProvider = ref.watch(searchCollegeProvider);
+    final themeMode = ref.watch(themeProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF1B1B1B),
+      // backgroundColor: const Color(0xFF1B1B1B),
+      backgroundColor: themeMode == ThemeMode.dark
+          ? const Color(0xFF1B1B1B)
+          : Color(0xFF008080),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -332,8 +337,12 @@ class _FindCollegePageState extends ConsumerState<FindCollegePage> {
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(30.r),
+                color: themeMode == ThemeMode.dark
+                    ? Colors.white
+                    : const Color(0xFF1B1B1B),
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(30.r),
+                    topRight: Radius.circular(30.r)),
               ),
               child: collegeProvider.when(
                 data: (colleges) => colleges.data?.isNotEmpty ?? false
@@ -393,6 +402,7 @@ class _FindCollegePageState extends ConsumerState<FindCollegePage> {
   }
 
   Widget _appBar() {
+    final themeMode = ref.watch(themeProvider);
     return Container(
       margin: EdgeInsets.only(left: 10.w, right: 10.w),
       child: Row(
@@ -425,7 +435,11 @@ class _FindCollegePageState extends ConsumerState<FindCollegePage> {
               Text(
                 "Find a ",
                 style: GoogleFonts.roboto(
-                    fontSize: 24.sp, color: const Color(0xff008080)),
+                  fontSize: 24.sp,
+                  color: themeMode == ThemeMode.dark
+                      ? Color(0xff008080)
+                      : Colors.white,
+                ),
               ),
               Text(
                 "College",

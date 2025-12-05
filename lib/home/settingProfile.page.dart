@@ -1,10 +1,12 @@
 import 'package:dio/dio.dart';
+import 'package:educationapp/coreFolder/Controller/themeController.dart';
 import 'package:educationapp/coreFolder/Model/passwordChangeBodyModel.dart';
 import 'package:educationapp/coreFolder/network/api.state.dart';
 import 'package:educationapp/coreFolder/utils/preety.dio.dart';
 import 'package:educationapp/home/forgot/forgotPassword.page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,14 +14,14 @@ import 'dart:developer';
 
 import 'package:hive/hive.dart';
 
-class SettingProfilePage extends StatefulWidget {
+class SettingProfilePage extends ConsumerStatefulWidget {
   const SettingProfilePage({super.key});
 
   @override
-  State<SettingProfilePage> createState() => _SettingProfilePageState();
+  ConsumerState<SettingProfilePage> createState() => _SettingProfilePageState();
 }
 
-class _SettingProfilePageState extends State<SettingProfilePage> {
+class _SettingProfilePageState extends ConsumerState<SettingProfilePage> {
   late TextEditingController fullNameController;
   late TextEditingController dobController;
   @override
@@ -42,6 +44,7 @@ class _SettingProfilePageState extends State<SettingProfilePage> {
   }
 
   void showChangePasswordBottomSheet(BuildContext context) {
+    final themeMode = ref.watch(themeProvider);
     final oldPasswordController = TextEditingController();
     final newPasswordController = TextEditingController();
     final repeatPasswordController = TextEditingController();
@@ -52,7 +55,9 @@ class _SettingProfilePageState extends State<SettingProfilePage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Color(0xFFF9F9F9),
+      // backgroundColor: Color(0xFFF9F9F9),
+      backgroundColor:
+          themeMode == ThemeMode.dark ? Colors.white : Color(0xFF008080),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(25.r)),
       ),
@@ -89,7 +94,9 @@ class _SettingProfilePageState extends State<SettingProfilePage> {
                       style: GoogleFonts.roboto(
                         fontSize: 18.sp,
                         fontWeight: FontWeight.w600,
-                        color: Colors.black,
+                        color: themeMode == ThemeMode.dark
+                            ? Color(0xFF1B1B1B)
+                            : Colors.white,
                       ),
                     ),
                   ),
@@ -109,11 +116,13 @@ class _SettingProfilePageState extends State<SettingProfilePage> {
                           )
                         ]),
                     child: TextField(
+                      style: TextStyle(color: Colors.black),
                       controller: oldPasswordController,
                       obscureText: isOld ? false : true,
                       decoration: InputDecoration(
                           hintText: "Old Password",
-                          hintStyle: GoogleFonts.roboto(fontSize: 14.sp),
+                          hintStyle: GoogleFonts.roboto(
+                              color: Colors.black, fontSize: 14.sp),
                           filled: true,
                           fillColor: Colors.white,
                           border: OutlineInputBorder(
@@ -145,9 +154,12 @@ class _SettingProfilePageState extends State<SettingProfilePage> {
                         child: Text(
                           "Forgot Password?",
                           style: GoogleFonts.inter(
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xFF9B9B9B)),
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w500,
+                            color: themeMode == ThemeMode.dark
+                                ? Color(0xFF1B1B1B)
+                                : Colors.white,
+                          ),
                         )),
                   ),
                   SizedBox(height: 5.h),
@@ -165,11 +177,13 @@ class _SettingProfilePageState extends State<SettingProfilePage> {
                           )
                         ]),
                     child: TextField(
+                      style: TextStyle(color: Colors.black),
                       controller: newPasswordController,
                       obscureText: isShow ? false : true,
                       decoration: InputDecoration(
                           hintText: "New Password",
-                          hintStyle: GoogleFonts.roboto(fontSize: 14.sp),
+                          hintStyle: GoogleFonts.roboto(
+                              color: Colors.black, fontSize: 14.sp),
                           filled: true,
                           fillColor: Colors.white,
                           border: OutlineInputBorder(
@@ -205,11 +219,13 @@ class _SettingProfilePageState extends State<SettingProfilePage> {
                           )
                         ]),
                     child: TextField(
+                      style: TextStyle(color: Colors.black),
                       controller: repeatPasswordController,
                       obscureText: conShow ? false : true,
                       decoration: InputDecoration(
                           hintText: "Repeat New Password",
-                          hintStyle: GoogleFonts.roboto(fontSize: 14.sp),
+                          hintStyle: GoogleFonts.roboto(
+                              color: Colors.black, fontSize: 14.sp),
                           filled: true,
                           fillColor: Colors.white,
                           border: OutlineInputBorder(
@@ -237,7 +253,9 @@ class _SettingProfilePageState extends State<SettingProfilePage> {
                     height: 50.h,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xff008080),
+                        backgroundColor: themeMode == ThemeMode.dark
+                            ? Color(0xff008080)
+                            : Color(0xFF1B1B1B),
                       ),
                       onPressed: isChange
                           ? null
@@ -330,8 +348,11 @@ class _SettingProfilePageState extends State<SettingProfilePage> {
   Widget build(BuildContext context) {
     var box = Hive.box('userdata');
     final profileImage = box.get('profile');
+    final themeMode = ref.watch(themeProvider);
     return Scaffold(
-      backgroundColor: Color(0xFFF9F9F9),
+      //backgroundColor: Color(0xFFF9F9F9),
+      backgroundColor:
+          themeMode == ThemeMode.dark ? Colors.white : Color(0xFF1B1B1B),
       body: Padding(
         padding: EdgeInsets.only(left: 10.w, right: 10.w),
         child: Column(
@@ -347,13 +368,18 @@ class _SettingProfilePageState extends State<SettingProfilePage> {
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    icon: Icon(Icons.arrow_back_ios)),
-                IconButton(
-                    onPressed: () {},
                     icon: Icon(
-                      Icons.search,
-                      color: Color(0xFFF9F9F9),
+                      Icons.arrow_back_ios,
+                      color: themeMode == ThemeMode.dark
+                          ? Color(0xFF1B1B1B)
+                          : Colors.white,
                     )),
+                // IconButton(
+                //     onPressed: () {},
+                //     icon: Icon(
+                //       Icons.search,
+                //       color: Color(0xFFF9F9F9),
+                //     )),
               ],
             ),
             SizedBox(
@@ -367,9 +393,12 @@ class _SettingProfilePageState extends State<SettingProfilePage> {
                   Text(
                     "Settings",
                     style: GoogleFonts.inter(
-                        fontSize: 34.sp,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF222222)),
+                      fontSize: 34.sp,
+                      fontWeight: FontWeight.w700,
+                      color: themeMode == ThemeMode.dark
+                          ? Color(0xFF1B1B1B)
+                          : Colors.white,
+                    ),
                   ),
                   SizedBox(
                     height: 10.h,
@@ -377,9 +406,12 @@ class _SettingProfilePageState extends State<SettingProfilePage> {
                   Text(
                     "Personal Information",
                     style: GoogleFonts.inter(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w400,
-                        color: Color(0xFF222222)),
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w400,
+                      color: themeMode == ThemeMode.dark
+                          ? Color(0xFF1B1B1B)
+                          : Colors.white,
+                    ),
                   ),
                   SizedBox(
                     height: 20.h,
@@ -397,6 +429,11 @@ class _SettingProfilePageState extends State<SettingProfilePage> {
                           )
                         ]),
                     child: TextField(
+                      style: TextStyle(
+                        color: themeMode == ThemeMode.dark
+                            ? Color(0xFF1B1B1B)
+                            : Colors.black,
+                      ),
                       controller: fullNameController,
                       decoration: InputDecoration(
                           filled: true,
@@ -433,6 +470,11 @@ class _SettingProfilePageState extends State<SettingProfilePage> {
                           )
                         ]),
                     child: TextField(
+                      style: TextStyle(
+                        color: themeMode == ThemeMode.dark
+                            ? Color(0xFF1B1B1B)
+                            : Colors.black,
+                      ),
                       controller: dobController,
                       decoration: InputDecoration(
                           filled: true,
@@ -462,9 +504,12 @@ class _SettingProfilePageState extends State<SettingProfilePage> {
                       Text(
                         "Password",
                         style: GoogleFonts.inter(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xFF222222)),
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w500,
+                          color: themeMode == ThemeMode.dark
+                              ? Color(0xFF1B1B1B)
+                              : Colors.white,
+                        ),
                       ),
                       InkWell(
                         onTap: () {
@@ -473,9 +518,12 @@ class _SettingProfilePageState extends State<SettingProfilePage> {
                         child: Text(
                           "Change",
                           style: GoogleFonts.inter(
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xFF9B9B9B)),
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w500,
+                            color: themeMode == ThemeMode.dark
+                                ? Color(0xFF1B1B1B)
+                                : Colors.white,
+                          ),
                         ),
                       ),
                     ],
@@ -550,27 +598,30 @@ class _SettingProfilePageState extends State<SettingProfilePage> {
   }
 }
 
-class MySwitchButton extends StatefulWidget {
+class MySwitchButton extends ConsumerStatefulWidget {
   final String name;
   const MySwitchButton({super.key, required this.name});
 
   @override
-  State<MySwitchButton> createState() => _MySwitchButtonState();
+  ConsumerState<MySwitchButton> createState() => _MySwitchButtonState();
 }
 
-class _MySwitchButtonState extends State<MySwitchButton> {
+class _MySwitchButtonState extends ConsumerState<MySwitchButton> {
   bool isCheckt = false;
   @override
   Widget build(BuildContext context) {
+    final themeMode = ref.watch(themeProvider);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
           widget.name,
           style: GoogleFonts.inter(
-              fontSize: 17.sp,
-              fontWeight: FontWeight.w500,
-              color: Color(0xFF222222)),
+            fontSize: 17.sp,
+            fontWeight: FontWeight.w500,
+            color:
+                themeMode == ThemeMode.dark ? Color(0xFF1B1B1B) : Colors.white,
+          ),
         ),
         Spacer(),
         Transform.scale(

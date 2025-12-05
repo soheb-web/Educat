@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:educationapp/coreFolder/Controller/themeController.dart';
 import 'package:educationapp/coreFolder/Controller/userProfileController.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,18 +13,17 @@ class ProfilePage extends ConsumerStatefulWidget {
   @override
   ConsumerState<ProfilePage> createState() => _ProfilePageState();
 }
-class _ProfilePageState extends ConsumerState<ProfilePage> {
 
+class _ProfilePageState extends ConsumerState<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     final userProfileProvider = ref.watch(userProfileController);
+    final themeMode = ref.watch(themeProvider);
     return Scaffold(
       body: userProfileProvider.when(
-
         data: (userProfile) => SingleChildScrollView(
           child: Stack(
             children: [
-
               Column(
                 children: [
                   Container(
@@ -32,7 +32,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     color: const Color(0xff008080),
                   ),
                   Container(
-                    color: Colors.white,
+                    // color: Colors.white,
+                    color: themeMode == ThemeMode.light
+                        ? Color(0xFF1B1B1B)
+                        : Colors.white,
                     child: Container(
                       width: double.infinity,
                       margin: EdgeInsets.only(top: 100.h),
@@ -46,7 +49,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                             style: GoogleFonts.roboto(
                               fontSize: 24.sp,
                               fontWeight: FontWeight.w600,
-                              color: Colors.black,
+                              color: themeMode == ThemeMode.dark
+                                  ? Color(0xFF1B1B1B)
+                                  : Colors.white,
                             ),
                           ),
                           Text(
@@ -169,7 +174,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                       style: GoogleFonts.roboto(
                                         fontSize: 20.sp,
                                         fontWeight: FontWeight.w600,
-                                        color: Colors.black,
+                                        color: themeMode == ThemeMode.dark
+                                            ? Color(0xFF1B1B1B)
+                                            : Colors.white,
                                       ),
                                     ),
                                     SizedBox(height: 3.h),
@@ -234,7 +241,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                           style: GoogleFonts.roboto(
                                             fontSize: 20.sp,
                                             fontWeight: FontWeight.w600,
-                                            color: Colors.black,
+                                            color: themeMode == ThemeMode.dark
+                                                ? Color(0xFF1B1B1B)
+                                                : Colors.white,
                                           ),
                                         ),
                                         SizedBox(height: 5.h),
@@ -277,7 +286,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                         style: GoogleFonts.roboto(
                                           fontSize: 20.sp,
                                           fontWeight: FontWeight.w600,
-                                          color: Colors.black,
+                                          color: themeMode == ThemeMode.dark
+                                              ? Color(0xFF1B1B1B)
+                                              : Colors.white,
                                         ),
                                       ),
                                       SizedBox(height: 10.h),
@@ -346,7 +357,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                         style: GoogleFonts.roboto(
                                           fontSize: 20.sp,
                                           fontWeight: FontWeight.w600,
-                                          color: Colors.black,
+                                          color: themeMode == ThemeMode.dark
+                                              ? Color(0xFF1B1B1B)
+                                              : Colors.white,
                                         ),
                                       ),
                                       SizedBox(height: 10.h),
@@ -382,7 +395,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-
                     Text(
                       "Profile",
                       style: GoogleFonts.roboto(
@@ -391,7 +403,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                         color: Colors.white,
                       ),
                     ),
-
                   ],
                 ),
               ),
@@ -422,13 +433,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                   ),
                 ),
               ),
-
             ],
           ),
         ),
-
         loading: () => const Center(child: CircularProgressIndicator()),
-
         error: (error, stack) {
           log(stack.toString());
           log(error.toString());
@@ -445,8 +453,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             ),
           );
         },
-
-
       ),
     );
   }

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:educationapp/coreFolder/Controller/blockListController.dart';
 import 'package:educationapp/coreFolder/Controller/chatController.dart';
+import 'package:educationapp/coreFolder/Controller/themeController.dart';
 import 'package:educationapp/coreFolder/Model/blockBodyModel.dart';
 import 'package:educationapp/coreFolder/Model/blockListModel.dart';
 import 'package:educationapp/coreFolder/Model/chatHistoryResMdel.dart';
@@ -59,7 +60,7 @@ class _ChatingPageState extends ConsumerState<ChatingPage>
 
     Future.microtask(() {
       ref.invalidate(chatHistoryController(widget.otherUesrid));
-    //  ref.read(markSeenController(widget.otherUesrid));
+      //  ref.read(markSeenController(widget.otherUesrid));
     });
 
     // Listen to incoming messages from start
@@ -67,7 +68,7 @@ class _ChatingPageState extends ConsumerState<ChatingPage>
       (data) {
         if (data is String) {
           _handleIncomingMessage(data);
-         // ref.read(markSeenController(widget.otherUesrid).future);
+          // ref.read(markSeenController(widget.otherUesrid).future);
         }
       },
       onError: (error) {
@@ -284,6 +285,7 @@ class _ChatingPageState extends ConsumerState<ChatingPage>
     final historyData = ref.watch(chatHistoryController(widget.otherUesrid));
     final box = Hive.box("userdata");
     final userid = box.get("userid");
+    final themeMode = ref.watch(themeProvider);
 
     // Update local messages when history loads
     historyData.whenData((snap) {
@@ -308,7 +310,9 @@ class _ChatingPageState extends ConsumerState<ChatingPage>
     }
 
     return Scaffold(
-      backgroundColor: Color(0xFF1B1B1B),
+      // backgroundColor: Color(0xFF1B1B1B),
+      backgroundColor:
+          themeMode == ThemeMode.dark ? Color(0xFF1B1B1B) : Color(0xFF008080),
       body: historyData.when(
         data: (snap) {
           // Compute status text based on last message from the other user
@@ -363,11 +367,17 @@ class _ChatingPageState extends ConsumerState<ChatingPage>
                     Spacer(),
                     Column(
                       children: [
-                        Text(widget.name,
-                            style: GoogleFonts.roboto(
-                                fontSize: 20.sp,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white)),
+                        Text(
+                          widget.name,
+                          style: GoogleFonts.roboto(
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.w600,
+                            // color: Colors.white,
+                            color: themeMode == ThemeMode.dark
+                                ? Colors.white
+                                : Colors.white,
+                          ),
+                        ),
                         Text(statusText,
                             style: GoogleFonts.roboto(
                                 fontSize: 14.sp,
@@ -433,7 +443,10 @@ class _ChatingPageState extends ConsumerState<ChatingPage>
               Expanded(
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    //color: Colors.white,
+                    color: themeMode == ThemeMode.dark
+                        ? Colors.white
+                        : Color(0xFF1B1B1B),
                     borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(30.r),
                         topRight: Radius.circular(30.r)),
@@ -539,23 +552,35 @@ class _ChatingPageState extends ConsumerState<ChatingPage>
   }
 }
 
-class MessageInput extends StatelessWidget {
+class MessageInput extends ConsumerStatefulWidget {
   final TextEditingController controller;
   final VoidCallback onSend;
   const MessageInput(
       {super.key, required this.controller, required this.onSend});
 
   @override
+  ConsumerState<MessageInput> createState() => _MessageInputState();
+}
+
+class _MessageInputState extends ConsumerState<MessageInput> {
+  @override
   Widget build(BuildContext context) {
+    final themeMode = ref.watch(themeProvider);
     return Container(
-      color: Colors.white,
+      //color: Colors.white,
+      color: themeMode == ThemeMode.dark ? Colors.white : Color(0xFF1B1B1B),
       padding:
           EdgeInsets.only(left: 10.w, right: 10.w, bottom: 10.h, top: 10.h),
       child: Row(
         children: [
           Expanded(
             child: TextField(
-              controller: controller,
+              style: TextStyle(
+                color: themeMode == ThemeMode.dark
+                    ? Color(0xFF1B1B1B)
+                    : Colors.black,
+              ),
+              controller: widget.controller,
               decoration: InputDecoration(
                 contentPadding:
                     EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
@@ -577,7 +602,7 @@ class MessageInput extends StatelessWidget {
           ),
           SizedBox(width: 10.w),
           GestureDetector(
-            onTap: onSend,
+            onTap: widget.onSend,
             child: Container(
               width: 53.w,
               height: 53.h,

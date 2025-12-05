@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+import 'package:educationapp/coreFolder/Controller/themeController.dart';
 import 'package:educationapp/home/CompanyDetail.dart';
 import 'package:educationapp/home/findmentor.page.dart';
 import 'package:flutter/material.dart';
@@ -109,8 +110,11 @@ class _FindCompanyPageState extends ConsumerState<FindCompanyPage> {
     final dropDownData = ref.watch(getDropDownProvider);
     final queryParams = ref.watch(companyQueryParamsProvider);
     final companyProvider = ref.watch(searchCompanyProvider);
+    final themeMode = ref.watch(themeProvider);
     return Scaffold(
-      backgroundColor: const Color(0xFF1B1B1B),
+      backgroundColor: themeMode == ThemeMode.dark
+          ? const Color(0xFF1B1B1B)
+          : Color(0xFF008080),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -324,8 +328,13 @@ class _FindCompanyPageState extends ConsumerState<FindCompanyPage> {
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(30.r),
+                // color: Colors.white,
+                color: themeMode == ThemeMode.dark
+                    ? Colors.white
+                    : const Color(0xFF1B1B1B),
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(30.r),
+                    topRight: Radius.circular(30.r)),
               ),
               child: companyProvider.when(
                 data: (companies) => companies.data?.isNotEmpty ?? false
@@ -361,7 +370,14 @@ class _FindCompanyPageState extends ConsumerState<FindCompanyPage> {
                           );
                         },
                       )
-                    : const Center(child: Text("No companies found")),
+                    : Center(
+                        child: Text(
+                        "No companies found",
+                        style: TextStyle(
+                            color: themeMode == ThemeMode.dark
+                                ? const Color(0xFF1B1B1B)
+                                : Colors.white),
+                      )),
                 error: (error, stackTrace) {
                   log(error.toString());
                   return Center(
@@ -390,6 +406,8 @@ class _FindCompanyPageState extends ConsumerState<FindCompanyPage> {
   }
 
   Widget _appBar() {
+    final themeMode = ref.watch(themeProvider);
+
     return Container(
       margin: EdgeInsets.only(left: 10.w, right: 10.w),
       child: Row(
@@ -422,7 +440,12 @@ class _FindCompanyPageState extends ConsumerState<FindCompanyPage> {
               Text(
                 "Find a ",
                 style: GoogleFonts.roboto(
-                    fontSize: 24.sp, color: const Color(0xff008080)),
+                  fontSize: 24.sp,
+                  // color: const Color(0xff008080),
+                  color: themeMode == ThemeMode.dark
+                      ? Color(0xff008080)
+                      : Colors.white,
+                ),
               ),
               Text(
                 "Company",

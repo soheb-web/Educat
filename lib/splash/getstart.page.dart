@@ -1,3 +1,4 @@
+import 'package:educationapp/coreFolder/Controller/themeController.dart';
 import 'package:educationapp/main.dart';
 import 'package:educationapp/splash/mentorshpi.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,23 +7,25 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class GetStartPAge extends StatefulWidget {
+class GetStartPAge extends ConsumerStatefulWidget {
   const GetStartPAge({super.key});
 
   @override
-  State<GetStartPAge> createState() => _GetStartPAgeState();
+  ConsumerState<GetStartPAge> createState() => _GetStartPAgeState();
 }
 
-class _GetStartPAgeState extends State<GetStartPAge> {
+class _GetStartPAgeState extends ConsumerState<GetStartPAge> {
   @override
   Widget build(BuildContext context) {
+    final themeMode = ref.watch(themeProvider);
     return Scaffold(
       body: Container(
         height: 956,
         width: 440,
         decoration: BoxDecoration(
-          color: Colors.white,
-        ),
+            // color: Colors.white,
+            color:
+                themeMode == ThemeMode.dark ? Colors.white : Color(0xFF1B1B1B)),
         child: Stack(
           alignment: AlignmentDirectional.center,
           children: [
@@ -46,15 +49,16 @@ class _GetstartBodyState extends ConsumerState<GetstartBody> {
   @override
   Widget build(BuildContext context) {
     final formData = ref.watch(formDataProvider);
+    final themeMode = ref.watch(themeProvider);
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         SizedBox(
-          height: 80.h,
+          height: 60.h,
         ),
         Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(
@@ -74,41 +78,46 @@ class _GetstartBodyState extends ConsumerState<GetstartBody> {
                   child: Icon(
                     Icons.arrow_back,
                     size: 16.41.h,
+                    color: themeMode == ThemeMode.dark
+                        ? Color(0xFF1B1B1B)
+                        : Colors.white,
                   ),
                 ),
               ),
             ),
-            Spacer(),
-            Container(
-              height: 37.h,
-              width: 86.w,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(40.r),
-                  color: Color(0xFFECEDF4)),
-              child: InkWell(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: Center(
-                    child: Text(
-                  "Skip",
-                  style: GoogleFonts.roboto(
-                      color: Colors.transparent,
-                      fontSize: 14.w,
-                      fontWeight: FontWeight.w500),
-                )),
-              ),
-            ),
-            SizedBox(
-              width: 20.w,
-            ),
+            // Spacer(),
+            // Container(
+            //   height: 37.h,
+            //   width: 86.w,
+            //   decoration: BoxDecoration(
+            //       borderRadius: BorderRadius.circular(40.r),
+            //       color: Color(0xFFECEDF4)),
+            //   child: InkWell(
+            //     onTap: () {
+            //       Navigator.pop(context);
+            //     },
+            //     child: Center(
+            //         child: Text(
+            //       "Skip",
+            //       style: GoogleFonts.roboto(
+            //           color: Colors.transparent,
+            //           fontSize: 14.w,
+            //           fontWeight: FontWeight.w500),
+            //     )),
+            //   ),
+            // ),
+            // SizedBox(
+            //   width: 20.w,
+            // ),
           ],
         ),
         Spacer(),
         Text(
           "You are a ?",
           style: GoogleFonts.roboto(
-              color: Colors.black,
+              color: themeMode == ThemeMode.dark
+                  ? Color(0xFF1B1B1B)
+                  : Colors.white,
               fontSize: 26.w,
               fontWeight: FontWeight.w600,
               letterSpacing: -1.2.h),
@@ -170,7 +179,8 @@ class _GetstartBodyState extends ConsumerState<GetstartBody> {
                     style: GoogleFonts.roboto(
                         fontSize: 13.w,
                         fontWeight: FontWeight.w400,
-                        letterSpacing: -0.85),
+                        color: Colors.black,
+                        letterSpacing: -0.5),
                   ),
                 )
               ],
@@ -231,7 +241,8 @@ class _GetstartBodyState extends ConsumerState<GetstartBody> {
                     style: GoogleFonts.roboto(
                         fontSize: 13.w,
                         fontWeight: FontWeight.w400,
-                        letterSpacing: -0.85),
+                        color: Colors.black,
+                        letterSpacing: -0.5),
                   ),
                 )
               ],
@@ -246,11 +257,13 @@ class _GetstartBodyState extends ConsumerState<GetstartBody> {
   }
 }
 
-class BackGroundImage extends StatelessWidget {
+class BackGroundImage extends ConsumerWidget {
   const BackGroundImage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeProvider);
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -259,13 +272,19 @@ class BackGroundImage extends StatelessWidget {
             child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [Image.asset("assets/Vector 2.png")],
+          children: [
+            Image.asset("assets/Vector 2.png",
+                color: themeMode == ThemeMode.dark ? null : Color(0xFF008080))
+          ],
         )),
         Expanded(
             child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.end,
-          children: [Image.asset("assets/Vector3.png")],
+          children: [
+            Image.asset("assets/Vector3.png",
+                color: themeMode == ThemeMode.dark ? null : Color(0xFF008080))
+          ],
         ))
       ],
     );

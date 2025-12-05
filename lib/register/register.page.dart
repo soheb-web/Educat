@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:educationapp/coreFolder/Controller/themeController.dart';
 import 'package:educationapp/home/id.page.dart';
 import 'package:educationapp/login/login.page.dart';
 import 'package:flutter/cupertino.dart';
@@ -25,6 +26,7 @@ class RegisterPage extends ConsumerStatefulWidget {
 class _RegisterPageState extends ConsumerState<RegisterPage> {
   @override
   Widget build(BuildContext context) {
+    final themeMode = ref.watch(themeProvider);
     return Scaffold(
       backgroundColor: const Color(0xff008080),
       body: SingleChildScrollView(
@@ -70,8 +72,10 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             ),
             Container(
               width: MediaQuery.of(context).size.width,
-              decoration: const BoxDecoration(
-                color: Colors.white,
+              decoration: BoxDecoration(
+                color: themeMode == ThemeMode.dark
+                    ? Colors.white
+                    : Color(0xFF1B1B1B),
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(40),
                   topRight: Radius.circular(40),
@@ -189,7 +193,7 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
   @override
   Widget build(BuildContext context) {
     final formData = ref.watch(formDataProvider);
-
+    final themeMode = ref.watch(themeProvider);
     final registerProviderData = ref.read(myFormDataProvider.notifier);
     return Form(
       key: _formKey,
@@ -204,6 +208,9 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
               fontWeight: FontWeight.w600,
               fontSize: 26.w,
               letterSpacing: -0.95,
+              color: themeMode == ThemeMode.dark
+                  ? Color(0xFF1B1B1B)
+                  : Colors.white,
             ),
           ),
           Row(
@@ -216,6 +223,9 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                   fontWeight: FontWeight.w700,
                   fontSize: 15.w,
                   letterSpacing: -0.50,
+                  color: themeMode == ThemeMode.dark
+                      ? Color(0xFF1B1B1B)
+                      : Colors.white,
                 ),
               ),
               GestureDetector(
@@ -277,7 +287,9 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                 style: GoogleFonts.roboto(
                   fontSize: 13.w,
                   fontWeight: FontWeight.w400,
-                  color: const Color(0xFF4D4D4D),
+                  color: themeMode == ThemeMode.dark
+                      ? Color(0xFF1B1B1B)
+                      : Colors.white,
                 ),
               ),
             ],
@@ -285,11 +297,26 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
           Padding(
             padding: EdgeInsets.only(left: 28.w, right: 28.w, top: 10.h),
             child: IntlPhoneField(
+              style: TextStyle(
+                color: themeMode == ThemeMode.dark
+                    ? Color(0xFF1B1B1B)
+                    : Colors.white,
+              ),
               controller: phoneController,
               decoration: InputDecoration(
+                counterText: "",
                 hintText: "XXXXXXXXXXX",
+                hintStyle: TextStyle(
+                  color: themeMode == ThemeMode.dark
+                      ? Color(0xFF1B1B1B)
+                      : Colors.white,
+                ),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.grey),
+                  borderSide: BorderSide(
+                    color: themeMode == ThemeMode.dark
+                        ? Color(0xFF4D4D4D)
+                        : Colors.white,
+                  ),
                   borderRadius: BorderRadius.circular(40.r),
                 ),
                 border: OutlineInputBorder(
@@ -303,6 +330,24 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
               ),
               initialCountryCode: 'IN',
               invalidNumberMessage: "Invalid phone number",
+              // 🔥 COUNTRY CODE STYLE 🔥
+              dropdownTextStyle: TextStyle(
+                color: themeMode == ThemeMode.dark
+                    ? const Color(0xFF1B1B1B)
+                    : Colors.white,
+                fontWeight: FontWeight.w500,
+              ),
+
+              // 🔥 COUNTRY CODE ICON COLOR 🔥
+              dropdownIcon: Icon(
+                Icons.arrow_drop_down,
+                color: themeMode == ThemeMode.dark
+                    ? const Color(0xFF1B1B1B)
+                    : Colors.white,
+              ),
+
+              // 🔥 +91 TEXT STYLE 🔥
+
               onChanged: (phone) {
                 log("Phone Number: ${phone.completeNumber}");
                 registerProviderData.setPhone(phone.toString());
@@ -377,11 +422,18 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                   style: GoogleFonts.roboto(
                     fontSize: 13.w,
                     fontWeight: FontWeight.w400,
-                    color: const Color(0xFF4D4D4D),
+                    color: themeMode == ThemeMode.dark
+                        ? Color(0xFF1B1B1B)
+                        : Colors.white,
                   ),
                 ),
                 SizedBox(height: 10.h),
                 TextFormField(
+                  style: TextStyle(
+                    color: themeMode == ThemeMode.dark
+                        ? Color(0xFF1B1B1B)
+                        : Colors.white,
+                  ),
                   onChanged: (value) {
                     registerProviderData.setPassword(value);
                   },
@@ -389,7 +441,11 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                   obscureText: isShow ? false : true,
                   decoration: InputDecoration(
                       focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Colors.grey),
+                        borderSide: BorderSide(
+                          color: themeMode == ThemeMode.dark
+                              ? Color(0xFF4D4D4D)
+                              : Colors.white,
+                        ),
                         borderRadius: BorderRadius.circular(40.r),
                       ),
                       border: OutlineInputBorder(
@@ -431,11 +487,18 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                   style: GoogleFonts.roboto(
                     fontSize: 13.w,
                     fontWeight: FontWeight.w400,
-                    color: const Color(0xFF4D4D4D),
+                    color: themeMode == ThemeMode.dark
+                        ? Color(0xFF1B1B1B)
+                        : Colors.white,
                   ),
                 ),
                 SizedBox(height: 10.h),
                 TextFormField(
+                  style: TextStyle(
+                    color: themeMode == ThemeMode.dark
+                        ? Color(0xFF1B1B1B)
+                        : Colors.white,
+                  ),
                   onChanged: (value) {
                     registerProviderData.setConfriPassword(value);
                   },
@@ -443,7 +506,11 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                   obscureText: conShow ? false : true,
                   decoration: InputDecoration(
                       focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Colors.grey),
+                        borderSide: BorderSide(
+                          color: themeMode == ThemeMode.dark
+                              ? Color(0xFF4D4D4D)
+                              : Colors.white,
+                        ),
                         borderRadius: BorderRadius.circular(40.r),
                       ),
                       border: OutlineInputBorder(
@@ -629,7 +696,7 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
   }
 }
 
-class RegisterField extends StatelessWidget {
+class RegisterField extends ConsumerWidget {
   final String label;
   final TextEditingController controller;
   final bool obscureText;
@@ -645,7 +712,8 @@ class RegisterField extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeProvider);
     return Padding(
       padding: EdgeInsets.only(top: 10.h, right: 28.w, left: 28.w),
       child: Column(
@@ -659,19 +727,31 @@ class RegisterField extends StatelessWidget {
                 style: GoogleFonts.roboto(
                   fontSize: 13.w,
                   fontWeight: FontWeight.w400,
-                  color: const Color(0xFF4D4D4D),
+                  color: themeMode == ThemeMode.dark
+                      ? Color(0xFF4D4D4D)
+                      : Colors.white,
                 ),
               ),
             ],
           ),
           SizedBox(height: 10.h),
           TextFormField(
+            style: TextStyle(
+              color: themeMode == ThemeMode.dark
+                  ? Color(0xFF1B1B1B)
+                  : Colors.white,
+            ),
             onChanged: onChange,
             controller: controller,
             obscureText: obscureText,
             decoration: InputDecoration(
               focusedBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: Colors.grey),
+                borderSide: BorderSide(
+                  //color: Colors.grey,
+                  color: themeMode == ThemeMode.dark
+                      ? Color(0xFF4D4D4D)
+                      : Colors.white,
+                ),
                 borderRadius: BorderRadius.circular(40.r),
               ),
               border: OutlineInputBorder(

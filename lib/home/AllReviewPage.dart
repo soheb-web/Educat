@@ -1,3 +1,4 @@
+import 'package:educationapp/coreFolder/Controller/themeController.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -39,9 +40,11 @@ class _AllReviewPageState extends ConsumerState<AllReviewPage> {
     final totalReviews = collage.totalReviews ?? 0;
     final distribution = collage.distribution ?? {};
     final averageRating = collage.rating?.toDouble() ?? 0.0;
-
+    final themeMode = ref.watch(themeProvider);
     return Scaffold(
-      backgroundColor: Color(0xff1B1B1B),
+      // backgroundColor: Color(0xff1B1B1B),
+      backgroundColor:
+          themeMode == ThemeMode.dark ? Color(0xff1B1B1B) : Color(0xFF008080),
       body: RefreshIndicator(
         onRefresh: () async {
           ref.invalidate(reviewProvider(widget.id));
@@ -68,7 +71,10 @@ class _AllReviewPageState extends ConsumerState<AllReviewPage> {
                       ),
                       child: Padding(
                         padding: EdgeInsets.only(left: 8.w),
-                        child: Icon(Icons.arrow_back_ios),
+                        child: Icon(
+                          Icons.arrow_back_ios,
+                          color: Colors.black,
+                        ),
                       ),
                     ),
                   ),
@@ -114,11 +120,8 @@ class _AllReviewPageState extends ConsumerState<AllReviewPage> {
             Container(
               padding: EdgeInsets.only(left: 10.w, right: 10.w),
               margin: EdgeInsets.only(
-                top: 30.h,
-                left: 20.w,
-                right: 20.w,
-              ),
-              height: 216.h,
+                  top: 30.h, left: 20.w, right: 20.w, bottom: 10.h),
+              height: 220.h,
               width: double.infinity,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20.r),
@@ -232,7 +235,9 @@ class _AllReviewPageState extends ConsumerState<AllReviewPage> {
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: themeMode == ThemeMode.dark
+                      ? Colors.white
+                      : Color(0xff1B1B1B),
                   borderRadius: BorderRadius.only(
                     topRight: Radius.circular(30.r),
                     topLeft: Radius.circular(30).r,
@@ -260,8 +265,12 @@ class _AllReviewPageState extends ConsumerState<AllReviewPage> {
                                 return Container(
                                   margin: EdgeInsets.only(bottom: 20.h),
                                   decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(20.r),
-                                      color: Color(0xFFF1F2F6)),
+                                    borderRadius: BorderRadius.circular(20.r),
+                                    // color: Color(0xFFF1F2F6),
+                                    color: themeMode == ThemeMode.dark
+                                        ? Color(0xffF1F2F6)
+                                        : Color(0xFF008080),
+                                  ),
                                   child: Padding(
                                     padding: EdgeInsets.all(16.w),
                                     child: Column(
@@ -272,7 +281,10 @@ class _AllReviewPageState extends ConsumerState<AllReviewPage> {
                                           children: [
                                             Icon(
                                               Icons.star,
-                                              color: const Color(0xff008080),
+                                              color:
+                                                  themeMode == ThemeMode.light
+                                                      ? Color(0xffDEDDEC)
+                                                      : Color(0xFF008080),
                                               size: 16.sp,
                                             ),
                                             SizedBox(width: 5.w),
@@ -281,7 +293,10 @@ class _AllReviewPageState extends ConsumerState<AllReviewPage> {
                                               style: GoogleFonts.roboto(
                                                 fontSize: 14.sp,
                                                 fontWeight: FontWeight.w600,
-                                                color: Colors.black,
+                                                color:
+                                                    themeMode == ThemeMode.light
+                                                        ? Color(0xffDEDDEC)
+                                                        : Color(0xFF666666),
                                               ),
                                             ),
                                           ],
@@ -291,7 +306,9 @@ class _AllReviewPageState extends ConsumerState<AllReviewPage> {
                                           review.description ?? '',
                                           style: GoogleFonts.roboto(
                                             fontSize: 16.sp,
-                                            color: const Color(0xff666666),
+                                            color: themeMode == ThemeMode.light
+                                                ? Color(0xffDEDDEC)
+                                                : Color(0xFF666666),
                                           ),
                                         ),
                                         SizedBox(height: 3.h),
@@ -299,7 +316,9 @@ class _AllReviewPageState extends ConsumerState<AllReviewPage> {
                                           "Posted on ${review.createdAt?.toString().split(' ')[0] ?? ''}",
                                           style: GoogleFonts.roboto(
                                             fontSize: 14.sp,
-                                            color: Colors.grey,
+                                            color: themeMode == ThemeMode.light
+                                                ? Color(0xffDEDDEC)
+                                                : Color(0xFF666666),
                                           ),
                                         ),
                                       ],

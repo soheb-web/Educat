@@ -2,6 +2,7 @@ import 'dart:core';
 import 'dart:developer';
 import 'dart:io';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:educationapp/coreFolder/Controller/themeController.dart';
 import 'package:educationapp/coreFolder/network/api.state.dart';
 import 'package:educationapp/coreFolder/utils/preety.dio.dart';
 import 'package:educationapp/main.dart';
@@ -19,23 +20,24 @@ import 'package:hive/hive.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-class IdPage extends StatefulWidget {
+class IdPage extends ConsumerStatefulWidget {
   const IdPage({super.key});
 
   @override
-  State<IdPage> createState() => _IdPageState();
+  ConsumerState<IdPage> createState() => _IdPageState();
 }
 
-class _IdPageState extends State<IdPage> {
+class _IdPageState extends ConsumerState<IdPage> {
   @override
   Widget build(BuildContext context) {
+    final themeMode = ref.watch(themeProvider);
     return Scaffold(
       body: Container(
         height: 956,
         width: 440,
         decoration: BoxDecoration(
-          color: Colors.white,
-        ),
+            color:
+                themeMode == ThemeMode.dark ? Colors.white : Color(0xFF1B1B1B)),
         child: Stack(
           alignment: AlignmentDirectional.topStart,
           children: [
@@ -154,6 +156,7 @@ class _IdBodyState extends ConsumerState<IdBody> {
   @override
   Widget build(BuildContext context) {
     final formData = ref.watch(formDataProvider);
+    final themeMode = ref.watch(themeProvider);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -180,9 +183,12 @@ class _IdBodyState extends ConsumerState<IdBody> {
           child: Text(
             formData.userType == "Student" ? "Student ID" : "Professional ID",
             style: GoogleFonts.inter(
-                fontSize: 25.sp,
-                fontWeight: FontWeight.w600,
-                color: Colors.black),
+              fontSize: 25.sp,
+              fontWeight: FontWeight.w600,
+              color: themeMode == ThemeMode.dark
+                  ? Color(0xFF1B1B1B)
+                  : Colors.white,
+            ),
           ),
         ),
         SizedBox(
@@ -225,7 +231,9 @@ class _IdBodyState extends ConsumerState<IdBody> {
                               style: GoogleFonts.inter(
                                   fontSize: 15.sp,
                                   fontWeight: FontWeight.w400,
-                                  color: Color(0xFF4D4D4D)),
+                                  color: themeMode == ThemeMode.dark
+                                      ? Color(0xFF1B1B1B)
+                                      : Colors.white),
                             )
                           ],
                         )
@@ -360,7 +368,7 @@ class FormDataNotifier extends StateNotifier<FromDataMode> {
     state = state.copyWith(phoneNumber: phone);
   }
 
- // void setDOB(String dob) => state = state.copyWith(dob: dob);
+  // void setDOB(String dob) => state = state.copyWith(dob: dob);
 
   void setUserType(String type) => state = state.copyWith(userType: type);
 
@@ -389,7 +397,7 @@ class FormDataNotifier extends StateNotifier<FromDataMode> {
         state.phoneNumber ?? "",
         state.password ?? "",
         state.confirmPass ?? "",
-       // state.dob ?? "",
+        // state.dob ?? "",
         state.userType ?? "",
         state.serviceType ?? "",
         // profileFile,

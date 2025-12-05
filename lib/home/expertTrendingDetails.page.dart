@@ -1,4 +1,5 @@
 import 'package:educationapp/coreFolder/Controller/profileController.dart';
+import 'package:educationapp/coreFolder/Controller/themeController.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -18,7 +19,7 @@ class _ExpertTrendingDetailsPageState
   @override
   Widget build(BuildContext context) {
     final profileAsync = ref.watch(profileProvider(widget.id));
-
+    final themeMode = ref.watch(themeProvider);
     return Scaffold(
         body: profileAsync.when(
       data: (profile) => SingleChildScrollView(
@@ -32,7 +33,9 @@ class _ExpertTrendingDetailsPageState
                   color: const Color(0xff008080),
                 ),
                 Container(
-                  color: Colors.white,
+                  color: themeMode == ThemeMode.light
+                      ? Color(0xFF1B1B1B)
+                      : Colors.white,
                   child: Container(
                     width: double.infinity,
                     margin: EdgeInsets.only(top: 100.h),
@@ -46,7 +49,9 @@ class _ExpertTrendingDetailsPageState
                           style: GoogleFonts.roboto(
                             fontSize: 24.sp,
                             fontWeight: FontWeight.w600,
-                            color: Colors.black,
+                            color: themeMode == ThemeMode.dark
+                                ? Color(0xFF1B1B1B)
+                                : Colors.white,
                           ),
                         ),
                         Text(
@@ -272,7 +277,9 @@ class _ExpertTrendingDetailsPageState
                                     style: GoogleFonts.roboto(
                                       fontSize: 20.sp,
                                       fontWeight: FontWeight.w600,
-                                      color: Colors.black,
+                                      color: themeMode == ThemeMode.dark
+                                          ? Color(0xFF1B1B1B)
+                                          : Colors.white,
                                     ),
                                   ),
                                   SizedBox(height: 3.h),
@@ -323,7 +330,9 @@ class _ExpertTrendingDetailsPageState
                                         style: GoogleFonts.roboto(
                                           fontSize: 20.sp,
                                           fontWeight: FontWeight.w600,
-                                          color: Colors.black,
+                                          color: themeMode == ThemeMode.dark
+                                              ? Color(0xFF1B1B1B)
+                                              : Colors.white,
                                         ),
                                       ),
                                       SizedBox(height: 5.h),
@@ -364,7 +373,9 @@ class _ExpertTrendingDetailsPageState
                                     style: GoogleFonts.roboto(
                                       fontSize: 20.sp,
                                       fontWeight: FontWeight.w600,
-                                      color: Colors.black,
+                                      color: themeMode == ThemeMode.dark
+                                          ? Color(0xFF1B1B1B)
+                                          : Colors.white,
                                     ),
                                   ),
                                   SizedBox(height: 10.h),

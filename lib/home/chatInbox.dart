@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:educationapp/coreFolder/Controller/chatController.dart';
+import 'package:educationapp/coreFolder/Controller/themeController.dart';
 import 'package:educationapp/home/chating.page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -26,8 +27,11 @@ class _ChatinboxState extends ConsumerState<Chatinbox> {
     var box = Hive.box("userdata");
     var id = box.get("userid");
     final inboxData = ref.watch(inboxProvider(id.toString()));
+    final themeMode = ref.watch(themeProvider);
     return Scaffold(
-      backgroundColor: Color(0xFF1B1B1B),
+      // backgroundColor: Color(0xFF1B1B1B),
+      backgroundColor:
+          themeMode == ThemeMode.dark ? Color(0xFF1B1B1B) : Color(0xFF008080),
       body: RefreshIndicator(
         onRefresh: () async {
           ref.invalidate(inboxProvider(id.toString()));
@@ -55,32 +59,36 @@ class _ChatinboxState extends ConsumerState<Chatinbox> {
                     SizedBox(
                       width: 30.w,
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: Container(
-                        height: 44.h,
-                        width: 44.w,
-                        decoration: BoxDecoration(
-                            color: Color(0xFF1B1B1B),
-                            borderRadius: BorderRadius.circular(500.r)),
-                        // child: Center(
-                        //   child: Icon(
-                        //     Icons.arrow_back_ios,
-                        //     color: Color.fromARGB(255, 248, 248, 248),
-                        //     size: 15.w,
-                        //   ),
-                        // ),
-                      ),
-                    ),
+                    // GestureDetector(
+                    //   onTap: () {
+                    //     Navigator.pop(context);
+                    //   },
+                    //   child: Container(
+                    //     height: 44.h,
+                    //     width: 44.w,
+                    //     decoration: BoxDecoration(
+                    //         color: Color(0xFF1B1B1B),
+                    //         borderRadius: BorderRadius.circular(500.r)),
+                    //     // child: Center(
+                    //     //   child: Icon(
+                    //     //     Icons.arrow_back_ios,
+                    //     //     color: Color.fromARGB(255, 248, 248, 248),
+                    //     //     size: 15.w,
+                    //     //   ),
+                    //     // ),
+                    //   ),
+                    // ),
                     Spacer(),
                     Text(
                       "Chat History",
                       style: GoogleFonts.roboto(
-                          fontSize: 18.w,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xff008080)),
+                        fontSize: 18.w,
+                        fontWeight: FontWeight.w600,
+                        //color: Color(0xff008080),
+                        color: themeMode == ThemeMode.dark
+                            ? Colors.white
+                            : Colors.white,
+                      ),
                     ),
                     Spacer(),
                     InkWell(
@@ -169,7 +177,10 @@ class _ChatinboxState extends ConsumerState<Chatinbox> {
                     width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.height,
                     decoration: BoxDecoration(
-                        color: Colors.white,
+                        //color: Colors.white,
+                        color: themeMode == ThemeMode.dark
+                            ? Colors.white
+                            : Color(0xFF1B1B1B),
                         borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(40.r),
                             topRight: Radius.circular(40.r))),
@@ -194,9 +205,13 @@ class _ChatinboxState extends ConsumerState<Chatinbox> {
                                               ? "No recent messages"
                                               : "No chats found for '$searchQuery'",
                                           style: GoogleFonts.inter(
-                                              fontSize: 15.sp,
-                                              fontWeight: FontWeight.w300,
-                                              color: Color(0xff666666)),
+                                            fontSize: 15.sp,
+                                            fontWeight: FontWeight.w300,
+                                            // color: Color(0xff666666),
+                                            color: themeMode == ThemeMode.dark
+                                                ? Color(0xff666666)
+                                                : Colors.white,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -236,7 +251,10 @@ class _ChatinboxState extends ConsumerState<Chatinbox> {
                                             bottom: 15.h,
                                             top: 10.h),
                                         decoration: BoxDecoration(
-                                            color: Color(0xFFFFFFFF),
+                                            //color: Color(0xFFFFFFFF),
+                                            color: themeMode == ThemeMode.dark
+                                                ? Colors.white
+                                                : Color(0xFF008080),
                                             border:
                                                 Border.all(color: Colors.grey),
                                             borderRadius:
@@ -290,11 +308,16 @@ class _ChatinboxState extends ConsumerState<Chatinbox> {
                                                         "no name",
                                                     //  "Mike Pena",
                                                     style: GoogleFonts.roboto(
-                                                        fontSize: 17.w,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        color:
-                                                            Color(0xff1B1B1B)),
+                                                      fontSize: 17.w,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      // color:
+                                                      //     Color(0xff1B1B1B),
+                                                      color: themeMode ==
+                                                              ThemeMode.dark
+                                                          ? Colors.black
+                                                          : Colors.white,
+                                                    ),
                                                   ),
                                                   Text(
                                                     //"You need to go to Tempa University",
@@ -302,11 +325,16 @@ class _ChatinboxState extends ConsumerState<Chatinbox> {
                                                             .lastMessage ??
                                                         "",
                                                     style: GoogleFonts.roboto(
-                                                        fontSize: 15.w,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        color:
-                                                            Color(0xff666666)),
+                                                      fontSize: 15.w,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      // color:
+                                                      //     Color(0xff666666),
+                                                      color: themeMode ==
+                                                              ThemeMode.dark
+                                                          ? Colors.black
+                                                          : Colors.white,
+                                                    ),
                                                   ),
                                                 ],
                                               ),

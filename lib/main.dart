@@ -113,13 +113,10 @@
 //   return FormDataNotifier();
 // });
 
-
-
-
-
 import 'dart:async';
 import 'dart:developer';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:educationapp/coreFolder/Controller/themeController.dart';
 import 'package:educationapp/coreFolder/utils/globalroute.key.dart';
 import 'package:educationapp/firebase_options.dart';
 import 'package:educationapp/home/home.page.dart';
@@ -152,14 +149,14 @@ void main() async {
   runApp(const ProviderScope(child: MyApp()));
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  ConsumerState<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends ConsumerState<MyApp> {
   String? token;
   late StreamSubscription<List<ConnectivityResult>> _subscription;
 
@@ -255,6 +252,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    final themeModeProvider = ref.watch(themeProvider);
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Color(0xFF1B1B1B),
@@ -268,6 +266,9 @@ class _MyAppState extends State<MyApp> {
           splitScreenMode: true,
           builder: (_, __) {
             return MaterialApp(
+              themeMode: themeModeProvider,
+              theme: ThemeData.light(), // light
+              darkTheme: ThemeData.dark(), // dark
               navigatorKey: navigatorKey,
               debugShowCheckedModeBanner: false,
               home: token == null ? const SplashScreen() : HomePage(0),

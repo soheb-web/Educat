@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:educationapp/coreFolder/Controller/reviewCategoryController.dart';
+import 'package:educationapp/coreFolder/Controller/themeController.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -75,8 +76,12 @@ class _SaveReviewPageState extends ConsumerState<SaveReviewPage> {
 
     final reviewAsync = ref.watch(reviewProvider(widget.id));
 
+    final themeMode = ref.watch(themeProvider);
+
     return Scaffold(
-      backgroundColor: Color(0xff1B1B1B),
+      ///backgroundColor: Color(0xff1B1B1B),
+      backgroundColor:
+          themeMode == ThemeMode.dark ? Color(0xff1B1B1B) : Color(0xFF008080),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -132,7 +137,10 @@ class _SaveReviewPageState extends ConsumerState<SaveReviewPage> {
                 right: 20.w,
               ),
               decoration: BoxDecoration(
-                color: Colors.white,
+                //  color: Colors.white,
+                color: themeMode == ThemeMode.dark
+                    ? Colors.white
+                    : Color(0xff1B1B1B),
                 borderRadius: BorderRadius.only(
                   topRight: Radius.circular(30.r),
                   topLeft: Radius.circular(30.r),
@@ -145,9 +153,12 @@ class _SaveReviewPageState extends ConsumerState<SaveReviewPage> {
                     Text(
                       "Fill out the details",
                       style: GoogleFonts.inter(
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black),
+                        fontSize: 20.sp,
+                        fontWeight: FontWeight.w600,
+                        color: themeMode == ThemeMode.dark
+                            ? Color(0xff1B1B1B)
+                            : Colors.white,
+                      ),
                     ),
                     SizedBox(
                       height: 10.h,
@@ -175,13 +186,26 @@ class _SaveReviewPageState extends ConsumerState<SaveReviewPage> {
                       height: 15.h,
                     ),
                     DropdownButtonFormField(
+                      dropdownColor: themeMode == ThemeMode.dark
+                          ? Colors.white
+                          : Colors.black,
+                      // 🔥 FIX: icon colors
+                      iconEnabledColor: themeMode == ThemeMode.dark
+                          ? Colors.black
+                          : Colors.white,
+                      iconDisabledColor: themeMode == ThemeMode.dark
+                          ? Colors.black
+                          : Colors.white,
+
                       value: collage,
                       decoration: InputDecoration(
                         labelText: "Select College Feature",
                         labelStyle: GoogleFonts.roboto(
                           fontSize: 13.w,
                           fontWeight: FontWeight.w400,
-                          color: const Color(0xFF4D4D4D),
+                          color: themeMode == ThemeMode.dark
+                              ? Colors.black
+                              : Colors.white,
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30.sp),
@@ -192,7 +216,11 @@ class _SaveReviewPageState extends ConsumerState<SaveReviewPage> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30.sp),
-                          borderSide: const BorderSide(color: Colors.black),
+                          borderSide: BorderSide(
+                            color: themeMode == ThemeMode.dark
+                                ? Color(0xFF4D4D4D)
+                                : Colors.white,
+                          ),
                         ),
                       ),
                       items: collageFeatureList.map(
@@ -202,9 +230,12 @@ class _SaveReviewPageState extends ConsumerState<SaveReviewPage> {
                               child: Text(
                                 e,
                                 style: GoogleFonts.roboto(
-                                    fontSize: 15.sp,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.black),
+                                  fontSize: 15.sp,
+                                  fontWeight: FontWeight.w500,
+                                  color: themeMode == ThemeMode.dark
+                                      ? Color(0xFF4D4D4D)
+                                      : Colors.white,
+                                ),
                               ));
                         },
                       ).toList(),
@@ -222,9 +253,12 @@ class _SaveReviewPageState extends ConsumerState<SaveReviewPage> {
                     Text(
                       "Description",
                       style: GoogleFonts.roboto(
-                          fontSize: 15.sp,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black),
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w500,
+                        color: themeMode == ThemeMode.dark
+                            ? Colors.black
+                            : Colors.white,
+                      ),
                     ),
                     SizedBox(
                       height: 10.h,
@@ -232,6 +266,11 @@ class _SaveReviewPageState extends ConsumerState<SaveReviewPage> {
                     TextField(
                       maxLines: 5,
                       controller: _descriptionController,
+                      style: TextStyle(
+                        color: themeMode == ThemeMode.dark
+                            ? Color(0xFF4D4D4D)
+                            : Colors.white,
+                      ),
                       decoration: InputDecoration(
                           contentPadding: EdgeInsets.only(
                               left: 15.w, right: 15.w, top: 10.h, bottom: 10.h),
@@ -242,15 +281,35 @@ class _SaveReviewPageState extends ConsumerState<SaveReviewPage> {
                               )),
                           focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20.r),
-                              borderSide: BorderSide(color: Colors.black))),
+                              borderSide: BorderSide(
+                                color: themeMode == ThemeMode.dark
+                                    ? Color(0xFF4D4D4D)
+                                    : Colors.white,
+                              ))),
                     ),
                     SizedBox(
                       height: 20.h,
                     ),
                     ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: Size(double.infinity, 60.h),
-                        backgroundColor: const Color(0xffA8E6CF),
+                      style: ButtonStyle(
+                        minimumSize: MaterialStateProperty.all(
+                            Size(double.infinity, 60.h)),
+                        backgroundColor:
+                            MaterialStateProperty.resolveWith<Color>(
+                          (states) {
+                            // When button is disabled
+                            if (states.contains(MaterialState.disabled)) {
+                              return themeMode == ThemeMode.dark
+                                  ? const Color(0xffA8E6CF).withOpacity(0.4)
+                                  : Colors.white.withOpacity(0.4);
+                            }
+
+                            // When button is enabled
+                            return themeMode == ThemeMode.dark
+                                ? const Color(0xffA8E6CF)
+                                : Colors.white;
+                          },
+                        ),
                       ),
                       onPressed: selectedRating == 0 || _isLoading
                           ? null
@@ -305,7 +364,9 @@ class _SaveReviewPageState extends ConsumerState<SaveReviewPage> {
                               width: 25,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2.w,
-                                color: Colors.black,
+                                color: themeMode == ThemeMode.dark
+                                    ? Colors.black
+                                    : Colors.white,
                               ),
                             )
                           : Text(
@@ -313,7 +374,9 @@ class _SaveReviewPageState extends ConsumerState<SaveReviewPage> {
                               style: GoogleFonts.roboto(
                                 fontSize: 14.sp,
                                 fontWeight: FontWeight.w600,
-                                color: const Color(0xff1B1B1B),
+                                color: themeMode == ThemeMode.dark
+                                    ? Colors.black
+                                    : Colors.black,
                               ),
                             ),
                     ),
@@ -325,7 +388,9 @@ class _SaveReviewPageState extends ConsumerState<SaveReviewPage> {
                       style: GoogleFonts.roboto(
                           fontSize: 20.sp,
                           fontWeight: FontWeight.w600,
-                          color: Color(0xFF1B1B1B),
+                          color: themeMode == ThemeMode.dark
+                              ? Colors.black
+                              : Colors.white,
                           letterSpacing: -1),
                     ),
                     reviewAsync.when(
@@ -336,7 +401,9 @@ class _SaveReviewPageState extends ConsumerState<SaveReviewPage> {
                               "No reviews yet",
                               style: GoogleFonts.roboto(
                                 fontSize: 14.sp,
-                                color: const Color(0xff666666),
+                                color: themeMode == ThemeMode.dark
+                                    ? Colors.black
+                                    : Colors.white,
                               ),
                             ),
                           );
@@ -364,7 +431,9 @@ class _SaveReviewPageState extends ConsumerState<SaveReviewPage> {
                                     style: GoogleFonts.inter(
                                         fontSize: 16.sp,
                                         fontWeight: FontWeight.w400,
-                                        color: Colors.black,
+                                        color: themeMode == ThemeMode.dark
+                                            ? Colors.black
+                                            : Colors.white,
                                         letterSpacing: -1),
                                   ),
                                   Spacer(),

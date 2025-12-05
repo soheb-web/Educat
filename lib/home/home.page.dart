@@ -4,6 +4,7 @@ import 'package:educationapp/Profile/profileScreen.dart';
 import 'package:educationapp/complete/complete.page.dart';
 import 'package:educationapp/coreFolder/Controller/getRequestStudentController.dart';
 import 'package:educationapp/coreFolder/Controller/myListingController.dart';
+import 'package:educationapp/coreFolder/Controller/themeController.dart';
 import 'package:educationapp/coreFolder/Controller/userProfileController.dart';
 import 'package:educationapp/coreFolder/Model/sendRequestBodyModel.dart';
 import 'package:educationapp/coreFolder/network/api.state.dart';
@@ -130,13 +131,18 @@ class _HomePageState extends ConsumerState<HomePage> {
     // 2. Hive StateProvider से डेटा पढ़ें (यह अपडेट होने पर UI को री-रेंडर करेगा)
     final profile = ref.watch(hiveProfileProvider);
 
+    final themeMode = ref.watch(themeProvider);
+
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Container(
         height: MediaQuery.of(context).size.height,
         width: 280.w,
         decoration: BoxDecoration(
-            color: Colors.white, borderRadius: BorderRadius.circular(30.r)),
+            // color: Colors.white,
+            color:
+                themeMode == ThemeMode.dark ? Colors.white : Color(0xFF1B1B1B),
+            borderRadius: BorderRadius.circular(30.r)),
         child: Column(
           children: [
             Container(
@@ -164,12 +170,15 @@ class _HomePageState extends ConsumerState<HomePage> {
                         color: Colors.white,
                         shape: BoxShape.circle,
                       ),
-                      child: const Center(
+                      child: Center(
                         child: Padding(
                           padding: EdgeInsets.only(left: 8),
                           child: Icon(
                             Icons.arrow_back_ios,
                             size: 20,
+                            color: themeMode == ThemeMode.dark
+                                ? Colors.black
+                                : null,
                           ),
                         ),
                       ),
@@ -276,13 +285,19 @@ class _HomePageState extends ConsumerState<HomePage> {
                         builder: (context) => const FindMentorPage(),
                       ));
                 },
-                leading: Image.asset("assets/drawer1.png"),
+                leading: Image.asset(
+                  "assets/drawer1.png",
+                  color: themeMode == ThemeMode.light ? Colors.white : null,
+                ),
                 title: Text(
                   "Find a Mentor",
                   style: GoogleFonts.roboto(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w600,
-                    color: const Color.fromARGB(255, 27, 27, 27),
+                    //color: const Color.fromARGB(255, 27, 27, 27),
+                    color: themeMode == ThemeMode.light
+                        ? Colors.white
+                        : Color(0xFF1B1B1B),
                   ),
                 ),
               ),
@@ -295,13 +310,19 @@ class _HomePageState extends ConsumerState<HomePage> {
                         builder: (context) => FindSkillPage(),
                       ));
                 },
-                leading: Image.asset("assets/drawer2.png"),
+                leading: Image.asset(
+                  "assets/drawer2.png",
+                  color: themeMode == ThemeMode.light ? Colors.white : null,
+                ),
                 title: Text(
                   "Trending Skills",
                   style: GoogleFonts.roboto(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w600,
-                    color: const Color.fromARGB(255, 27, 27, 27),
+                    //color: const Color.fromARGB(255, 27, 27, 27),
+                    color: themeMode == ThemeMode.light
+                        ? Colors.white
+                        : Color(0xFF1B1B1B),
                   ),
                 ),
               ),
@@ -314,13 +335,19 @@ class _HomePageState extends ConsumerState<HomePage> {
                         builder: (context) => const FindCollegePage(),
                       ));
                 },
-                leading: Image.asset("assets/drawer3.png"),
+                leading: Image.asset(
+                  "assets/drawer3.png",
+                  color: themeMode == ThemeMode.light ? Colors.white : null,
+                ),
                 title: Text(
                   "Explore Colleges",
                   style: GoogleFonts.roboto(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w600,
-                    color: const Color.fromARGB(255, 27, 27, 27),
+                    // color: const Color.fromARGB(255, 27, 27, 27),
+                    color: themeMode == ThemeMode.light
+                        ? Colors.white
+                        : Color(0xFF1B1B1B),
                   ),
                 ),
               ),
@@ -333,13 +360,19 @@ class _HomePageState extends ConsumerState<HomePage> {
                         builder: (context) => const FindCompanyPage(),
                       ));
                 },
-                leading: Image.asset("assets/drawer4.png"),
+                leading: Image.asset(
+                  "assets/drawer4.png",
+                  color: themeMode == ThemeMode.light ? Colors.white : null,
+                ),
                 title: Text(
                   "Explore Companies",
                   style: GoogleFonts.roboto(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w600,
-                    color: const Color.fromARGB(255, 27, 27, 27),
+                    // color: const Color.fromARGB(255, 27, 27, 27),
+                    color: themeMode == ThemeMode.light
+                        ? Colors.white
+                        : Color(0xFF1B1B1B),
                   ),
                 ),
               ),
@@ -352,27 +385,43 @@ class _HomePageState extends ConsumerState<HomePage> {
                         builder: (context) => WalletPage(),
                       ));
                 },
-                leading: Image.asset("assets/drawer5.png"),
+                leading: Image.asset(
+                  "assets/drawer5.png",
+                  color: themeMode == ThemeMode.light ? Colors.white : null,
+                ),
                 title: Text(
                   "Wallet",
                   style: GoogleFonts.roboto(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w600,
-                    color: const Color.fromARGB(255, 27, 27, 27),
+                    // color: const Color.fromARGB(255, 27, 27, 27),
+                    color: themeMode == ThemeMode.light
+                        ? Colors.white
+                        : Color(0xFF1B1B1B),
                   ),
                 ),
               ),
             ListTile(
               onTap: () {
-                // Fluttertoast.showToast(msg: "Dark Mode toggle not implemented");
+                Fluttertoast.showToast(
+                    msg: themeMode == ThemeMode.light
+                        ? "Light Mode On"
+                        : "Dark Mode On");
+                ref.read(themeProvider.notifier).toggleTheme();
               },
-              leading: Image.asset("assets/drawer6.png"),
+              leading: Image.asset(
+                "assets/drawer6.png",
+                color: themeMode == ThemeMode.light ? Colors.white : null,
+              ),
               title: Text(
-                "Dark Mode",
+                themeMode == ThemeMode.light ? "Light Mode" : "Dark Mode",
                 style: GoogleFonts.roboto(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w600,
-                  color: const Color.fromARGB(255, 27, 27, 27),
+                  // color: const Color.fromARGB(255, 27, 27, 27),
+                  color: themeMode == ThemeMode.light
+                      ? Colors.white
+                      : Color(0xFF1B1B1B),
                 ),
               ),
             ),
@@ -384,25 +433,37 @@ class _HomePageState extends ConsumerState<HomePage> {
                       builder: (context) => SettingProfilePage(),
                     ));
               },
-              leading: Image.asset("assets/drawer7.png"),
+              leading: Image.asset(
+                "assets/drawer7.png",
+                color: themeMode == ThemeMode.light ? Colors.white : null,
+              ),
               title: Text(
                 "Settings",
                 style: GoogleFonts.roboto(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w600,
-                  color: const Color.fromARGB(255, 27, 27, 27),
+                  //  color: const Color.fromARGB(255, 27, 27, 27),
+                  color: themeMode == ThemeMode.light
+                      ? Colors.white
+                      : Color(0xFF1B1B1B),
                 ),
               ),
             ),
             const Divider(),
             ListTile(
-              leading: Image.asset("assets/logoutIcon.png"),
+              leading: Image.asset(
+                "assets/logoutIcon.png",
+                color: themeMode == ThemeMode.light ? Colors.white : null,
+              ),
               title: Text(
                 "Logout",
                 style: GoogleFonts.roboto(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w600,
-                  color: const Color.fromARGB(255, 27, 27, 27),
+                  //color: const Color.fromARGB(255, 27, 27, 27),
+                  color: themeMode == ThemeMode.light
+                      ? Colors.white
+                      : Color(0xFF1B1B1B),
                 ),
               ),
               onTap: () async {

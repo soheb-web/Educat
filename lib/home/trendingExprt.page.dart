@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:educationapp/coreFolder/Controller/expertTrendingSkillController.dart';
+import 'package:educationapp/coreFolder/Controller/themeController.dart';
 import 'package:educationapp/home/MentorDetail.dart';
 import 'package:educationapp/home/expertTrendingDetails.page.dart';
 import 'package:flutter/cupertino.dart';
@@ -21,10 +22,14 @@ class _TrendingExprtPageState extends ConsumerState<TrendingExprtPage> {
   String searchQuery = "";
   @override
   Widget build(BuildContext context) {
+    final themeMode = ref.watch(themeProvider);
     final expertTrendingProvider =
         ref.watch(expertTrendingSkillController(widget.id.toString()));
     return Scaffold(
-        backgroundColor: Color(0xFF1B1B1B),
+        // backgroundColor: Color(0xFF1B1B1B),
+        backgroundColor: themeMode == ThemeMode.dark
+            ? const Color(0xFF1B1B1B)
+            : Color(0xFF008080),
         body: expertTrendingProvider.when(
           data: (snap) {
             final filteredExperts = snap.experts.where((expert) {
@@ -131,8 +136,9 @@ class _TrendingExprtPageState extends ConsumerState<TrendingExprtPage> {
                     padding: EdgeInsets.only(
                         left: 15.w, right: 15.w, top: 15.h, bottom: 15.h),
                     decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20.r),
-                        color: Color(0xFF262626)),
+                      borderRadius: BorderRadius.circular(20.r),
+                      color: Color(0xFF262626),
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -198,7 +204,10 @@ class _TrendingExprtPageState extends ConsumerState<TrendingExprtPage> {
                         topLeft: Radius.circular(30.r),
                         topRight: Radius.circular(30.r),
                       ),
-                      color: Colors.white,
+                      // color: Colors.white,
+                      color: themeMode == ThemeMode.dark
+                          ? Colors.white
+                          : const Color(0xFF1B1B1B),
                     ),
                     child: SingleChildScrollView(
                       child: Padding(
@@ -214,7 +223,10 @@ class _TrendingExprtPageState extends ConsumerState<TrendingExprtPage> {
                               style: GoogleFonts.inter(
                                 fontSize: 20.sp,
                                 fontWeight: FontWeight.w600,
-                                color: Colors.black,
+                                // color: Colors.black,
+                                color: themeMode == ThemeMode.dark
+                                    ? const Color(0xFF1B1B1B)
+                                    : Colors.white,
                               ),
                             ),
                             if (filteredExperts.isEmpty)
@@ -224,8 +236,11 @@ class _TrendingExprtPageState extends ConsumerState<TrendingExprtPage> {
                                   child: Text(
                                     "No experts found.",
                                     style: GoogleFonts.inter(
-                                        fontSize: 16.sp,
-                                        color: Colors.grey.shade600),
+                                      fontSize: 16.sp,
+                                      color: themeMode == ThemeMode.dark
+                                          ? const Color(0xFF1B1B1B)
+                                          : Colors.white,
+                                    ),
                                   ),
                                 ),
                               )
