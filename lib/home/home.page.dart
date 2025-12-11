@@ -548,6 +548,9 @@ class _HomePageContentState extends ConsumerState<HomePageContent> {
     }
 
     return RefreshIndicator(
+      backgroundColor:
+          themeMode == ThemeMode.dark ? Colors.white : Colors.black,
+      color: themeMode == ThemeMode.dark ? Colors.black : Colors.white,
       onRefresh: () async {
         ref.invalidate(getRequestStudentController);
         ref.invalidate(getHomeStudentDataProvider);
