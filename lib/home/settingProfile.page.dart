@@ -31,7 +31,7 @@ class _SettingProfilePageState extends ConsumerState<SettingProfilePage> {
     var box = Hive.box('userdata');
     final profileData = box.get('profile');
     final fullName = profileData['full_name'].toString();
-    final dob = profileData['dob']?.toString() ?? "No Date of Birth";
+    final dob = profileData['dob']?.toString() ?? "";
     fullNameController = TextEditingController(text: fullName);
     dobController = TextEditingController(text: dob);
   }
@@ -87,7 +87,6 @@ class _SettingProfilePageState extends ConsumerState<SettingProfilePage> {
                     ),
                   ),
                   SizedBox(height: 20.h),
-
                   Center(
                     child: Text(
                       "Password Change",
