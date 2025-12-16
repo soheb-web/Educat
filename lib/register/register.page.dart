@@ -355,64 +355,6 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
               },
             ),
           ),
-          // Padding(
-          //   padding: EdgeInsets.only(left: 28.w, right: 28.w, top: 10.h),
-          //   child: TextFormField(
-          //     onTap: () {
-          //       pickDate();
-          //     },
-          //     controller: dateController,
-          //     readOnly: true,
-          //     decoration: InputDecoration(
-          //       contentPadding:
-          //           EdgeInsets.only(left: 10.w, top: 20.h, bottom: 20.h),
-          //       focusedBorder: OutlineInputBorder(
-          //         borderSide: const BorderSide(color: Colors.grey),
-          //         borderRadius: BorderRadius.circular(40.r),
-          //       ),
-          //       border: OutlineInputBorder(
-          //         borderSide: const BorderSide(color: Colors.grey),
-          //         borderRadius: BorderRadius.circular(40.r),
-          //       ),
-          //       enabledBorder: OutlineInputBorder(
-          //         borderSide: const BorderSide(color: Colors.grey),
-          //         borderRadius: BorderRadius.circular(40.r),
-          //       ),
-          //       prefixIcon: Icon(
-          //         Icons.date_range_outlined,
-          //         color: Color(0xFFC8C8C8),
-          //       ),
-          //       hintText: "Date of Birth",
-          //       hintStyle: GoogleFonts.inter(
-          //         fontSize: 15.sp,
-          //         fontWeight: FontWeight.w600,
-          //         color: Color(0xFFC8C8C8),
-          //       ),
-          //     ),
-          //     validator: (value) {
-          //       if (value == null || value.isEmpty) {
-          //         return 'Please select your date of birth';
-          //       }
-          //       return null;
-          //     },
-          //   ),
-          // ),
-
-          // RegisterField(
-          //   onChange: (value) {
-          //     registerProviderData.setPassword(value);
-          //   },
-          //   controller: passwordController,
-          //   label: 'Password',
-          //   obscureText: true,
-          //   validator: (value) {
-          //     if (value!.isEmpty) return "Password is required";
-          //     if (value.length < 6)
-          //       return "Password must be at least 6 characters";
-          //     return null;
-          //   },
-          // ),
-
           Padding(
             padding: EdgeInsets.only(left: 30.w, right: 30.w, top: 10.h),
             child: Column(
@@ -477,7 +419,6 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
               ],
             ),
           ),
-
           Padding(
             padding: EdgeInsets.only(left: 30.w, right: 30.w, top: 10.h),
             child: Column(
@@ -542,70 +483,6 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
               ],
             ),
           ),
-          // RegisterField(
-          //   onChange: (value) {
-          //     registerProviderData.setConfriPassword(value);
-          //   },
-          //   controller: confirmPasswordController,
-          //   label: 'Confirm Password',
-          //   obscureText: true,
-          //   validator: (value) {
-          //     if (value!.isEmpty) return "Confirm Password is required";
-          //     if (value != passwordController.text) {
-          //       return "Passwords do not match";
-          //     }
-          //     return null;
-          //   },
-          // ),
-
-          // SizedBox(
-          //   height: 20.h,
-          // ),
-          // InkWell(
-          //   onTap: () {
-          //     showImage();
-          //   },
-          //   child: Center(
-          //     child: Container(
-          //       width: 380.w,
-          //       height: 220.h,
-          //       decoration: BoxDecoration(
-          //           borderRadius: BorderRadius.circular(20.r),
-          //           border: Border.all(color: Colors.grey)),
-          //       child: _image == null
-          //           ? Column(
-          //               crossAxisAlignment: CrossAxisAlignment.center,
-          //               mainAxisAlignment: MainAxisAlignment.center,
-          //               children: [
-          //                 Icon(
-          //                   Icons.upload_sharp,
-          //                   color: Color(0xFF008080),
-          //                   size: 30.sp,
-          //                 ),
-          //                 SizedBox(
-          //                   height: 10.h,
-          //                 ),
-          //                 Text(
-          //                   "Upload picture",
-          //                   style: GoogleFonts.inter(
-          //                       fontSize: 15.sp,
-          //                       fontWeight: FontWeight.w400,
-          //                       color: Color(0xFF4D4D4D)),
-          //                 )
-          //               ],
-          //             )
-          //           : ClipRRect(
-          //               borderRadius: BorderRadius.circular(20.r),
-          //               child: Image.file(
-          //                 _image!,
-          //                 fit: BoxFit.cover,
-          //                 width: 400.w,
-          //                 height: 220.h,
-          //               ),
-          //             ),
-          //     ),
-          //   ),
-          // ),
           SizedBox(height: 20.h),
           GestureDetector(
             onTap: buttonLoader
@@ -613,22 +490,9 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                 : () async {
                     if (_formKey.currentState!.validate()) {
                       setState(() {
-                        buttonLoader = true; // show loader
+                        buttonLoader = true;
                       });
                       try {
-                        // await Auth.register(
-                        //     emailController.text,
-                        //     passwordController.text,
-                        //     fullNameController.text,
-                        //     phoneController.text,
-                        //     formData.serviceType ?? "Opportunities",
-                        //     formData.userType ?? "Professional",
-                        //     context);
-                        // if (_image == null || _image!.path.isEmpty) {
-                        //   Fluttertoast.showToast(msg: "Please Select Picture");
-                        //   return;
-                        // }
-
                         final Notifier = ref.read(myFormDataProvider.notifier);
                         Notifier.setName(fullNameController.text);
                         Notifier.setEmail(emailController.text);
@@ -643,17 +507,15 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
 
                         //Notifier.setProfilePicture(_image!.path);
 
-                        await ref.read(myFormDataProvider.notifier).register();
+                        // await ref.read(myFormDataProvider.notifier).register();
 
-                        Fluttertoast.showToast(msg: "Register Successfull");
+                        //Fluttertoast.showToast(msg: "Register Successfull");
 
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          CupertinoPageRoute(
-                            builder: (context) => LoginPage(),
-                          ),
-                          (route) => false,
-                        );
+                        Navigator.push(
+                            context,
+                            CupertinoPageRoute(
+                              builder: (context) => IdPage(),
+                            ));
                       } on DioException catch (e, st) {
                         setState(() {
                           buttonLoader = false;

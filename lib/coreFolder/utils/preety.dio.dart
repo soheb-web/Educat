@@ -150,6 +150,7 @@
 //   return dio;
 // }
 
+
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:educationapp/home/noInternetScreen.dart';
@@ -323,7 +324,7 @@ Dio createDio() {
       requestBody: true,
       responseBody: true,
       requestHeader: true,
-      responseHeader: true,
+      responseHeader: false,
     ),
   );
 

@@ -60,7 +60,6 @@ class _ChatingPageState extends ConsumerState<ChatingPage>
 
     Future.microtask(() {
       ref.invalidate(chatHistoryController(widget.otherUesrid));
-      //  ref.read(markSeenController(widget.otherUesrid));
     });
 
     // Listen to incoming messages from start
@@ -68,7 +67,6 @@ class _ChatingPageState extends ConsumerState<ChatingPage>
       (data) {
         if (data is String) {
           _handleIncomingMessage(data);
-          // ref.read(markSeenController(widget.otherUesrid).future);
         }
       },
       onError: (error) {
@@ -160,7 +158,6 @@ class _ChatingPageState extends ConsumerState<ChatingPage>
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeOut,
         );
-        //ref.read(markSeenController(widget.otherUesrid));
       }
     });
   }

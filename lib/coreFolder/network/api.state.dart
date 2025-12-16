@@ -2,9 +2,11 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:educationapp/coreFolder/Model/blockBodyModel.dart';
 import 'package:educationapp/coreFolder/Model/blockListModel.dart';
+import 'package:educationapp/coreFolder/Model/getCreateListModel.dart';
 import 'package:educationapp/coreFolder/Model/getMentorReviewModel.dart';
 import 'package:educationapp/coreFolder/Model/getProfileUserModel.dart';
 import 'package:educationapp/coreFolder/Model/getStudentRequestResModel.dart';
+import 'package:educationapp/coreFolder/Model/listingBodyModel.dart';
 import 'package:educationapp/coreFolder/Model/login.body.model.dart';
 import 'package:educationapp/coreFolder/Model/login.rsponse.model.dart';
 import 'package:educationapp/coreFolder/Model/mentorReviewResModel.dart';
@@ -186,4 +188,10 @@ abstract class APIStateNetwork {
 
   @GET("/mentor-review/{id}")
   Future<GetmentorReviewModel> getmentorReview(@Path('id') String id);
+
+  @POST("/student-list")
+  Future<HttpResponse<dynamic>> createList(@Body() CreatelistBodyModel body);
+
+  @GET("/student-list")
+  Future<GetcreatelistModel> getCreateList();
 }

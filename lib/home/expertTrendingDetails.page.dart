@@ -449,6 +449,47 @@ class _ExpertTrendingDetailsPageState
                             ],
                           ),
                         ),
+                        SizedBox(
+                          height: 10.h,
+                        ),
+                        Divider(),
+                        Container(
+                          margin: EdgeInsets.only(left: 20.w, top: 15.h),
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Language",
+                                      style: GoogleFonts.roboto(
+                                        fontSize: 20.sp,
+                                        fontWeight: FontWeight.w600,
+                                        color: themeMode == ThemeMode.dark
+                                            ? Color(0xFF1B1B1B)
+                                            : Colors.white,
+                                      ),
+                                    ),
+                                    SizedBox(height: 10.h),
+                                    Text(
+                                      (profile.languageKnown == null ||
+                                              profile.languageKnown!.isEmpty)
+                                          ? "No Language"
+                                          : profile.languageKnown!,
+                                      style: GoogleFonts.roboto(
+                                        fontSize: 15.sp,
+                                        fontWeight: FontWeight.w600,
+                                        //color: const Color(0xff666666),
+                                        color: themeMode == ThemeMode.dark
+                                            ? Color(0xff666666)
+                                            : Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ]),
+                        ),
                         SizedBox(height: 20.h),
                       ]),
                     ),

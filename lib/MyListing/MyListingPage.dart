@@ -1,12 +1,17 @@
 import 'package:dio/dio.dart';
 import 'package:educationapp/coreFolder/Controller/myListingController.dart';
 import 'package:educationapp/coreFolder/Controller/themeController.dart';
+import 'package:educationapp/coreFolder/Model/listingBodyModel.dart';
+import 'package:educationapp/coreFolder/network/api.state.dart';
+import 'package:educationapp/coreFolder/utils/preety.dio.dart';
+import 'package:educationapp/home/createlist.page.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:developer';
-
 import 'package:hive/hive.dart';
 
 class MyListing extends ConsumerStatefulWidget {
@@ -156,196 +161,201 @@ class _MyListingState extends ConsumerState<MyListing> {
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(40.r),
                       topRight: Radius.circular(40.r))),
-              child: myListingProvider.when(
-                data: (myListingData) {
-                  final query = searchController.text.toLowerCase();
-                  // final filteredList = myListingData.data.where((item) {
-                  //   final name = type == "Mentor"
-                  //       ? item.studentName.toLowerCase()
-                  //       : item.mentorName.toLowerCase();
-                  //   return name.contains(query);
-                  // }).toList();
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    type != "Student"
+                        ? myListingProvider.when(
+                            data: (listData) {
+                              final query = searchController.text.toLowerCase();
+                              final filteredList = query.isEmpty
+                                  ? listData.data!
+                                  : listData.data!.where((item) {
+                                      final education =
+                                          item.education?.toLowerCase() ?? '';
+                                      final experience =
+                                          item.experience?.toString() ?? '';
+                                      return education.contains(query) ||
+                                          experience.contains(query);
+                                    }).toList();
 
-                  final filteredList = myListingData.data.where((item) {
-                    final name = isMentorOrProfessional
-                        ? item.studentName
-                            .toLowerCase() // Mentor/Professional के लिए छात्र का नाम
-                        : item.mentorName
-                            .toLowerCase(); // Student के लिए मेंटर का नाम
-
-                    return name.contains(query);
-                  }).toList();
-
-                  if (filteredList.isEmpty) {
-                    return Container(
-                      margin: EdgeInsets.only(left: 20.w, top: 20.h),
-                      child: Text(
-                        "No List Available",
-                        style: GoogleFonts.inter(
-                            fontSize: 20.sp,
-                            fontWeight: FontWeight.w300,
-                            color: Colors.black),
-                      ),
-                    );
-                  }
-                  return ListView.builder(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 20.h, horizontal: 16.w),
-                    itemCount: filteredList.length,
-                    itemBuilder: (context, index) {
-                      final item = filteredList[index];
-                      return Container(
-                        margin: EdgeInsets.only(bottom: 10.h, top: 6.h),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20.r),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.08),
-                              blurRadius: 8,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        padding: EdgeInsets.all(16.w),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Align(
-                              alignment: Alignment.topRight,
-                              child: Container(
+                              if (filteredList.isEmpty) {
+                                return Column(
+                                  children: [
+                                    SizedBox(
+                                      height: 20.h,
+                                    ),
+                                    Text(
+                                      "No List Available",
+                                      style: GoogleFonts.inter(
+                                          fontSize: 20.sp,
+                                          fontWeight: FontWeight.w300,
+                                          color: Colors.black),
+                                    ),
+                                  ],
+                                );
+                              }
+                              return ListView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
                                 padding: EdgeInsets.symmetric(
-                                    vertical: 4.h, horizontal: 10.w),
-                                decoration: BoxDecoration(
-                                  color: item.status == "accepted"
-                                      ? Colors.green.withOpacity(0.15)
-                                      : Colors.orange.withOpacity(0.15),
-                                  borderRadius: BorderRadius.circular(20.r),
-                                ),
+                                    vertical: 20.h, horizontal: 16.w),
+                                itemCount: filteredList.length,
+                                itemBuilder: (context, index) {
+                                  final item = filteredList[index];
+                                  return Container(
+                                    margin:
+                                        EdgeInsets.only(bottom: 10.h, top: 6.h),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(20.r),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.08),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 3),
+                                        ),
+                                      ],
+                                    ),
+                                    padding: EdgeInsets.all(16.w),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(height: 10.h),
+                                        Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(40.r),
+                                              child: Image.network(
+                                                // type == "Mentor"
+                                                //     ? item.studentProfile
+                                                //     : item.mentorProfile,
+                                                item.student!.fullName ?? "",
+                                                height: 60.h,
+                                                width: 60.w,
+                                                fit: BoxFit.cover,
+                                                errorBuilder: (context, error,
+                                                    stackTrace) {
+                                                  return Image.network(
+                                                    "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png",
+                                                    height: 60.h,
+                                                    width: 60.w,
+                                                    fit: BoxFit.cover,
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                            SizedBox(width: 12.w),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    // type == "Mentor"
+                                                    item.student!.fullName ??
+                                                        "",
+                                                    style: GoogleFonts.roboto(
+                                                      fontSize: 18.sp,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color: Colors.black,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    // type == "Mentor"
+                                                    item.education ?? '',
+                                                    style: GoogleFonts.roboto(
+                                                      fontSize: 14.sp,
+                                                      color: Colors.grey[700],
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    // type == "Mentor"
+                                                    "${item.experience} Year Experience",
+                                                    style: GoogleFonts.roboto(
+                                                      fontSize: 13.sp,
+                                                      color: Colors.grey[600],
+                                                    ),
+                                                  ),
+                                                  Wrap(
+                                                    spacing: 6,
+                                                    runSpacing: 6,
+                                                    children: item.subjects!
+                                                        .map(
+                                                          (subject) => Chip(
+                                                            label: Text(
+                                                              subject,
+                                                              style: GoogleFonts
+                                                                  .roboto(
+                                                                fontSize: 12.sp,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                                color: Colors
+                                                                    .black,
+                                                              ),
+                                                            ),
+                                                            backgroundColor:
+                                                                Color.fromARGB(
+                                                                    225,
+                                                                    222,
+                                                                    221,
+                                                                    236),
+                                                            side:
+                                                                BorderSide.none,
+                                                          ),
+                                                        )
+                                                        .toList(),
+                                                  ),
+                                                  Text(
+                                                    // type == "Mentor"
+                                                    "Fee: ₹${item.fee}",
+                                                    style: GoogleFonts.roboto(
+                                                      fontSize: 13.sp,
+                                                      color: Colors.grey[600],
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    // type == "Mentor"
+                                                    item.description ?? '',
+                                                    style: GoogleFonts.roboto(
+                                                      fontSize: 13.sp,
+                                                      color: Colors.grey[600],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                            error: (error, stackTrace) {
+                              log(stackTrace.toString());
+
+                              // Non-Dio errors
+                              return Center(
                                 child: Text(
-                                  item.status.toUpperCase(),
-                                  style: GoogleFonts.roboto(
-                                    color: item.status == "accepted"
-                                        ? Colors.green[800]
-                                        : Colors.orange[800],
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 12.sp,
-                                  ),
+                                  error.toString(),
+                                  style: const TextStyle(color: Colors.red),
                                 ),
-                              ),
+                              );
+                            },
+                            loading: () => Center(
+                              child: CircularProgressIndicator(),
                             ),
-                            SizedBox(height: 10.h),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(40.r),
-                                  child: Image.network(
-                                    // type == "Mentor"
-                                    //     ? item.studentProfile
-                                    //     : item.mentorProfile,
-                                    isMentorOrProfessional
-                                        ? item.studentProfile
-                                        : item.mentorProfile,
-                                    height: 60.h,
-                                    width: 60.w,
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Image.network(
-                                        "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png",
-                                        height: 60.h,
-                                        width: 60.w,
-                                        fit: BoxFit.cover,
-                                      );
-                                    },
-                                  ),
-                                ),
-                                SizedBox(width: 12.w),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        // type == "Mentor"
-                                        (type == "Mentor" ||
-                                                type == "Professional")
-                                            ? item.studentName
-                                            : item.mentorName,
-                                        style: GoogleFonts.roboto(
-                                          fontSize: 18.sp,
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                      Text(
-                                        // type == "Mentor"
-                                        isMentorOrProfessional
-                                            ? item.studentEmail
-                                            : item.mentorEmail,
-                                        style: GoogleFonts.roboto(
-                                          fontSize: 14.sp,
-                                          color: Colors.grey[700],
-                                        ),
-                                      ),
-                                      Text(
-                                        // type == "Mentor"
-                                        isMentorOrProfessional
-                                            ? item.studentPhone
-                                            : item.mentorPhone,
-                                        style: GoogleFonts.roboto(
-                                          fontSize: 13.sp,
-                                          color: Colors.grey[600],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                      );
-                    },
-                  );
-                },
-                error: (error, stackTrace) {
-                  log(stackTrace.toString());
-                  if (error is DioException) {
-                    final statusCode = error.response?.statusCode;
-                    // 🔥 If API sends 403 → Show No Data Accepted UI
-                    if (statusCode == 403) {
-                      return Center(
-                        child: Text(
-                          "No Data Accepted",
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      );
-                    }
-
-                    // Other Dio errors
-                    return Center(
-                      child: Text(
-                        "Error: ${error.message}",
-                        style: const TextStyle(color: Colors.red),
-                      ),
-                    );
-                  }
-
-                  // Non-Dio errors
-                  return Center(
-                    child: Text(
-                      error.toString(),
-                      style: const TextStyle(color: Colors.red),
-                    ),
-                  );
-                },
-                loading: () => Center(
-                  child: CircularProgressIndicator(),
+                          )
+                        : CreateListPage(),
+                  ],
                 ),
               ),
             ),
@@ -356,191 +366,197 @@ class _MyListingState extends ConsumerState<MyListing> {
   }
 }
 
-class DraggableBottomSheetContent extends ConsumerStatefulWidget {
-  final int currentBalance;
-  final String voletid;
-  final Function callback;
 
-  DraggableBottomSheetContent(
-      {super.key,
-      required this.callback,
-      required this.voletid,
-      required this.currentBalance});
+
+class CreateListPage extends StatefulWidget {
+  const CreateListPage({super.key});
 
   @override
-  ConsumerState<DraggableBottomSheetContent> createState() =>
-      _DraggableBottomSheetContentState();
+  State<CreateListPage> createState() => _CreateListPageState();
 }
 
-class _DraggableBottomSheetContentState
-    extends ConsumerState<DraggableBottomSheetContent> {
-  final coinsController = TextEditingController();
+class _CreateListPageState extends State<CreateListPage> {
+  final educationCotnroller = TextEditingController();
+  final exprienceController = TextEditingController();
+  final subjectConroller = TextEditingController();
+  final feesController = TextEditingController();
+  final descController = TextEditingController();
+  bool isLoading = false;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(40.r), topRight: Radius.circular(40.r))),
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height * 0.7, // Customize height
-      child: Padding(
-        padding: EdgeInsets.all(15.0.w),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              height: 5.h,
-              width: 50.w,
-              decoration: BoxDecoration(
-                color: Colors.grey,
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  "Add Coins",
-                  style: GoogleFonts.roboto(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 18.w),
-                )
-              ],
-            ),
-            SizedBox(
-              height: 8.h,
-            ),
-            TextFormField(
-              controller: coinsController,
-              keyboardType:
-                  TextInputType.numberWithOptions(signed: true, decimal: true),
-              decoration: InputDecoration(
-                focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-                border: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 25.h,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  "Choose Payment Method",
-                  style: GoogleFonts.roboto(
-                      color: Colors.black,
-                      fontSize: 16.w,
-                      fontWeight: FontWeight.w600),
-                )
-              ],
-            ),
-            SizedBox(
-              height: 10.h,
-            ),
-            Container(
-              width: 400.w,
-              height: 70.h,
-              decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 241, 242, 246),
-                  borderRadius: BorderRadius.circular(20.r)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: 16.w,
-                  ),
-                  Container(
-                    height: 35.h,
-                    width: 35.w,
-                    decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image: AssetImage("assets/logos_mastercard.png"),
-                            fit: BoxFit.contain)),
-                  ),
-                  SizedBox(
-                    width: 15,
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Your Payment Method",
-                        style: GoogleFonts.roboto(
-                            fontSize: 11.w,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.black),
-                      ),
-                      Text(
-                        "8799 4566 XXXX",
-                        style: GoogleFonts.roboto(
-                            fontSize: 18.w,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black),
-                      )
-                    ],
-                  ),
-                  Spacer(),
-                  Container(
-                    height: 44.h,
-                    width: 44.w,
-                    decoration: BoxDecoration(
-                      color: Color.fromARGB(30, 38, 50, 56),
-                      borderRadius: BorderRadius.circular(500.r),
-                    ),
-                    child: Center(
-                      child: Icon(
-                        Icons.arrow_forward_ios_rounded,
-                        color: const Color.fromARGB(255, 0, 0, 0),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 16.w,
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(
-              height: 40.h,
-            ),
-            GestureDetector(
-              onTap: () {},
-              child: Container(
-                height: 52.h,
-                width: 400.w,
-                decoration: BoxDecoration(
-                    color: Color.fromARGB(255, 220, 248, 129),
-                    borderRadius: BorderRadius.circular(40.r)),
-                child: Center(
-                  child: Text(
-                    "Continue",
-                    style: GoogleFonts.roboto(
-                        color: Colors.black,
-                        fontSize: 16.w,
-                        fontWeight: FontWeight.w500),
-                  ),
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: 20.h,
+          ),
+          CreateList(label: "Education", controller: educationCotnroller),
+          CreateList(label: "Experience", controller: exprienceController),
+          CreateList(label: "Subjects", controller: subjectConroller),
+          CreateList(label: "Fee", controller: feesController),
+          CreateList(label: "Description", controller: descController),
+          SizedBox(
+            height: 20.h,
+          ),
+          Center(
+              child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      minimumSize: Size(380.w, 50.h),
+                      padding: EdgeInsets.symmetric(vertical: 18.h)),
+                  onPressed: () async {
+                    if (!_formKey.currentState!.validate()) {
+                      return;
+                    }
+                    setState(() {
+                      isLoading = true;
+                    });
+
+                    try {
+                      final body = CreatelistBodyModel(
+                          education: educationCotnroller.text,
+                          experience: exprienceController.text,
+                          //  subjects: [subjectConroller.text],
+                          subjects: subjectConroller.text
+                              .split(',')
+                              .map((e) => e.trim())
+                              .toList(),
+                          fee: feesController.text,
+                          description: descController.text);
+
+                      final service = APIStateNetwork(createDio());
+                      final response = await service.createList(body);
+                      if (response.response.statusCode == 201) {
+                        Fluttertoast.showToast(
+                            msg: response.response.data['message']);
+                        Navigator.pop(context);
+                        setState(() {
+                          isLoading = false;
+                        });
+                      }
+                    } catch (e, st) {
+                      setState(() {
+                        isLoading = false;
+                      });
+                      log("${e.toString()} /n ${st.toString()}");
+                      Fluttertoast.showToast(msg: "APi Error : $e");
+                    } finally {
+                      setState(() {
+                        isLoading = false;
+                      });
+                    }
+                  },
+                  child: isLoading
+                      ? Center(
+                          child: SizedBox(
+                            width: 30.w,
+                            height: 30.h,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                          ),
+                        )
+                      : Text("Create List"))),
+          SizedBox(
+            height: 30.h,
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class CreateList extends ConsumerStatefulWidget {
+  final String label;
+  final TextEditingController controller;
+  final TextInputType? type;
+
+  final int? maxLine;
+  final String? Function(String?)? validator;
+
+  const CreateList({
+    super.key,
+    required this.label,
+    required this.controller,
+    this.validator,
+    this.maxLine,
+    this.type,
+  });
+
+  @override
+  ConsumerState<CreateList> createState() => _CreateListState();
+}
+
+class _CreateListState extends ConsumerState<CreateList> {
+  @override
+  Widget build(BuildContext context) {
+    final themeMode = ref.watch(themeProvider);
+    return Padding(
+      padding: EdgeInsets.only(top: 10.h, right: 28.w, left: 28.w),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                widget.label,
+                style: GoogleFonts.roboto(
+                  fontSize: 13.w,
+                  fontWeight: FontWeight.w400,
+                  // color: const Color(0xFF4D4D4D),
+                  color: themeMode == ThemeMode.dark
+                      ? Color(0xFF4D4D4D)
+                      : Colors.white,
                 ),
               ),
+            ],
+          ),
+          SizedBox(height: 10.h),
+          TextFormField(
+            style: TextStyle(
+              color: themeMode == ThemeMode.dark
+                  ? Color(0xFF4D4D4D)
+                  : Colors.white,
             ),
-          ],
-        ),
+            controller: widget.controller,
+            maxLines: widget.maxLine,
+            keyboardType: widget.type,
+            decoration: InputDecoration(
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  // color: Colors.black,
+                  color: themeMode == ThemeMode.dark
+                      ? const Color(0xFF4D4D4D)
+                      : Colors.white,
+                ),
+                borderRadius: BorderRadius.circular(40.r),
+              ),
+              border: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Colors.grey,
+                ),
+                borderRadius: BorderRadius.circular(40.r),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  //color: Colors.grey
+                  color: Colors.grey,
+                ),
+                borderRadius: BorderRadius.circular(40.r),
+              ),
+            ),
+            validator: (value) {
+              if (value == null || value.trim().isEmpty) {
+                return '${widget.label} is required';
+              }
+              return null;
+            },
+          ),
+        ],
       ),
     );
   }

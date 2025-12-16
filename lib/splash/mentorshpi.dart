@@ -324,12 +324,10 @@ class _MentorshipBodyState extends ConsumerState<MentorshipBody> {
   ];
 
   void sendToNextPage() {
-    // Navigator.push(
-    //     context, CupertinoPageRoute(builder: (context) => RegisterPage()));
     Navigator.push(
         context,
         CupertinoPageRoute(
-          builder: (context) => IdPage(),
+          builder: (context) => RegisterPage(),
         ));
   }
 

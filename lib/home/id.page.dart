@@ -1,10 +1,12 @@
 import 'dart:core';
 import 'dart:developer';
 import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:educationapp/coreFolder/Controller/themeController.dart';
 import 'package:educationapp/coreFolder/network/api.state.dart';
 import 'package:educationapp/coreFolder/utils/preety.dio.dart';
+import 'package:educationapp/login/login.page.dart';
 import 'package:educationapp/main.dart';
 import 'package:educationapp/register/register.page.dart';
 import 'package:educationapp/splash/getstart.page.dart';
@@ -56,6 +58,7 @@ class IdBody extends ConsumerStatefulWidget {
 }
 
 class _IdBodyState extends ConsumerState<IdBody> {
+  bool buttonLoader = false;
   File? _image;
   final picker = ImagePicker();
 
@@ -252,26 +255,73 @@ class _IdBodyState extends ConsumerState<IdBody> {
         ),
         Center(
           child: ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               // ✅ Step 1: Determine which message to show based on userType
               final data = formData.userType == "Student"
                   ? "Please select Student ID Card"
                   : "Please select Professional ID Card";
-
-              // ✅ Step 2: Validate if image is picked
               if (_image == null || _image!.path.isEmpty) {
                 Fluttertoast.showToast(msg: data);
                 return;
               }
+              setState(() {
+                buttonLoader = true;
+              });
 
-              // ✅ Step 3: Save image path in Riverpod provider
-              ref.read(myFormDataProvider.notifier).setIdCarPic(_image!.path);
+              // ✅ Step 2: Validate if image is picked
+              try {
+                // ✅ Step 3: Save image path in Riverpod provider
+                ref.read(myFormDataProvider.notifier).setIdCarPic(_image!.path);
 
-              // ✅ Step 4: Show success message
-              Fluttertoast.showToast(msg: "ID Card uploaded successfully");
+                await ref.read(myFormDataProvider.notifier).register();
 
-              Navigator.push(context,
-                  CupertinoPageRoute(builder: (context) => RegisterPage()));
+                Fluttertoast.showToast(msg: "Register Successfull");
+
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  CupertinoPageRoute(
+                    builder: (context) => LoginPage(),
+                  ),
+                  (route) => false,
+                );
+                setState(() {
+                  buttonLoader = false;
+                });
+              } on DioException catch (e, st) {
+                setState(() => buttonLoader = false);
+                String extractErrorMessages(dynamic errorData) {
+                  if (errorData == null) return "Something went wrong";
+
+                  if (errorData['errors'] != null) {
+                    final errors = errorData['errors'] as Map<String, dynamic>;
+
+                    final buffer = StringBuffer();
+
+                    errors.forEach((key, value) {
+                      if (value is List && value.isNotEmpty) {
+                        buffer.writeln(value.first);
+                      }
+                    });
+
+                    return buffer.toString().trim();
+                  }
+
+                  return errorData['message'] ?? "Unknown error";
+                }
+
+                final data = e.response?.data;
+
+                final errorMessage = extractErrorMessages(data);
+
+                Fluttertoast.showToast(
+                  msg: errorMessage,
+                  textColor: Colors.red,
+                  toastLength: Toast.LENGTH_LONG,
+                );
+
+                log("Register Error: ${e.response?.data}");
+                log(st.toString());
+              }
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFA8E6CF),
@@ -280,15 +330,25 @@ class _IdBodyState extends ConsumerState<IdBody> {
               ),
               fixedSize: Size(400.w, 60.h),
             ),
-            child: Text(
-              "Continue",
-              style: GoogleFonts.roboto(
-                color: Colors.black,
-                fontWeight: FontWeight.w500,
-                letterSpacing: -0.4,
-                fontSize: 14.4.w,
-              ),
-            ),
+            child: buttonLoader
+                ? Center(
+                    child: SizedBox(
+                      width: 30.w,
+                      height: 30.h,
+                      child: CircularProgressIndicator(
+                        color: Colors.black,
+                      ),
+                    ),
+                  )
+                : Text(
+                    "Submit",
+                    style: GoogleFonts.roboto(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: -0.4,
+                      fontSize: 14.4.w,
+                    ),
+                  ),
           ),
         )
       ],

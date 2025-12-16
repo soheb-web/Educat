@@ -1,6 +1,8 @@
 import 'dart:developer';
+import 'package:educationapp/complete/complete.page.dart';
 import 'package:educationapp/coreFolder/Controller/themeController.dart';
 import 'package:educationapp/coreFolder/Controller/userProfileController.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -514,7 +516,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                   ),
                                 ),
                               ),
-
                               SizedBox(height: 20.h),
                             ]),
                       ),
@@ -544,27 +545,58 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                 left: 0,
                 right: 0,
                 top: 110.h,
-                child: Center(
-                  child: ClipOval(
-                    child: userProfile.data!.profilePic != null
-                        ? Image.network(
-                            userProfile.data!.profilePic!,
-                            height: 182.w,
-                            width: 182.w,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) =>
-                                Image.network(
-                                    "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png",
-                                    height: 182.w,
-                                    width: 182.w,
-                                    fit: BoxFit.cover),
-                          )
-                        : Image.network(
-                            "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png",
-                            height: 182.w,
-                            width: 182.w,
-                            fit: BoxFit.cover),
-                  ),
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Center(
+                      child: ClipOval(
+                        child: userProfile.data!.profilePic != null
+                            ? Image.network(
+                                userProfile.data!.profilePic!,
+                                height: 182.w,
+                                width: 182.w,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    Image.network(
+                                        "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png",
+                                        height: 182.w,
+                                        width: 182.w,
+                                        fit: BoxFit.cover),
+                              )
+                            : Image.network(
+                                "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png",
+                                height: 182.w,
+                                width: 182.w,
+                                fit: BoxFit.cover),
+                      ),
+                    ),
+                    Positioned(
+                        left: 0,
+                        right: -85,
+                        bottom: -5,
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                CupertinoPageRoute(
+                                  builder: (context) =>
+                                      ProfileCompletionWidget(true),
+                                ));
+                          },
+                          child: Container(
+                              width: 50.w,
+                              height: 50.h,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Color(0xff008080),
+                              ),
+                              child: Icon(
+                                Icons.edit,
+                                color: Colors.white,
+                                size: 24.sp,
+                              )),
+                        )),
+                  ],
                 ),
               ),
             ],

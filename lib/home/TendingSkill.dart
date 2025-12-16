@@ -498,46 +498,44 @@ class _FindSkillPageState extends ConsumerState<FindSkillPage> {
           SizedBox(height: 30.h),
           _appBar(),
           SizedBox(height: 20.h),
-          if (_showSearchBar) ...[
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.w),
-              child: TextField(
-                controller: _searchController,
-                style: GoogleFonts.roboto(color: Colors.white, fontSize: 20.sp),
-                decoration: InputDecoration(
-                  isDense: true,
-                  contentPadding: EdgeInsets.only(
-                      left: 10.w, right: 10.w, top: 6.h, bottom: 6.h),
-                  hintText: "Search skills...",
-                  hintStyle: GoogleFonts.roboto(
-                      color: Colors.white70, fontSize: 18.sp),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(25.r),
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(25.r),
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                  prefixIcon:
-                      const Icon(Icons.search, color: Colors.white, size: 20),
-                  suffixIcon: _searchText.isNotEmpty
-                      ? IconButton(
-                          icon: const Icon(Icons.clear, color: Colors.white),
-                          onPressed: () {
-                            _searchController.clear();
-                            setState(() {
-                              _searchText = '';
-                            });
-                            _updateQueryParams();
-                          },
-                        )
-                      : null,
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10.w),
+            child: TextField(
+              controller: _searchController,
+              style: GoogleFonts.roboto(color: Colors.white, fontSize: 20.sp),
+              decoration: InputDecoration(
+                isDense: true,
+                contentPadding: EdgeInsets.only(
+                    left: 10.w, right: 10.w, top: 6.h, bottom: 6.h),
+                hintText: "Search skills...",
+                hintStyle:
+                    GoogleFonts.roboto(color: Colors.white70, fontSize: 18.sp),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(25.r),
+                  borderSide: BorderSide(color: Colors.white),
                 ),
-                onChanged: _onSearchChanged,
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(25.r),
+                  borderSide: BorderSide(color: Colors.white),
+                ),
+                prefixIcon:
+                    const Icon(Icons.search, color: Colors.white, size: 20),
+                suffixIcon: _searchText.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear, color: Colors.white),
+                        onPressed: () {
+                          _searchController.clear();
+                          setState(() {
+                            _searchText = '';
+                          });
+                          _updateQueryParams();
+                        },
+                      )
+                    : null,
               ),
+              onChanged: _onSearchChanged,
             ),
-          ],
+          ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 20.h),
             child: dropDownData.when(
@@ -892,30 +890,33 @@ class _FindSkillPageState extends ConsumerState<FindSkillPage> {
                 ),
               ),
               Text(
-                "Skills",
+                "Course",
                 style: GoogleFonts.roboto(
                     fontSize: 24.sp, color: const Color(0xffA8E6CF)),
               ),
             ],
           ),
-          GestureDetector(
-            onTap: _toggleSearchBar,
-            child: Container(
-              height: 44.h,
-              width: 44.w,
-              decoration: BoxDecoration(
-                color: const Color.fromARGB(25, 255, 255, 255),
-                borderRadius: BorderRadius.circular(500.r),
-              ),
-              child: Center(
-                child: Icon(
-                  _showSearchBar ? Icons.close : Icons.search,
-                  color: Colors.white,
-                  size: 24,
-                ),
-              ),
-            ),
-          ),
+          SizedBox(
+            width: 44.w,
+          )
+          // GestureDetector(
+          //   onTap: _toggleSearchBar,
+          //   child: Container(
+          //     height: 44.h,
+          //     width: 44.w,
+          //     decoration: BoxDecoration(
+          //       color: const Color.fromARGB(25, 255, 255, 255),
+          //       borderRadius: BorderRadius.circular(500.r),
+          //     ),
+          //     child: Center(
+          //       child: Icon(
+          //         _showSearchBar ? Icons.close : Icons.search,
+          //         color: Colors.white,
+          //         size: 24,
+          //       ),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );

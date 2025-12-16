@@ -276,7 +276,7 @@ class _MentoraddReviewPageState extends ConsumerState<MentoraddReviewPage> {
                         if (snp.reviews!.isEmpty) {
                           return Center(
                             child: Text(
-                              "No Review yeat.",
+                              "No Review yet.",
                               style: GoogleFonts.inter(
                                 fontSize: 16.sp,
                                 color: themeMode == ThemeMode.dark
