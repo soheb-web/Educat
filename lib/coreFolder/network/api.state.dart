@@ -16,6 +16,7 @@ import 'package:educationapp/coreFolder/Model/passwordChangeBodyModel.dart';
 import 'package:educationapp/coreFolder/Model/passwordChangeResModel.dart';
 import 'package:educationapp/coreFolder/Model/reportResModel.dart';
 import 'package:educationapp/coreFolder/Model/reviewCategoryResModel.dart';
+import 'package:educationapp/coreFolder/Model/sendNotifcationBodyModel.dart';
 import 'package:educationapp/coreFolder/Model/sendOTPResModel.dart';
 import 'package:educationapp/coreFolder/Model/sendRequestBodyModel.dart';
 import 'package:educationapp/coreFolder/Model/sendRequestResModel.dart';
@@ -194,4 +195,8 @@ abstract class APIStateNetwork {
 
   @GET("/student-list")
   Future<GetcreatelistModel> getCreateList();
+
+  @POST("/send")
+  Future<HttpResponse<dynamic>> sendNotifcation(
+      @Body() SendNotifcationBodyModel body);
 }

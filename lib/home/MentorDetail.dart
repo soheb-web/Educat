@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:educationapp/apiService.dart';
 import 'package:educationapp/coreFolder/Controller/getMentorReveiwController.dart';
 import 'package:educationapp/coreFolder/Controller/getRequestStudentController.dart';
 import 'package:educationapp/coreFolder/Controller/reviewController.dart';
@@ -8,6 +9,7 @@ import 'package:educationapp/coreFolder/network/api.state.dart';
 import 'package:educationapp/coreFolder/utils/preety.dio.dart';
 import 'package:educationapp/home/chating.page.dart';
 import 'package:educationapp/home/mentorAddReview.page.dart';
+import 'package:educationapp/notificationService.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -58,6 +60,20 @@ class _MentorDetailPageState extends ConsumerState<MentorDetailPage> {
     }
   }
 
+  String? token;
+
+  @override
+  void initState() {
+    super.initState();
+    NotificationService.init();
+    _loadToken();
+  }
+
+  Future<void> _loadToken() async {
+    token = await NotificationService.getToken();
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     final profileAsync = ref.watch(profileProvider(widget.id));
@@ -65,6 +81,9 @@ class _MentorDetailPageState extends ConsumerState<MentorDetailPage> {
         ref.watch(getMentorReviewController(widget.id.toString()));
     final themeMode = ref.watch(themeProvider);
     var box = Hive.box('userdata');
+
+    final api = ApiService();
+
     return Scaffold(
       body: profileAsync.when(
         data: (profile) {
@@ -101,6 +120,22 @@ class _MentorDetailPageState extends ConsumerState<MentorDetailPage> {
                             child: Column(children: [
                               SizedBox(
                                 height: 15.h,
+                              ),
+                              const SizedBox(height: 20),
+                              ElevatedButton(
+                                onPressed: token == null
+                                    ? null
+                                    : () {
+                                        api.sendNotification(
+                                            token: token!,
+                                            title: 'Test Notification',
+                                            b: 'This is a test message'
+                                            // token: token!,
+                                            // title: "Test Notification",
+                                            // body: "This is a test message",
+                                            );
+                                      },
+                                child: const Text("Send Notification"),
                               ),
                               Text(
                                 profile.fullName!,
