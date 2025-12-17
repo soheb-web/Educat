@@ -113,23 +113,6 @@ class _MentorDetailPageState extends ConsumerState<MentorDetailPage> {
                                       : Colors.white,
                                 ),
                               ),
-                              Text(
-                                "Total Exprience ${profile.totalExperience ?? 'No experience listed'}",
-                                style: GoogleFonts.roboto(
-                                  fontSize: 15.sp,
-                                  fontWeight: FontWeight.w600,
-                                  color: const Color(0xff666666),
-                                ),
-                              ),
-                              Text(
-                                'College: ${profile.usersField ?? 'N/A'} - Company: ${profile.companiesWorked?.toString() ?? 'N/A'}',
-                                style: GoogleFonts.roboto(
-                                  fontSize: 15.sp,
-                                  fontWeight: FontWeight.w600,
-                                  color: const Color(0xff666666),
-                                ),
-                              ),
-                              SizedBox(height: 15.w),
                               if (profile.skills != null)
                                 if (profile.skills is List &&
                                     profile.skills!.isNotEmpty)
@@ -138,47 +121,24 @@ class _MentorDetailPageState extends ConsumerState<MentorDetailPage> {
                                     runSpacing: 10.h,
                                     children: (profile.skills as List)
                                         .map<Widget>(
-                                          (skill) => Container(
-                                            padding: EdgeInsets.only(
-                                                left: 20.w,
-                                                right: 20.w,
-                                                top: 8.h,
-                                                bottom: 8.h),
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(20.r),
-                                              color: const Color(0xffDEDDEC),
-                                            ),
-                                            child: Text(
-                                              skill.toString(),
-                                              style: GoogleFonts.roboto(
-                                                fontSize: 20.sp,
-                                                fontWeight: FontWeight.w600,
-                                                color: Colors.black,
-                                              ),
+                                          (skill) => Text(
+                                            skill.toString(),
+                                            style: GoogleFonts.roboto(
+                                              fontSize: 20.sp,
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.black,
                                             ),
                                           ),
                                         )
                                         .toList(),
                                   )
                                 else
-                                  Container(
-                                    padding: EdgeInsets.only(
-                                        left: 15.w,
-                                        right: 15.w,
-                                        top: 10.h,
-                                        bottom: 10.h),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(20),
-                                      color: const Color(0xffDEDDEC),
-                                    ),
-                                    child: Text(
-                                      profile.skills.toString(),
-                                      style: GoogleFonts.roboto(
-                                        fontSize: 14.sp,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.black,
-                                      ),
+                                  Text(
+                                    profile.skills.toString(),
+                                    style: GoogleFonts.roboto(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black,
                                     ),
                                   )
                               else
@@ -190,6 +150,23 @@ class _MentorDetailPageState extends ConsumerState<MentorDetailPage> {
                                     color: const Color(0xff666666),
                                   ),
                                 ),
+                              Text(
+                                "Total Exprience ${profile.totalExperience ?? 'No experience listed'}",
+                                style: GoogleFonts.roboto(
+                                  fontSize: 15.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: const Color(0xff666666),
+                                ),
+                              ),
+                              Text(
+                                '${profile.companiesWorked ?? 'N/A'}',
+                                style: GoogleFonts.roboto(
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: const Color(0xff666666),
+                                ),
+                              ),
+                              SizedBox(height: 15.w),
                               Container(
                                 margin: EdgeInsets.only(
                                     left: 10.w, top: 10.h, right: 10.w),
@@ -693,6 +670,7 @@ class _MentorDetailPageState extends ConsumerState<MentorDetailPage> {
                                 },
                                 error: (error, stackTrace) {
                                   log(stackTrace.toString());
+                                  log(error.toString());
                                   return Center(
                                     child: Text(error.toString()),
                                   );

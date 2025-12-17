@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive/hive.dart';
 
 class ProfilePage extends ConsumerStatefulWidget {
   ProfilePage({
@@ -19,6 +20,8 @@ class ProfilePage extends ConsumerStatefulWidget {
 class _ProfilePageState extends ConsumerState<ProfilePage> {
   @override
   Widget build(BuildContext context) {
+    var box = Hive.box('userdata');
+    final userType = box.get("userType");
     final userProfileProvider = ref.watch(userProfileController);
     final themeMode = ref.watch(themeProvider);
     return Scaffold(
@@ -46,7 +49,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               SizedBox(
-                                height: 10.h,
+                                height: 15.h,
                               ),
                               Center(
                                 child: Text(
@@ -61,29 +64,17 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                 ),
                               ),
                               Center(
-                                child: Text(
-                                  // profile.totalExperience ?? 'No experience listed',
-                                  "Total Experience ${userProfile.data!.totalExperience ?? 0}",
-                                  style: GoogleFonts.roboto(
-                                    fontSize: 15.sp,
-                                    fontWeight: FontWeight.w600,
-                                    // color: const Color(0xff666666),
-                                    color: themeMode == ThemeMode.dark
-                                        ? Color(0xff666666)
-                                        : Colors.white,
-                                  ),
-                                ),
-                              ),
-                              Center(
                                 child: Padding(
-                                  padding:
-                                      EdgeInsets.only(left: 15.w, right: 15.w),
+                                  padding: EdgeInsets.only(
+                                    left: 15.w,
+                                    right: 15.w,
+                                  ),
                                   child: Text(
                                     textAlign: TextAlign.center,
                                     //'College: ${profile.usersField ?? 'N/A'} - Company: ${profile.companiesWorked?.toString() ?? 'N/A'}',
-                                    "${userProfile.data!.serviceType ?? "No serviceType"}",
+                                    "${userProfile.data!.highestQualification ?? "No qualification "}",
                                     style: GoogleFonts.roboto(
-                                      fontSize: 15.sp,
+                                      fontSize: 16.sp,
                                       fontWeight: FontWeight.w600,
                                       // color: const Color(0xff666666),
                                       color: themeMode == ThemeMode.dark
@@ -93,93 +84,109 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                   ),
                                 ),
                               ),
-                              SizedBox(
-                                height: 15.h,
-                              ),
-                              Container(
-                                margin:
-                                    EdgeInsets.only(left: 10.w, right: 10.w),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                      padding: EdgeInsets.only(
-                                          left: 12.w,
-                                          right: 12.w,
-                                          top: 8.h,
-                                          bottom: 8.h),
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(20.r),
-                                        color: Color(0xffDEDDEC),
-                                      ),
-                                      child: Text(
-                                        "Placement Expert",
-                                        style: GoogleFonts.roboto(
-                                          fontSize: 14.sp,
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(width: 15.w),
-                                    Container(
-                                      padding: EdgeInsets.only(
-                                          left: 12.w,
-                                          right: 12.w,
-                                          top: 8.h,
-                                          bottom: 8.h),
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(20.r),
-                                        color: const Color(0xffDEDDEC),
-                                      ),
-                                      child: Text(
-                                        "Career Coach",
-                                        style: GoogleFonts.roboto(
-                                          fontSize: 14.sp,
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(width: 15.w),
-                                    Container(
-                                      padding: EdgeInsets.only(
-                                          left: 12.w,
-                                          right: 12.w,
-                                          top: 8.h,
-                                          bottom: 8.h),
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(20.r),
-                                        color: const Color(0xffDEDDEC),
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          Icon(
-                                            Icons.star,
-                                            size: 16.sp,
-                                            color: const Color(0xff008080),
+                              Center(
+                                  child: Wrap(
+                                spacing: 10.w,
+                                runSpacing: 5.h,
+                                children: userProfile.data!.skills!
+                                    .map<Widget>((skill) => Text(
+                                          skill.toString(),
+                                          style: GoogleFonts.roboto(
+                                            fontSize: 16.sp,
+                                            fontWeight: FontWeight.w600,
+                                            //color: Colors.black,
+                                            color: themeMode == ThemeMode.dark
+                                                ? Color(0xff666666)
+                                                : Colors.white,
                                           ),
-                                          SizedBox(width: 5.w),
-                                          Text(
-                                            "4.5 Review",
-                                            style: GoogleFonts.roboto(
-                                              fontSize: 14.sp,
-                                              fontWeight: FontWeight.w600,
-                                              color: Colors.black,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                                        ))
+                                    .toList(),
+                              )),
+
+                              // Container(
+                              //   margin:
+                              //       EdgeInsets.only(left: 10.w, right: 10.w),
+                              //   child: Row(
+                              //     mainAxisAlignment: MainAxisAlignment.center,
+                              //     children: [
+                              //       Container(
+                              //         padding: EdgeInsets.only(
+                              //             left: 12.w,
+                              //             right: 12.w,
+                              //             top: 8.h,
+                              //             bottom: 8.h),
+                              //         decoration: BoxDecoration(
+                              //           borderRadius:
+                              //               BorderRadius.circular(20.r),
+                              //           color: Color(0xffDEDDEC),
+                              //         ),
+                              //         child: Text(
+                              //           "Placement Expert",
+                              //           style: GoogleFonts.roboto(
+                              //             fontSize: 14.sp,
+                              //             fontWeight: FontWeight.w600,
+                              //             color: Colors.black,
+                              //           ),
+                              //         ),
+                              //       ),
+                              //       SizedBox(width: 15.w),
+                              //       Container(
+                              //         padding: EdgeInsets.only(
+                              //             left: 12.w,
+                              //             right: 12.w,
+                              //             top: 8.h,
+                              //             bottom: 8.h),
+                              //         decoration: BoxDecoration(
+                              //           borderRadius:
+                              //               BorderRadius.circular(20.r),
+                              //           color: const Color(0xffDEDDEC),
+                              //         ),
+                              //         child: Text(
+                              //           "Career Coach",
+                              //           style: GoogleFonts.roboto(
+                              //             fontSize: 14.sp,
+                              //             fontWeight: FontWeight.w600,
+                              //             color: Colors.black,
+                              //           ),
+                              //         ),
+                              //       ),
+                              //       SizedBox(width: 15.w),
+                              //       Container(
+                              //         padding: EdgeInsets.only(
+                              //             left: 12.w,
+                              //             right: 12.w,
+                              //             top: 8.h,
+                              //             bottom: 8.h),
+                              //         decoration: BoxDecoration(
+                              //           borderRadius:
+                              //               BorderRadius.circular(20.r),
+                              //           color: const Color(0xffDEDDEC),
+                              //         ),
+                              //         child: Row(
+                              //           children: [
+                              //             Icon(
+                              //               Icons.star,
+                              //               size: 16.sp,
+                              //               color: const Color(0xff008080),
+                              //             ),
+                              //             SizedBox(width: 5.w),
+                              //             Text(
+                              //               "4.5 Review",
+                              //               style: GoogleFonts.roboto(
+                              //                 fontSize: 14.sp,
+                              //                 fontWeight: FontWeight.w600,
+                              //                 color: Colors.black,
+                              //               ),
+                              //             ),
+                              //           ],
+                              //         ),
+                              //       ),
+                              //     ],
+                              //   ),
+                              // ),
 
                               SizedBox(
-                                height: 30.h,
+                                height: 20.h,
                               ),
                               Divider(),
                               Container(
@@ -187,78 +194,88 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          "About ${userProfile.data!.fullName ?? "No Name"}",
-                                          style: GoogleFonts.roboto(
-                                            fontSize: 20.sp,
-                                            fontWeight: FontWeight.w600,
-                                            color: themeMode == ThemeMode.dark
-                                                ? Color(0xFF1B1B1B)
-                                                : Colors.white,
-                                          ),
-                                        ),
-                                        SizedBox(height: 3.h),
-                                        Container(
-                                          // color: Colors.amber,
-                                          width: 400.w,
-                                          child: Text(
-                                            userProfile.data!.description ??
-                                                "No description",
-                                            style: GoogleFonts.roboto(
-                                              fontSize: 16.sp,
-                                              fontWeight: FontWeight.w600,
-
-                                              ///color: const Color(0xff666666),
-                                              color: themeMode == ThemeMode.dark
-                                                  ? Color(0xff666666)
-                                                  : Colors.white,
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(height: 3.h),
-                                        SizedBox(
-                                          width: 400.w,
-                                          child: Text(
-                                            '${userProfile.data!.serviceType ?? 'N/A'}',
-                                            style: GoogleFonts.roboto(
-                                              fontSize: 15.sp,
-                                              fontWeight: FontWeight.w600,
-                                              // color: Color(0xff666666),
-                                              color: themeMode == ThemeMode.dark
-                                                  ? Color(0xff666666)
-                                                  : Colors.white,
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(height: 3.h),
-                                        SizedBox(
-                                          width: 400.w,
-                                          child: Text(
-                                            "${userProfile.data!.jobCompanyName?.toString() ?? ''}, ${userProfile.data!.jobLocation ?? ""}",
-                                            style: GoogleFonts.roboto(
-                                              fontSize: 15.sp,
-                                              fontWeight: FontWeight.w600,
-                                              // color: Color(0xff666666),
-                                              color: themeMode == ThemeMode.dark
-                                                  ? Color(0xff666666)
-                                                  : Colors.white,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
+                                    Text(
+                                      "About ${userProfile.data!.fullName ?? "No Name"}",
+                                      style: GoogleFonts.roboto(
+                                        fontSize: 20.sp,
+                                        fontWeight: FontWeight.w600,
+                                        color: themeMode == ThemeMode.dark
+                                            ? Color(0xFF1B1B1B)
+                                            : Colors.white,
+                                      ),
                                     ),
                                   ],
                                 ),
                               ),
+                              SizedBox(height: 3.h),
+                              Container(
+                                margin: EdgeInsets.only(left: 20.w),
+                                width: 400.w,
+                                child: Text(
+                                  userProfile.data!.description ??
+                                      "No description",
+                                  style: GoogleFonts.roboto(
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.w600,
+
+                                    ///color: const Color(0xff666666),
+                                    color: themeMode == ThemeMode.dark
+                                        ? Color(0xff666666)
+                                        : Colors.white,
+                                  ),
+                                ),
+                              ),
+                              if (userType != "Student") ...[
+                                Padding(
+                                  padding: EdgeInsets.only(left: 20.w),
+                                  child: Text(
+                                    "Total Experience ${userProfile.data!.totalExperience ?? 0}",
+                                    style: GoogleFonts.roboto(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w600,
+                                      // color: const Color(0xff666666),
+                                      color: themeMode == ThemeMode.dark
+                                          ? Color(0xff666666)
+                                          : Colors.white,
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  margin: EdgeInsets.only(left: 20.w, top: 4.h),
+                                  child: Text(
+                                    userProfile.data!.jobCompanyName
+                                            ?.toString() ??
+                                        'company',
+                                    style: GoogleFonts.roboto(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w600,
+                                      // color: Color(0xff666666),
+                                      color: themeMode == ThemeMode.dark
+                                          ? Color(0xff666666)
+                                          : Colors.white,
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  margin: EdgeInsets.only(left: 20.w, top: 4.h),
+                                  child: Text(
+                                    userProfile.data!.jobLocation ?? "location",
+                                    style: GoogleFonts.roboto(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w600,
+                                      // color: Color(0xff666666),
+                                      color: themeMode == ThemeMode.dark
+                                          ? Color(0xff666666)
+                                          : Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ],
                               SizedBox(
                                 height: 10.h,
                               ),
                               Divider(),
-                              // Educations section
+
                               Container(
                                   margin:
                                       EdgeInsets.only(left: 20.w, top: 15.h),
@@ -282,37 +299,12 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                               ),
                                             ),
                                             SizedBox(height: 5.h),
-                                            // Text(
-                                            //   userProfile.data!.totalExperience ??
-                                            //       "0",
-                                            //   style: GoogleFonts.roboto(
-                                            //     fontSize: 12.sp,
-                                            //     fontWeight: FontWeight.w600,
-                                            //     //color: const Color(0xff666666),
-                                            //     color: themeMode == ThemeMode.dark
-                                            //         ? Color(0xff666666)
-                                            //         : Colors.white,
-                                            //   ),
-                                            // ),
-                                            Text(
-                                              userProfile.data!.serviceType ??
-                                                  "N/A",
-                                              style: GoogleFonts.roboto(
-                                                fontSize: 15.sp,
-                                                fontWeight: FontWeight.w600,
-                                                // color: const Color(0xff666666),
-                                                color:
-                                                    themeMode == ThemeMode.dark
-                                                        ? Color(0xff666666)
-                                                        : Colors.white,
-                                              ),
-                                            ),
                                             Text(
                                               userProfile.data!
                                                       .highestQualification ??
-                                                  "",
+                                                  "qualification",
                                               style: GoogleFonts.roboto(
-                                                fontSize: 14.sp,
+                                                fontSize: 16.sp,
                                                 fontWeight: FontWeight.w600,
                                                 // color: const Color(0xff666666),
                                                 color:
@@ -321,33 +313,36 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                                         : Colors.white,
                                               ),
                                             ),
-                                            Text(
-                                              userProfile.data!
-                                                      .collegeOrInstituteName ??
-                                                  "",
-                                              style: GoogleFonts.roboto(
-                                                fontSize: 14.sp,
-                                                fontWeight: FontWeight.w600,
-                                                // color: const Color(0xff666666),
-                                                color:
-                                                    themeMode == ThemeMode.dark
-                                                        ? Color(0xff666666)
-                                                        : Colors.white,
+                                            if (userType == "Student") ...[
+                                              Text(
+                                                userProfile.data!
+                                                        .collegeOrInstituteName ??
+                                                    "collage",
+                                                style: GoogleFonts.roboto(
+                                                  fontSize: 16.sp,
+                                                  fontWeight: FontWeight.w600,
+                                                  // color: const Color(0xff666666),
+                                                  color: themeMode ==
+                                                          ThemeMode.dark
+                                                      ? Color(0xff666666)
+                                                      : Colors.white,
+                                                ),
                                               ),
-                                            ),
-                                            Text(
-                                              userProfile.data!.educationYear ??
-                                                  "",
-                                              style: GoogleFonts.roboto(
-                                                fontSize: 14.sp,
-                                                fontWeight: FontWeight.w600,
-                                                // color: const Color(0xff666666),
-                                                color:
-                                                    themeMode == ThemeMode.dark
-                                                        ? Color(0xff666666)
-                                                        : Colors.white,
-                                              ),
-                                            ),
+                                              // Text(
+                                              //   userProfile
+                                              //           .data!.educationYear ??
+                                              //       "year",
+                                              //   style: GoogleFonts.roboto(
+                                              //     fontSize: 16.sp,
+                                              //     fontWeight: FontWeight.w600,
+                                              //     // color: const Color(0xff666666),
+                                              //     color: themeMode ==
+                                              //             ThemeMode.dark
+                                              //         ? Color(0xff666666)
+                                              //         : Colors.white,
+                                              //   ),
+                                              // ),
+                                            ],
                                           ],
                                         ),
                                       ])),

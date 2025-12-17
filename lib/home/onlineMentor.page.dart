@@ -92,7 +92,7 @@ class _OnlineMentorPageState extends ConsumerState<OnlineMentorPage> {
               child: filteredMentors.isEmpty
                   ? Center(
                       child: Text(
-                        "No Mentors Found",
+                        "No Online Mentor",
                         style: TextStyle(color: Colors.black),
                       ),
                     )

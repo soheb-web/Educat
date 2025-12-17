@@ -70,7 +70,7 @@ class _ProfileCompletionWidgetState
     "10th",
     "12th",
     "Diploma",
-    "Undergraduate",
+    "graduate",
     "Postgraduate"
   ];
 
@@ -328,6 +328,7 @@ class _ProfileCompletionWidgetState
         jobLocation: jobLocationController.text,
         jobRol: jobRoleController.text,
         salary: salaryController.text,
+        qualification: qualification.toString(),
       );
       if (mounted) {
         ref.invalidate(userProfileController);
@@ -625,7 +626,76 @@ class _ProfileCompletionWidgetState
                                 ],
                               ),
                             ),
-                            if (userType == "Mentor") ...[
+                            if (userType == "Mentor" ||
+                                userType == "Professional") ...[
+                              Container(
+                                margin: EdgeInsets.symmetric(
+                                    horizontal: 28.w, vertical: 20.h),
+                                child: DropdownButtonFormField(
+                                  dropdownColor: themeMode == ThemeMode.light
+                                      ? Colors.black
+                                      : Colors.white,
+                                  value: qualification == null
+                                      ? null
+                                      : (qualificationList
+                                              .where((item) =>
+                                                  item.toLowerCase() ==
+                                                  qualification!.toLowerCase())
+                                              .isNotEmpty
+                                          ? qualification
+                                          : null),
+                                  decoration: InputDecoration(
+                                    labelText: 'Highest Qualification',
+                                    labelStyle: GoogleFonts.roboto(
+                                      fontSize: 13.w,
+                                      fontWeight: FontWeight.w400,
+                                      // color: const Color(0xFF4D4D4D),
+                                      color: themeMode == ThemeMode.dark
+                                          ? Colors.black
+                                          : Colors.white,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(30.sp),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(30.sp),
+                                      borderSide:
+                                          const BorderSide(color: Colors.grey),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(30.sp),
+                                      borderSide: const BorderSide(
+                                          color: Color(0xff008080)),
+                                    ),
+                                  ),
+                                  items: qualificationList
+                                      .map((qualification) => DropdownMenuItem(
+                                            value: qualification,
+                                            child: Text(
+                                              qualification,
+                                              style: GoogleFonts.roboto(
+                                                fontSize: 14.w,
+                                                color:
+                                                    themeMode == ThemeMode.dark
+                                                        ? Color(0xFF4D4D4D)
+                                                        : Colors.white,
+                                              ),
+                                            ),
+                                          ))
+                                      .toList(),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      qualification = value;
+                                    });
+                                  },
+                                  validator: (value) => value == null
+                                      ? 'Qualification is required'
+                                      : null,
+                                ),
+                              ),
                               RegisterField(
                                 controller: jobRoleController,
                                 label: 'Job Role',

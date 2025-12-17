@@ -336,6 +336,7 @@ class Auth {
     required String totalExperience,
     required String gender,
     required String dob,
+    required String qualification,
     File? profileImage,
     required String skillsId,
     required String languageKnown,
@@ -360,6 +361,7 @@ class Auth {
         "job_company_name": companyName,
         "gender": gender,
         'salary': salary,
+        'highest_qualification': qualification,
       };
 
       // Resume File

@@ -559,52 +559,13 @@ class _HomePageContentState extends ConsumerState<HomePageContent> {
     var box = Hive.box("userdata");
     userId = box.get("userid");
     _connectWebSocket();
-    _connectMentorCount();
-    _connectMultiple();
-  }
-
-  void _connectMultiple() {
-    try {
-      // final url = "ws://192.168.1.53:8000/chat/ws/$userId";
-      final url = "wss://websocket.educatservicesindia.com/chat/ws/$userId";
-
-      channel = WebSocketChannel.connect(Uri.parse(url));
-
-      setState(() {
-        multiplestatus = 'ConnectMul';
-      });
-
-      // Incoming messages listen karo
-      channel.stream.listen(
-        (message) {
-          log('Received: $message');
-          // Yahan message handle karo (JSON parse etc.)
-        },
-        onError: (error) {
-          log('WebSocket error: $error');
-          setState(() {
-            multiplestatus = 'Error: $error';
-          });
-        },
-        onDone: () {
-          log('WebSocket closed: ${channel.closeReason}');
-          setState(() {
-            multiplestatus = 'DisconnectedMul';
-          });
-          // Optional: reconnect logic
-          Future.delayed(const Duration(seconds: 3), _connectMultiple);
-        },
-      );
-    } catch (e) {
-      setState(() {
-        multiplestatus = 'Connection failed: $e';
-      });
-    }
+    _connectedUsersCount();
   }
 
   void _connectWebSocket() {
     try {
-      final url = 'ws://192.168.1.53:8000/chat/ws/user/${userId}';
+      final url =
+          'wss://websocket.educatservicesindia.com/chat/ws/user/${userId}';
 
       channel = WebSocketChannel.connect(Uri.parse(url));
 
@@ -640,9 +601,10 @@ class _HomePageContentState extends ConsumerState<HomePageContent> {
     }
   }
 
-  void _connectMentorCount() {
+  void _connectedUsersCount() {
     try {
-      final url = 'ws://192.168.1.53:8000/chat/ws/presence/connected-users';
+      final url =
+          'wss://websocket.educatservicesindia.com/chat/ws/presence/connected-users';
 
       channel = WebSocketChannel.connect(Uri.parse(url));
 
@@ -653,7 +615,7 @@ class _HomePageContentState extends ConsumerState<HomePageContent> {
       // Incoming messages listen karo
       channel.stream.listen(
         (message) {
-          log('Received:\n$message');
+          log('connectedUsersCount Received :$message');
           // Yahan message handle karo (JSON parse etc.)
           try {
             final data = jsonDecode(message) as Map<String, dynamic>;
@@ -689,7 +651,7 @@ class _HomePageContentState extends ConsumerState<HomePageContent> {
             statusMemtnro = 'DisconnectedMentor';
           });
           // Optional: reconnect logic
-          Future.delayed(const Duration(seconds: 3), _connectMentorCount);
+          Future.delayed(const Duration(seconds: 3), _connectedUsersCount);
         },
       );
     } catch (e) {
@@ -862,8 +824,8 @@ class _HomePageContentState extends ConsumerState<HomePageContent> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Text('WebSocket Status: $status'),
-                          // Text('WebSocket Mentor: $statusMemtnro'),
+                          Text('WebSocket Status: $status'),
+                          Text('WebSocket Mentor: $statusMemtnro'),
                           Text('WebSocket multiple: $multiplestatus'),
                           Row(
                             children: [
