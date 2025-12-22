@@ -38,6 +38,7 @@
         "path_provider",
         "permission_handler",
         "pretty_dio_logger",
+        "razorpay_flutter",
         "shared_preferences",
         "shimmer",
         "url_launcher",
@@ -152,6 +153,15 @@
         "stream_channel",
         "test_api",
         "vector_math"
+      ]
+    },
+    {
+      "name": "razorpay_flutter",
+      "version": "1.4.0",
+      "dependencies": [
+        "eventify",
+        "flutter",
+        "fluttertoast"
       ]
     },
     {
@@ -964,6 +974,11 @@
         "string_scanner",
         "term_glyph"
       ]
+    },
+    {
+      "name": "eventify",
+      "version": "1.0.1",
+      "dependencies": []
     },
     {
       "name": "url_launcher_windows",

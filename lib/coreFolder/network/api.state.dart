@@ -26,6 +26,9 @@ import 'package:educationapp/coreFolder/Model/trendingSkillExpertResModel.dart';
 import 'package:educationapp/coreFolder/Model/userProfileResModel.dart';
 import 'package:educationapp/coreFolder/Model/verifyOrChangePassBodyModel.dart';
 import 'package:retrofit/retrofit.dart';
+import '../Model/PaymentCreateModel.dart';
+import '../Model/PaymentVerifyModel.dart';
+import '../Model/VerifyResponseModel.dart';
 import '../Model/bodyNewModel.dart';
 import '../Model/service.model.dart';
 import '../Model/mentorHomeModel.dart';
@@ -210,4 +213,12 @@ abstract class APIStateNetwork {
 
   @GET("/mentor/users")
   Future<GetNotificationResModel> getNotification();
+
+
+  @POST('/razorpay/order')
+  Future<HttpResponse<dynamic>> razorpayOrder(@Body() PaymentCreateModel body);
+
+  @POST('/razorpay/capture')
+  Future<VerifyPaymentResponseModel> razorpayOrderVerify(@Body() PaymentVerifyModel body);
+
 }
