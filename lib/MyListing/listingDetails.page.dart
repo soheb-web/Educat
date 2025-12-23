@@ -349,6 +349,8 @@ class _ListingDetailsPageState extends ConsumerState<ListingDetailsPage> {
                     onPressed: hasApplied
                         ? null
                         : () {
+                            log("id : -  ${widget.item.id.toString()}");
+                            log("Student id : -  ${widget.item.studentId.toString()}");
                             Navigator.push(
                                 context,
                                 CupertinoPageRoute(
@@ -437,7 +439,7 @@ class _ListingDetailsPageState extends ConsumerState<ListingDetailsPage> {
                               width: 25.w,
                               height: 25.h,
                               child: CircularProgressIndicator(
-                                color: Colors.white,
+                                color: const Color.fromARGB(255, 96, 74, 74),
                                 strokeWidth: 1.5,
                               ),
                             ),
