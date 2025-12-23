@@ -38,7 +38,7 @@ String acceptRequestBodyModelToJson(AcceptRequestBodyModel data) =>
     json.encode(data.toJson());
 
 class AcceptRequestBodyModel {
-  int requestId;
+  String requestId;
 
   AcceptRequestBodyModel({
     required this.requestId,
@@ -51,5 +51,40 @@ class AcceptRequestBodyModel {
 
   Map<String, dynamic> toJson() => {
         "request_id": requestId,
+      };
+}
+
+
+
+// To parse this JSON data, do
+//
+//     final applybodyModel = applybodyModelFromJson(jsonString);
+
+ApplybodyModel applybodyModelFromJson(String str) =>
+    ApplybodyModel.fromJson(json.decode(str));
+
+String applybodyModelToJson(ApplybodyModel data) => json.encode(data.toJson());
+
+class ApplybodyModel {
+  String? title;
+  String? body;
+  int? userId;
+
+  ApplybodyModel({
+    this.title,
+    this.body,
+    this.userId,
+  });
+
+  factory ApplybodyModel.fromJson(Map<String, dynamic> json) => ApplybodyModel(
+        title: json["title"],
+        body: json["body"],
+        userId: json["user_id"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "title": title,
+        "body": body,
+        "user_id": userId,
       };
 }

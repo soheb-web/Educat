@@ -1526,14 +1526,11 @@ class _HomePageContentState extends ConsumerState<HomePageContent> {
                                     subtitle: student.studentType,
                                     email: student.studentEmail,
                                     phone: student.studentPhone,
-
                                     callBack: () async {
-
                                       final body = AcceptRequestBodyModel(
-                                          requestId:
-                                              requestData.data[index].id);
+                                          requestId: requestData.data[index].id
+                                              .toString());
                                       try {
-
                                         setState(() {
                                           isAccept = true;
                                         });
@@ -1544,13 +1541,13 @@ class _HomePageContentState extends ConsumerState<HomePageContent> {
                                             await service.acceptRequest(body);
 
                                         if (response.status == true) {
-
                                           api.sendNotificationMentor(
-                                              title: 'Mentorship Request Accepted 🎉',
-                                              b: 'Great news! Your mentorship request has been accepted.',
-                                              user_Id:  student.studentId.toString()
-                                          );
-
+                                              title:
+                                                  'Mentorship Request Accepted 🎉',
+                                              b:
+                                                  'Great news! Your mentorship request has been accepted.',
+                                              user_Id:
+                                                  student.studentId.toString());
 
                                           Fluttertoast.showToast(
                                               msg: response.message);
@@ -1577,7 +1574,6 @@ class _HomePageContentState extends ConsumerState<HomePageContent> {
                                         });
                                       }
                                     },
-
                                   );
                                 },
                               );

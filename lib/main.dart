@@ -114,7 +114,6 @@
 // });
 
 
-
 import 'dart:async';
 import 'dart:developer';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -288,7 +287,6 @@ class _MyAppState extends ConsumerState<MyApp> {
       ),
     );
   }
-
 }
 
 class MyFormDataModel {

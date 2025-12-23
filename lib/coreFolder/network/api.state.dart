@@ -205,14 +205,13 @@ abstract class APIStateNetwork {
   Future<HttpResponse<dynamic>> sendNotifcation(
       @Body() SendNotifcationBodyModel body);
 
-
   @POST("/send-notification")
   Future<HttpResponse<dynamic>> sendNotifcationMentorside(
       @Body() MentorBodyNotification body);
 
-
   @GET("/mentor/users")
   Future<GetNotificationResModel> getNotification();
+
 
 
   @POST('/razorpay/order')
@@ -220,5 +219,10 @@ abstract class APIStateNetwork {
 
   @POST('/razorpay/capture')
   Future<VerifyPaymentResponseModel> razorpayOrderVerify(@Body() PaymentVerifyModel body);
+
+
+  @POST("/apply")
+  Future<HttpResponse<dynamic>> applyOrSendNotification(
+      @Body() ApplybodyModel body);
 
 }

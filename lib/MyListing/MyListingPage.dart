@@ -1,11 +1,10 @@
-import 'package:dio/dio.dart';
+import 'package:educationapp/MyListing/listingDetails.page.dart';
 import 'package:educationapp/coreFolder/Controller/myListingController.dart';
 import 'package:educationapp/coreFolder/Controller/themeController.dart';
 import 'package:educationapp/coreFolder/Model/listingBodyModel.dart';
 import 'package:educationapp/coreFolder/network/api.state.dart';
 import 'package:educationapp/coreFolder/utils/preety.dio.dart';
-import 'package:educationapp/home/createlist.page.dart';
-import 'package:educationapp/wallet/wallet.page.dart';
+import 'package:educationapp/home/home.page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,6 +26,15 @@ class _MyListingState extends ConsumerState<MyListing> {
   int currentBalance = 0;
   final searchController = TextEditingController();
   bool isShow = false;
+
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      ref.invalidate(myListingController);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -148,9 +156,11 @@ class _MyListingState extends ConsumerState<MyListing> {
                     )),
               ),
             ),
+
           SizedBox(
             height: 20.h,
           ),
+
           Expanded(
             child: Container(
               width: MediaQuery.of(context).size.width,
@@ -166,7 +176,9 @@ class _MyListingState extends ConsumerState<MyListing> {
                 child: Column(
                   children: [
                     type != "Student"
-                        ? myListingProvider.when(
+                        ?
+
+                    myListingProvider.when(
                             data: (listData) {
                               final query = searchController.text.toLowerCase();
                               final filteredList = query.isEmpty
@@ -204,366 +216,186 @@ class _MyListingState extends ConsumerState<MyListing> {
                                 itemCount: filteredList.length,
                                 itemBuilder: (context, index) {
                                   final item = filteredList[index];
-                                  return InkWell(
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          CupertinoPageRoute(
-                                            builder: (context) => WalletPage(),
-                                          ));
-                                    },
-                                    
-                                    // child: Container(
-                                    //   margin: EdgeInsets.only(
-                                    //       bottom: 10.h, top: 6.h),
-                                    //   decoration: BoxDecoration(
-                                    //     color: Colors.white,
-                                    //     borderRadius:
-                                    //         BorderRadius.circular(20.r),
-                                    //     boxShadow: [
-                                    //       BoxShadow(
-                                    //         color:
-                                    //             Colors.black.withOpacity(0.08),
-                                    //         blurRadius: 8,
-                                    //         offset: const Offset(0, 3),
-                                    //       ),
-                                    //     ],
-                                    //   ),
-                                    //   padding: EdgeInsets.all(16.w),
-                                    //   child: Column(
-                                    //     crossAxisAlignment:
-                                    //         CrossAxisAlignment.start,
-                                    //     children: [
-                                    //       SizedBox(height: 10.h),
-                                    //       Row(
-                                    //         crossAxisAlignment:
-                                    //             CrossAxisAlignment.start,
-                                    //         children: [
-                                    //           ClipRRect(
-                                    //             borderRadius:
-                                    //                 BorderRadius.circular(40.r),
-                                    //             child: Image.network(
-                                    //               // type == "Mentor"
-                                    //               //     ? item.studentProfile
-                                    //               //     : item.mentorProfile,
-                                    //               item.student!.fullName ?? "",
-                                    //               height: 60.h,
-                                    //               width: 60.w,
-                                    //               fit: BoxFit.cover,
-                                    //               errorBuilder: (context, error,
-                                    //                   stackTrace) {
-                                    //                 return Image.network(
-                                    //                   "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png",
-                                    //                   height: 60.h,
-                                    //                   width: 60.w,
-                                    //                   fit: BoxFit.cover,
-                                    //                 );
-                                    //               },
-                                    //             ),
-                                    //           ),
-                                    //           SizedBox(width: 12.w),
-                                    //           Expanded(
-                                    //             child: Column(
-                                    //               crossAxisAlignment:
-                                    //                   CrossAxisAlignment.start,
-                                    //               children: [
-                                    //                 Text(
-                                    //                   // type == "Mentor"
-                                    //                   item.student!.fullName ??
-                                    //                       "",
-                                    //                   style: GoogleFonts.roboto(
-                                    //                     fontSize: 18.sp,
-                                    //                     fontWeight:
-                                    //                         FontWeight.w600,
-                                    //                     color: Colors.black,
-                                    //                   ),
-                                    //                 ),
-                                    //                 Text(
-                                    //                   // type == "Mentor"
-                                    //                   item.education ?? '',
-                                    //                   style: GoogleFonts.roboto(
-                                    //                     fontSize: 14.sp,
-                                    //                     color: Colors.grey[700],
-                                    //                   ),
-                                    //                 ),
-                                    //                 Text(
-                                    //                   // type == "Mentor"
-                                    //                   "${item.experience} Year Experience",
-                                    //                   style: GoogleFonts.roboto(
-                                    //                     fontSize: 13.sp,
-                                    //                     color: Colors.grey[600],
-                                    //                   ),
-                                    //                 ),
-                                    //                 Wrap(
-                                    //                   spacing: 6,
-                                    //                   runSpacing: 6,
-                                    //                   children: item.subjects!
-                                    //                       .map(
-                                    //                         (subject) => Chip(
-                                    //                           label: Text(
-                                    //                             subject,
-                                    //                             style:
-                                    //                                 GoogleFonts
-                                    //                                     .roboto(
-                                    //                               fontSize:
-                                    //                                   12.sp,
-                                    //                               fontWeight:
-                                    //                                   FontWeight
-                                    //                                       .w400,
-                                    //                               color: Colors
-                                    //                                   .black,
-                                    //                             ),
-                                    //                           ),
-                                    //                           backgroundColor:
-                                    //                               Color
-                                    //                                   .fromARGB(
-                                    //                                       225,
-                                    //                                       222,
-                                    //                                       221,
-                                    //                                       236),
-                                    //                           side: BorderSide
-                                    //                               .none,
-                                    //                         ),
-                                    //                       )
-                                    //                       .toList(),
-                                    //                 ),
-                                    //                 Text(
-                                    //                   // type == "Mentor"
-                                    //                   "Fee: ₹${item.fee}",
-                                    //                   style: GoogleFonts.roboto(
-                                    //                     fontSize: 13.sp,
-                                    //                     color: Colors.grey[600],
-                                    //                   ),
-                                    //                 ),
-                                    //                 Text(
-                                    //                   // type == "Mentor"
-                                    //                   item.description ?? '',
-                                    //                   style: GoogleFonts.roboto(
-                                    //                     fontSize: 13.sp,
-                                    //                     color: Colors.grey[600],
-                                    //                   ),
-                                    //                 ),
-                                    //               ],
-                                    //             ),
-                                    //           ),
-                                    //         ],
-                                    //       )
-                                    //     ],
-                                    //   ),
-                                    // ),
+                                  return Container(
+                                    margin: EdgeInsets.only(bottom: 12.h),
+                                    padding: EdgeInsets.all(16.w),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(16.r),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.08),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 4),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        /// STUDENT INFO
+                                        Row(
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(40.r),
+                                              child: Image.network(
+                                                item.student!.profilePic ??
+                                                    "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png",
+                                                height: 60.h,
+                                                width: 60.w,
+                                                fit: BoxFit.cover,
+                                                errorBuilder: (context, error,
+                                                    stackTrace) {
+                                                  return Image.network(
+                                                    "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png",
+                                                    height: 60.h,
+                                                    width: 60.w,
+                                                    fit: BoxFit.cover,
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                            SizedBox(width: 12.w),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  item.student?.fullName ??
+                                                      "Student",
+                                                  style: GoogleFonts.roboto(
+                                                    fontSize: 18.sp,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Colors.black,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  "Looking for Mentor",
+                                                  style: GoogleFonts.inter(
+                                                    fontSize: 15.sp,
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                ),
+                                              ],
+                                            )
+                                          ],
+                                        ),
 
-                                    child: Container(
-                                      margin: EdgeInsets.only(bottom: 12.h),
-                                      padding: EdgeInsets.all(16.w),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius:
-                                            BorderRadius.circular(16.r),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color:
-                                                Colors.black.withOpacity(0.08),
-                                            blurRadius: 8,
-                                            offset: const Offset(0, 4),
-                                          ),
-                                        ],
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          /// STUDENT INFO
-                                          Row(
-                                            children: [
-                                              ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(40.r),
-                                                child: Image.network(
-                                                  // type == "Mentor"
-                                                  //     ? item.studentProfile
-                                                  //     : item.mentorProfile,
-                                                  item.student!.fullName ?? "",
-                                                  height: 60.h,
-                                                  width: 60.w,
-                                                  fit: BoxFit.cover,
-                                                  errorBuilder: (context, error,
-                                                      stackTrace) {
-                                                    return Image.network(
-                                                      "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png",
-                                                      height: 60.h,
-                                                      width: 60.w,
-                                                      fit: BoxFit.cover,
-                                                    );
-                                                  },
+                                        SizedBox(height: 14.h),
+
+                                        /// EDUCATION
+                                        Row(
+                                          children: [
+                                            Icon(Icons.school,
+                                                size: 18.sp,
+                                                color: Colors.blue),
+                                            SizedBox(width: 6.w),
+                                            Expanded(
+                                              child: Text(
+                                                item.education ?? '',
+                                                style: GoogleFonts.roboto(
+                                                  fontSize: 15.sp,
+                                                  color: Colors.grey[700],
+                                                  fontWeight: FontWeight.w700,
                                                 ),
                                               ),
-                                              SizedBox(width: 12.w),
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    item.student?.fullName ??
-                                                        "Student",
+                                            ),
+                                          ],
+                                        ),
+
+                                        SizedBox(height: 8.h),
+
+                                        /// EXPERIENCE
+                                        Row(
+                                          children: [
+                                            Icon(Icons.work_outline,
+                                                size: 18.sp,
+                                                color: Colors.orange),
+                                            SizedBox(width: 6.w),
+                                            Text(
+                                              "${item.experience}+ Years Experience",
+                                              style: GoogleFonts.roboto(
+                                                fontSize: 15.sp,
+                                                color: Colors.grey[700],
+                                                fontWeight: FontWeight.w700,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+
+                                        SizedBox(height: 10.h),
+
+                                        /// SUBJECTS
+                                        Wrap(
+                                          spacing: 6,
+                                          runSpacing: 6,
+                                          children: item.subjects!
+                                              .map(
+                                                (subject) => Chip(
+                                                  label: Text(
+                                                    subject,
                                                     style: GoogleFonts.roboto(
-                                                      fontSize: 18.sp,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      color: Colors.black,
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    "Looking for Mentor",
-                                                    style: GoogleFonts.inter(
-                                                      fontSize: 15.sp,
-                                                      color: Colors.black,
+                                                      fontSize: 12.sp,
                                                       fontWeight:
                                                           FontWeight.w400,
+                                                      color: Colors.black,
                                                     ),
                                                   ),
-                                                ],
+                                                  backgroundColor:
+                                                      Color.fromARGB(
+                                                          225, 222, 221, 236),
+                                                  side: BorderSide.none,
+                                                ),
                                               )
-                                            ],
-                                          ),
+                                              .toList(),
+                                        ),
 
-                                          SizedBox(height: 14.h),
+                                        SizedBox(height: 10.h),
 
-                                          /// EDUCATION
-                                          Row(
-                                            children: [
-                                              Icon(Icons.school,
-                                                  size: 18.sp,
-                                                  color: Colors.blue),
-                                              SizedBox(width: 6.w),
-                                              Expanded(
-                                                child: Text(
-                                                  item.education ?? '',
-                                                  style: GoogleFonts.roboto(
-                                                    fontSize: 15.sp,
-                                                    color: Colors.grey[700],
-                                                    fontWeight: FontWeight.w700,
-                                                  ),
-                                                ),
+                                        /// BUTTON
+                                        Align(
+                                          alignment: Alignment.centerRight,
+                                          child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.blue,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(20.r),
                                               ),
-                                            ],
-                                          ),
-
-                                          SizedBox(height: 8.h),
-
-                                          /// EXPERIENCE
-                                          Row(
-                                            children: [
-                                              Icon(Icons.work_outline,
-                                                  size: 18.sp,
-                                                  color: Colors.orange),
-                                              SizedBox(width: 6.w),
-                                              Text(
-                                                "${item.experience}+ Years Experience",
-                                                style: GoogleFonts.roboto(
-                                                  fontSize: 15.sp,
-                                                  color: Colors.grey[700],
-                                                  fontWeight: FontWeight.w700,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-
-                                          SizedBox(height: 12.h),
-
-                                          /// SUBJECTS
-                                          Wrap(
-                                            spacing: 6,
-                                            runSpacing: 6,
-                                            children: item.subjects!
-                                                .map(
-                                                  (subject) => Chip(
-                                                    label: Text(
-                                                      subject,
-                                                      style: GoogleFonts.roboto(
-                                                        fontSize: 12.sp,
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                        color: Colors.black,
-                                                      ),
-                                                    ),
-                                                    backgroundColor:
-                                                        Color.fromARGB(
-                                                            225, 222, 221, 236),
-                                                    side: BorderSide.none,
-                                                  ),
-                                                )
-                                                .toList(),
-                                          ),
-
-                                          SizedBox(height: 10.h),
-
-                                          /// FEE
-                                          Row(
-                                            children: [
-                                              Icon(Icons.currency_rupee,
-                                                  size: 18.sp,
-                                                  color: Colors.green),
-                                              SizedBox(width: 6.w),
-                                              Text(
-                                                "Budget: ₹${item.fee}",
-                                                style: GoogleFonts.roboto(
-                                                  fontSize: 15.sp,
-                                                  color: Colors.grey[700],
-                                                  fontWeight: FontWeight.w700,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-
-                                          SizedBox(height: 10.h),
-
-                                          /// DESCRIPTION
-                                          Text(
-                                            item.description ?? '',
-                                            maxLines: 3,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: GoogleFonts.roboto(
-                                              fontSize: 15.sp,
-                                              color: Colors.grey[700],
-                                              fontWeight: FontWeight.w700,
                                             ),
-                                          ),
+                                            onPressed: () {
 
-                                          SizedBox(height: 14.h),
+                                              Navigator.push(
+                                                context,
+                                                CupertinoPageRoute(
+                                                  builder: (_) => ListingDetailsPage(item),
+                                                ),
+                                              ).then((_) {
+                                                ref.invalidate(myListingController);
+                                              });
 
-                                          /// BUTTON
-                                          Align(
-                                            alignment: Alignment.centerRight,
-                                            child: ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: Colors.blue,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          20.r),
+                                              /*  Navigator.push(
+                                                context,
+                                                CupertinoPageRoute(
+                                                  builder: (_) =>
+                                                      ListingDetailsPage(item),
                                                 ),
-                                              ),
-                                              onPressed: () {
-                                                Navigator.push(
-                                                  context,
-                                                  CupertinoPageRoute(
-                                                    builder: (_) =>
-                                                        WalletPage(),
-                                                  ),
-                                                );
-                                              },
-                                              child: Text(
-                                                "View Details",
-                                                style: GoogleFonts.roboto(
-                                                  fontSize: 15.sp,
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.w700,
-                                                ),
+                                              );*/
+                                            },
+                                            child: Text(
+                                              "View Details",
+                                              style: GoogleFonts.roboto(
+                                                fontSize: 15.sp,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w700,
                                               ),
                                             ),
                                           ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
                                   );
                                 },
@@ -596,24 +428,35 @@ class _MyListingState extends ConsumerState<MyListing> {
   }
 }
 
-class CreateListPage extends StatefulWidget {
+class CreateListPage extends ConsumerStatefulWidget {
   const CreateListPage({super.key});
 
   @override
-  State<CreateListPage> createState() => _CreateListPageState();
+  ConsumerState<CreateListPage> createState() => _CreateListPageState();
 }
 
-class _CreateListPageState extends State<CreateListPage> {
+class _CreateListPageState extends ConsumerState<CreateListPage> {
   final educationCotnroller = TextEditingController();
   final exprienceController = TextEditingController();
   final subjectConroller = TextEditingController();
   final feesController = TextEditingController();
   final descController = TextEditingController();
+  final durationController = TextEditingController();
+  final locationController = TextEditingController();
+
   bool isLoading = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  String? mode;
+
+  List<String> modeList = [
+    "online",
+    "offline",
+  ];
+
   @override
   Widget build(BuildContext context) {
+    final themeMode = ref.watch(themeProvider);
     return Form(
       key: _formKey,
       child: Column(
@@ -625,7 +468,63 @@ class _CreateListPageState extends State<CreateListPage> {
           CreateList(label: "Education", controller: educationCotnroller),
           CreateList(label: "Experience", controller: exprienceController),
           CreateList(label: "Subjects", controller: subjectConroller),
-          CreateList(label: "Fee", controller: feesController),
+          CreateList(label: "Location", controller: locationController),
+          CreateList(label: "Duration", controller: durationController),
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 28.w, vertical: 20.h),
+            child: DropdownButtonFormField(
+              dropdownColor:
+                  themeMode == ThemeMode.dark ? Colors.white : Colors.black,
+              value: mode,
+              decoration: InputDecoration(
+                labelText: 'Teaching Mode',
+                labelStyle: GoogleFonts.roboto(
+                  fontSize: 13.w,
+                  fontWeight: FontWeight.w400,
+                  //color: const Color(0xFF4D4D4D),
+                  color:
+                      themeMode == ThemeMode.dark ? Colors.black : Colors.white,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.sp),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.sp),
+                  borderSide: const BorderSide(color: Colors.grey),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.sp),
+                  borderSide: BorderSide(
+                    color: themeMode == ThemeMode.dark
+                        ? const Color(0xFF4D4D4D)
+                        : Colors.white,
+                  ),
+                ),
+              ),
+              items: modeList
+                  .map((mode) => DropdownMenuItem(
+                        value: mode,
+                        child: Text(
+                          mode,
+                          style: GoogleFonts.roboto(
+                            fontSize: 14.w,
+                            color: themeMode == ThemeMode.dark
+                                ? Color(0xFF4D4D4D)
+                                : Colors.white,
+                          ),
+                        ),
+                      ))
+                  .toList(),
+              onChanged: (value) {
+                setState(() {
+                  mode = value;
+                });
+              },
+              validator: (value) =>
+                  value == null ? 'Teaching Mode is required' : null,
+            ),
+          ),
+          CreateList(label: "Budget", controller: feesController),
           CreateList(label: "Description", controller: descController),
           SizedBox(
             height: 20.h,
@@ -645,22 +544,27 @@ class _CreateListPageState extends State<CreateListPage> {
 
                     try {
                       final body = CreatelistBodyModel(
-                          education: educationCotnroller.text,
-                          experience: exprienceController.text,
-                          //  subjects: [subjectConroller.text],
-                          subjects: subjectConroller.text
-                              .split(',')
-                              .map((e) => e.trim())
-                              .toList(),
-                          fee: feesController.text,
-                          description: descController.text);
+                        education: educationCotnroller.text,
+                        experience: exprienceController.text,
+                        //  subjects: [subjectConroller.text],
+                        subjects: subjectConroller.text
+                            .split(',')
+                            .map((e) => e.trim())
+                            .toList(),
+                        fee: feesController.text,
+                        description: descController.text,
+                        duration: durationController.text,
+                        location: locationController.text,
+                        teachingMode: mode.toString(),
+                      );
 
                       final service = APIStateNetwork(createDio());
                       final response = await service.createList(body);
                       if (response.response.statusCode == 201) {
                         Fluttertoast.showToast(
                             msg: response.response.data['message']);
-                        Navigator.pop(context);
+
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>HomePage(0)));
                         setState(() {
                           isLoading = false;
                         });

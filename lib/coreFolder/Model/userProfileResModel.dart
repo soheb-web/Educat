@@ -133,7 +133,7 @@ class Data {
         collegeOrInstituteName: json["college_or_institute_name"],
         highestQualification: json["highest_qualification"],
         jobRole: json["job_role"],
-        jobLocation: json["job_location"].toString(),
+        jobLocation: json["job_location"],
         jobCompanyName: json["job_company_name"],
         salary: json["salary"],
         skills: json["skills"] == null
