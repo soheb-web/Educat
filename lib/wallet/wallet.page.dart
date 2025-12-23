@@ -572,7 +572,7 @@ class _WalletPageState extends ConsumerState<WalletPage> {
 
                                           _handleBuyCoins(
                                               payload); // Use handler for error handling
-                                          Navigator.pop(context);*//*
+                                          Navigator.pop(context);*/ /*
 
 
 
@@ -856,7 +856,6 @@ class _WalletPageState extends ConsumerState<WalletPage> {
 
 }
 */
-
 
 /*
 
@@ -1775,7 +1774,7 @@ class _WalletPageState extends ConsumerState<WalletPage> {
       }
       return false;
     }
-  }*//*
+  }*/ /*
 
 
 
@@ -1819,7 +1818,6 @@ class _WalletPageState extends ConsumerState<WalletPage> {
 }
 
 */
-
 
 /*
 
@@ -3151,7 +3149,6 @@ class _WalletPageState extends ConsumerState<WalletPage> {
   }
 }*/
 
-
 import 'package:educationapp/coreFolder/Controller/themeController.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -3178,7 +3175,8 @@ class WalletPage extends ConsumerStatefulWidget {
 
 class _WalletPageState extends ConsumerState<WalletPage> {
   final TextEditingController _amountController = TextEditingController();
-  final TextEditingController _searchController = TextEditingController(); // New
+  final TextEditingController _searchController =
+      TextEditingController(); // New
   int? _userId;
   late Razorpay _razorpay;
   bool _isLoading = false;
@@ -3205,7 +3203,8 @@ class _WalletPageState extends ConsumerState<WalletPage> {
 
   // ₹0.1 per coin
   double _getAmountInRupees(int coins) {
-    return (coins * 0.1);
+    // return (coins * 0.1);
+    return (coins.toDouble());
   }
 
   void _openRazorpayCheckout(int coins) async {
@@ -3263,8 +3262,10 @@ class _WalletPageState extends ConsumerState<WalletPage> {
         ),
       );
 
-      if (verifyResponse.success != true || verifyResponse.payment?.status != "paid") {
-        throw Exception(verifyResponse.message ?? "Payment verification failed");
+      if (verifyResponse.success != true ||
+          verifyResponse.payment?.status != "paid") {
+        throw Exception(
+            verifyResponse.message ?? "Payment verification failed");
       }
 
       final int backendPaymentId = verifyResponse.payment!.id!;
@@ -3279,7 +3280,8 @@ class _WalletPageState extends ConsumerState<WalletPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Payment Successful! ${selectCoins ?? ''} Coins added.'),
+            content:
+                Text('Payment Successful! ${selectCoins ?? ''} Coins added.'),
             backgroundColor: Colors.green,
           ),
         );
@@ -3305,7 +3307,8 @@ class _WalletPageState extends ConsumerState<WalletPage> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Payment Failed: ${response.message ?? 'Unknown error'}'),
+          content:
+              Text('Payment Failed: ${response.message ?? 'Unknown error'}'),
           backgroundColor: Colors.red,
         ),
       );
@@ -3356,7 +3359,8 @@ class _WalletPageState extends ConsumerState<WalletPage> {
     var box = Hive.box('userdata');
     final userIdRaw = box.get('userid');
     final themeMode = ref.watch(themeProvider);
-    final userId = userIdRaw != null ? int.tryParse(userIdRaw.toString()) : null;
+    final userId =
+        userIdRaw != null ? int.tryParse(userIdRaw.toString()) : null;
 
     if (userId == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -3381,7 +3385,9 @@ class _WalletPageState extends ConsumerState<WalletPage> {
     final transactionState = ref.watch(transactionProvider(userId));
 
     return Scaffold(
-      backgroundColor: themeMode == ThemeMode.dark ? const Color(0xFF1B1B1B) : const Color(0xFF008080),
+      backgroundColor: themeMode == ThemeMode.dark
+          ? const Color(0xFF1B1B1B)
+          : const Color(0xFF008080),
       body: Column(
         children: [
           SizedBox(height: 30.h),
@@ -3398,7 +3404,8 @@ class _WalletPageState extends ConsumerState<WalletPage> {
                       color: const Color.fromARGB(39, 255, 255, 255),
                       borderRadius: BorderRadius.circular(500.r),
                     ),
-                    child: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 15),
+                    child: const Icon(Icons.arrow_back_ios,
+                        color: Colors.white, size: 15),
                   ),
                 ),
                 const Spacer(),
@@ -3407,7 +3414,9 @@ class _WalletPageState extends ConsumerState<WalletPage> {
                   style: GoogleFonts.roboto(
                     fontSize: 18.sp,
                     fontWeight: FontWeight.w600,
-                    color: themeMode == ThemeMode.dark ? const Color(0xff008080) : Colors.white,
+                    color: themeMode == ThemeMode.dark
+                        ? const Color(0xff008080)
+                        : Colors.white,
                   ),
                 ),
                 const Spacer(),
@@ -3441,11 +3450,16 @@ class _WalletPageState extends ConsumerState<WalletPage> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Balance", style: GoogleFonts.roboto(fontSize: 14.sp, color: Colors.white)),
+                    Text("Balance",
+                        style: GoogleFonts.roboto(
+                            fontSize: 14.sp, color: Colors.white)),
                     SizedBox(height: 5.h),
                     Text(
                       "$balanceText Coins",
-                      style: GoogleFonts.roboto(fontSize: 24.sp, fontWeight: FontWeight.w600, color: Colors.white),
+                      style: GoogleFonts.roboto(
+                          fontSize: 24.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white),
                     ),
                   ],
                 ),
@@ -3457,27 +3471,41 @@ class _WalletPageState extends ConsumerState<WalletPage> {
                       backgroundColor: Colors.transparent,
                       builder: (context) {
                         return StatefulBuilder(
-                          builder: (BuildContext context, StateSetter setModalState) {
+                          builder: (BuildContext context,
+                              StateSetter setModalState) {
                             final int coinsToUse = selectCoins ?? 0;
-                            final double amountToPay = _getAmountInRupees(coinsToUse);
+                            final double amountToPay =
+                                _getAmountInRupees(coinsToUse);
 
                             return Container(
                               decoration: BoxDecoration(
-                                color: themeMode == ThemeMode.dark ? Colors.white : Colors.black,
-                                borderRadius: const BorderRadius.only(topLeft: Radius.circular(40), topRight: Radius.circular(40)),
+                                color: themeMode == ThemeMode.dark
+                                    ? Colors.white
+                                    : Colors.black,
+                                borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(40),
+                                    topRight: Radius.circular(40)),
                               ),
                               height: MediaQuery.of(context).size.height * 0.7,
                               padding: EdgeInsets.all(15.w),
                               child: Column(
                                 children: [
-                                  Container(height: 5.h, width: 50.w, decoration: BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.circular(10))),
+                                  Container(
+                                      height: 5.h,
+                                      width: 50.w,
+                                      decoration: BoxDecoration(
+                                          color: Colors.grey,
+                                          borderRadius:
+                                              BorderRadius.circular(10))),
                                   SizedBox(height: 15.h),
                                   Align(
                                     alignment: Alignment.centerLeft,
                                     child: Text(
                                       "Add Coins",
                                       style: GoogleFonts.roboto(
-                                        color: themeMode == ThemeMode.dark ? Colors.black : Colors.white,
+                                        color: themeMode == ThemeMode.dark
+                                            ? Colors.black
+                                            : Colors.white,
                                         fontWeight: FontWeight.w600,
                                         fontSize: 18.sp,
                                       ),
@@ -3487,7 +3515,10 @@ class _WalletPageState extends ConsumerState<WalletPage> {
                                   TextFormField(
                                     controller: _amountController,
                                     keyboardType: TextInputType.number,
-                                    style: TextStyle(color: themeMode == ThemeMode.dark ? Colors.black : Colors.white),
+                                    style: TextStyle(
+                                        color: themeMode == ThemeMode.dark
+                                            ? Colors.black
+                                            : Colors.white),
                                     onChanged: (value) {
                                       final parsed = int.tryParse(value) ?? 0;
                                       setState(() => selectCoins = parsed);
@@ -3495,33 +3526,57 @@ class _WalletPageState extends ConsumerState<WalletPage> {
                                     },
                                     decoration: InputDecoration(
                                       labelText: "Enter amount of coins",
-                                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.r)),
-                                      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10.r), borderSide: const BorderSide(color: Colors.grey)),
-                                      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10.r), borderSide: const BorderSide(color: Colors.grey)),
+                                      border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10.r)),
+                                      enabledBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10.r),
+                                          borderSide: const BorderSide(
+                                              color: Colors.grey)),
+                                      focusedBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10.r),
+                                          borderSide: const BorderSide(
+                                              color: Colors.grey)),
                                     ),
                                   ),
                                   SizedBox(height: 20.h),
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
                                     children: [50, 100, 150, 200].map((amount) {
-                                      final bool isSelected = selectCoins == amount;
+                                      final bool isSelected =
+                                          selectCoins == amount;
                                       return GestureDetector(
                                         onTap: () {
                                           setState(() {
                                             selectCoins = amount;
-                                            _amountController.text = amount.toString();
+                                            _amountController.text =
+                                                amount.toString();
                                           });
                                           setModalState(() {});
                                         },
                                         child: AnimatedContainer(
-                                          duration: const Duration(milliseconds: 250),
+                                          duration:
+                                              const Duration(milliseconds: 250),
                                           height: 60.h,
                                           width: 80.w,
                                           decoration: BoxDecoration(
-                                            color: isSelected ? const Color(0xFF008080) : Colors.grey.shade200,
-                                            borderRadius: BorderRadius.circular(20.r),
+                                            color: isSelected
+                                                ? const Color(0xFF008080)
+                                                : Colors.grey.shade200,
+                                            borderRadius:
+                                                BorderRadius.circular(20.r),
                                             boxShadow: isSelected
-                                                ? [BoxShadow(color: const Color(0xFF008080).withOpacity(0.6), blurRadius: 12, spreadRadius: 3)]
+                                                ? [
+                                                    BoxShadow(
+                                                        color: const Color(
+                                                                0xFF008080)
+                                                            .withOpacity(0.6),
+                                                        blurRadius: 12,
+                                                        spreadRadius: 3)
+                                                  ]
                                                 : null,
                                           ),
                                           child: Center(
@@ -3530,7 +3585,9 @@ class _WalletPageState extends ConsumerState<WalletPage> {
                                               style: GoogleFonts.inter(
                                                 fontSize: 18.sp,
                                                 fontWeight: FontWeight.w700,
-                                                color: isSelected ? Colors.white : Colors.black,
+                                                color: isSelected
+                                                    ? Colors.white
+                                                    : Colors.black,
                                               ),
                                             ),
                                           ),
@@ -3541,22 +3598,29 @@ class _WalletPageState extends ConsumerState<WalletPage> {
                                   SizedBox(height: 30.h),
                                   AnimatedContainer(
                                     duration: const Duration(milliseconds: 300),
-                                    padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 20.w),
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 16.h, horizontal: 20.w),
                                     width: double.infinity,
                                     decoration: BoxDecoration(
-                                      color: const Color(0xFF008080).withOpacity(0.1),
+                                      color: const Color(0xFF008080)
+                                          .withOpacity(0.1),
                                       borderRadius: BorderRadius.circular(15.r),
-                                      border: Border.all(color: const Color(0xFF008080), width: 1.5),
+                                      border: Border.all(
+                                          color: const Color(0xFF008080),
+                                          width: 1.5),
                                     ),
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
                                           "You will pay",
                                           style: GoogleFonts.roboto(
                                             fontSize: 16.sp,
                                             fontWeight: FontWeight.w500,
-                                            color: themeMode == ThemeMode.dark ? Colors.black87 : Colors.white,
+                                            color: themeMode == ThemeMode.dark
+                                                ? Colors.black87
+                                                : Colors.white,
                                           ),
                                         ),
                                         Text(
@@ -3575,34 +3639,40 @@ class _WalletPageState extends ConsumerState<WalletPage> {
                                     onTap: _isLoading || coinsToUse <= 0
                                         ? null
                                         : () {
-                                      if (coinsToUse <= 0) {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          const SnackBar(content: Text('Please enter a valid coin amount')),
-                                        );
-                                        return;
-                                      }
-                                      _openRazorpayCheckout(coinsToUse);
-                                    },
+                                            if (coinsToUse <= 0) {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                const SnackBar(
+                                                    content: Text(
+                                                        'Please enter a valid coin amount')),
+                                              );
+                                              return;
+                                            }
+                                            _openRazorpayCheckout(coinsToUse);
+                                          },
                                     child: Container(
                                       height: 56.h,
                                       width: double.infinity,
                                       decoration: BoxDecoration(
                                         color: (_isLoading || coinsToUse <= 0)
                                             ? Colors.grey
-                                            : const Color.fromARGB(255, 220, 248, 129),
-                                        borderRadius: BorderRadius.circular(40.r),
+                                            : const Color.fromARGB(
+                                                255, 220, 248, 129),
+                                        borderRadius:
+                                            BorderRadius.circular(40.r),
                                       ),
                                       child: Center(
                                         child: _isLoading
-                                            ? const CircularProgressIndicator(color: Colors.black)
+                                            ? const CircularProgressIndicator(
+                                                color: Colors.black)
                                             : Text(
-                                          "Continue to Pay ₹${amountToPay.toStringAsFixed(2)}",
-                                          style: GoogleFonts.roboto(
-                                            color: Colors.black,
-                                            fontSize: 17.sp,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
+                                                "Continue to Pay ₹${amountToPay.toStringAsFixed(2)}",
+                                                style: GoogleFonts.roboto(
+                                                  color: Colors.black,
+                                                  fontSize: 17.sp,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
                                       ),
                                     ),
                                   ),
@@ -3626,7 +3696,11 @@ class _WalletPageState extends ConsumerState<WalletPage> {
                       children: [
                         Icon(Icons.add, color: Colors.black, size: 16.sp),
                         SizedBox(width: 3.w),
-                        Text("Add Coin", style: GoogleFonts.roboto(fontSize: 12.sp, fontWeight: FontWeight.w500, color: Colors.black)),
+                        Text("Add Coin",
+                            style: GoogleFonts.roboto(
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black)),
                       ],
                     ),
                   ),
@@ -3639,8 +3713,12 @@ class _WalletPageState extends ConsumerState<WalletPage> {
             child: Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                color: themeMode == ThemeMode.dark ? Colors.white : const Color(0xFF1B1B1B),
-                borderRadius: const BorderRadius.only(topLeft: Radius.circular(40), topRight: Radius.circular(40)),
+                color: themeMode == ThemeMode.dark
+                    ? Colors.white
+                    : const Color(0xFF1B1B1B),
+                borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(40),
+                    topRight: Radius.circular(40)),
               ),
               child: Padding(
                 padding: EdgeInsets.all(19.w),
@@ -3649,78 +3727,95 @@ class _WalletPageState extends ConsumerState<WalletPage> {
                     // Search Bar or Title
                     _isSearching
                         ? Container(
-                      height: 50.h,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
-                        borderRadius: BorderRadius.circular(25.r),
-                      ),
-                      child: Row(
-                        children: [
-                          SizedBox(width: 16.w),
-                          const Icon(Icons.search, color: Colors.grey),
-                          SizedBox(width: 8.w),
-                          Expanded(
-                            child: TextField(
-                              controller: _searchController,
-                              autofocus: true,
-                              style: TextStyle(color: themeMode == ThemeMode.dark ? Colors.black : Colors.white),
-                              decoration: InputDecoration(
-                                hintText: "Search transactions...",
-                                border: InputBorder.none,
-                                hintStyle: TextStyle(color: Colors.grey.shade600),
-                              ),
-                              onChanged: (value) {
-                                setState(() {
-                                  _searchQuery = value.toLowerCase();
-                                });
-                              },
+                            height: 50.h,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade200,
+                              borderRadius: BorderRadius.circular(25.r),
                             ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                _isSearching = false;
-                                _searchQuery = '';
-                                _searchController.clear();
-                              });
-                            },
-                            child: Padding(
-                              padding: EdgeInsets.only(right: 16.w),
-                              child: const Icon(Icons.close, color: Colors.grey),
+                            child: Row(
+                              children: [
+                                SizedBox(width: 16.w),
+                                const Icon(Icons.search, color: Colors.grey),
+                                SizedBox(width: 8.w),
+                                Expanded(
+                                  child: TextField(
+                                    controller: _searchController,
+                                    autofocus: true,
+                                    style: TextStyle(
+                                        color: themeMode == ThemeMode.dark
+                                            ? Colors.black
+                                            : Colors.white),
+                                    decoration: InputDecoration(
+                                      hintText: "Search transactions...",
+                                      border: InputBorder.none,
+                                      hintStyle: TextStyle(
+                                          color: Colors.grey.shade600),
+                                    ),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _searchQuery = value.toLowerCase();
+                                      });
+                                    },
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _isSearching = false;
+                                      _searchQuery = '';
+                                      _searchController.clear();
+                                    });
+                                  },
+                                  child: Padding(
+                                    padding: EdgeInsets.only(right: 16.w),
+                                    child: const Icon(Icons.close,
+                                        color: Colors.grey),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
-                      ),
-                    )
+                          )
                         : Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        "Payment Transaction",
-                        style: GoogleFonts.roboto(
-                          color: themeMode == ThemeMode.dark ? const Color(0xFF1B1B1B) : Colors.white,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 20.sp,
-                        ),
-                      ),
-                    ),
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              "Payment Transaction",
+                              style: GoogleFonts.roboto(
+                                color: themeMode == ThemeMode.dark
+                                    ? const Color(0xFF1B1B1B)
+                                    : Colors.white,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 20.sp,
+                              ),
+                            ),
+                          ),
                     SizedBox(height: _isSearching ? 15.h : 20.h),
                     Expanded(
                       child: transactionState.when(
                         data: (transactions) {
                           // Filter logic
-                          final filteredList = transactions.data!.where((trans) {
+                          final filteredList =
+                              transactions.data!.where((trans) {
                             final query = _searchQuery;
                             if (query.isEmpty) return true;
-                            return (trans.description?.toLowerCase().contains(query) ?? false) ||
-                                (trans.type?.toLowerCase().contains(query) ?? false) ||
-                                (trans.coins?.toLowerCase().contains(query) ?? false);
+                            return (trans.description
+                                        ?.toLowerCase()
+                                        .contains(query) ??
+                                    false) ||
+                                (trans.type?.toLowerCase().contains(query) ??
+                                    false) ||
+                                (trans.coins?.toLowerCase().contains(query) ??
+                                    false);
                           }).toList();
 
                           if (filteredList.isEmpty) {
                             return Center(
                               child: Text(
-                                _searchQuery.isEmpty ? "No payment transaction" : "No matching transactions found",
-                                style: GoogleFonts.roboto(color: const Color(0xFF666666), fontSize: 16.sp),
+                                _searchQuery.isEmpty
+                                    ? "No payment transaction"
+                                    : "No matching transactions found",
+                                style: GoogleFonts.roboto(
+                                    color: const Color(0xFF666666),
+                                    fontSize: 16.sp),
                               ),
                             );
                           }
@@ -3735,23 +3830,41 @@ class _WalletPageState extends ConsumerState<WalletPage> {
                                 padding: EdgeInsets.all(15.w),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(15.r),
-                                  color: themeMode == ThemeMode.dark ? const Color(0xffF1F2F6) : const Color(0xFF008080),
+                                  color: themeMode == ThemeMode.dark
+                                      ? const Color(0xffF1F2F6)
+                                      : const Color(0xFF008080),
                                 ),
                                 child: Row(
                                   children: [
-                                    Icon(Icons.person_sharp, size: 25.sp, color: themeMode == ThemeMode.dark ? const Color(0xffF1F2F6) : Colors.white),
+                                    Icon(Icons.person_sharp,
+                                        size: 25.sp,
+                                        color: themeMode == ThemeMode.dark
+                                            ? const Color(0xffF1F2F6)
+                                            : Colors.white),
                                     SizedBox(width: 10.w),
                                     Expanded(
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                             trans.type ?? 'Unknown',
-                                            style: GoogleFonts.inter(fontSize: 18.sp, fontWeight: FontWeight.w600, color: themeMode == ThemeMode.dark ? const Color(0xFF1B1B1B) : Colors.white),
+                                            style: GoogleFonts.inter(
+                                                fontSize: 18.sp,
+                                                fontWeight: FontWeight.w600,
+                                                color: themeMode ==
+                                                        ThemeMode.dark
+                                                    ? const Color(0xFF1B1B1B)
+                                                    : Colors.white),
                                           ),
                                           Text(
                                             trans.description ?? '',
-                                            style: GoogleFonts.inter(fontSize: 14.sp, color: themeMode == ThemeMode.dark ? const Color(0xFF1B1B1B) : Colors.white),
+                                            style: GoogleFonts.inter(
+                                                fontSize: 14.sp,
+                                                color: themeMode ==
+                                                        ThemeMode.dark
+                                                    ? const Color(0xFF1B1B1B)
+                                                    : Colors.white),
                                           ),
                                         ],
                                       ),
@@ -3761,7 +3874,12 @@ class _WalletPageState extends ConsumerState<WalletPage> {
                                       style: GoogleFonts.inter(
                                         fontSize: 16.sp,
                                         fontWeight: FontWeight.w600,
-                                        color: (trans.coins?.startsWith('-') == true) ? Colors.red : (themeMode == ThemeMode.dark ? const Color(0xFF008080) : Colors.white),
+                                        color: (trans.coins?.startsWith('-') ==
+                                                true)
+                                            ? Colors.red
+                                            : (themeMode == ThemeMode.dark
+                                                ? const Color(0xFF008080)
+                                                : Colors.white),
                                       ),
                                     ),
                                   ],
@@ -3770,8 +3888,10 @@ class _WalletPageState extends ConsumerState<WalletPage> {
                             },
                           );
                         },
-                        loading: () => const Center(child: CircularProgressIndicator()),
-                        error: (error, _) => Center(child: Text('Error: $error')),
+                        loading: () =>
+                            const Center(child: CircularProgressIndicator()),
+                        error: (error, _) =>
+                            Center(child: Text('Error: $error')),
                       ),
                     ),
                   ],
@@ -3784,12 +3904,14 @@ class _WalletPageState extends ConsumerState<WalletPage> {
     );
   }
 
-  static Future<String?> paymentCreateApi(String amount, String currency, String description, BuildContext context) async {
+  static Future<String?> paymentCreateApi(String amount, String currency,
+      String description, BuildContext context) async {
     try {
       final dio = await createDio();
       final service = APIStateNetwork(dio);
 
-      final response = await service.razorpayOrder(PaymentCreateModel(currency: currency, description: description, amount: amount));
+      final response = await service.razorpayOrder(PaymentCreateModel(
+          currency: currency, description: description, amount: amount));
 
       if (response.data['success'] == true) {
         return response.data['payment']['order_id'].toString();
@@ -3799,18 +3921,19 @@ class _WalletPageState extends ConsumerState<WalletPage> {
     } catch (e) {
       debugPrint("Payment Create Error: $e");
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Order failed: $e")));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("Order failed: $e")));
       }
       return null;
     }
   }
 
   static Future<bool> paymentVerifyApi(
-      String razorpay_payment_id,
-      String razorpay_order_id,
-      String razorpay_signature, {
-        required BuildContext context,
-      }) async {
+    String razorpay_payment_id,
+    String razorpay_order_id,
+    String razorpay_signature, {
+    required BuildContext context,
+  }) async {
     try {
       final dio = await createDio();
       final service = APIStateNetwork(dio);
@@ -3827,7 +3950,9 @@ class _WalletPageState extends ConsumerState<WalletPage> {
     } catch (e) {
       debugPrint("Payment Verify Error: $e");
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Verification failed: $e"), backgroundColor: Colors.red));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Verification failed: $e"),
+            backgroundColor: Colors.red));
       }
       return false;
     }

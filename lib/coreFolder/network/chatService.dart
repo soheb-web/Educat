@@ -5,8 +5,8 @@ import 'package:retrofit/retrofit.dart';
 
 part 'chatService.g.dart';
 
- @RestApi(baseUrl: "https://websocket.educatservicesindia.com")
-//@RestApi(baseUrl: "http://192.168.1.33:8000")
+@RestApi(baseUrl: "https://websocket.educatservicesindia.com")
+//@RestApi(baseUrl: "http://192.168.1.39:8000")
 abstract class ChatService {
   factory ChatService(Dio dio, {String baseUrl}) = _ChatService;
 

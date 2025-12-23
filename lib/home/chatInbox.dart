@@ -117,58 +117,56 @@ class _ChatinboxState extends ConsumerState<Chatinbox> {
                     ),
                   ],
                 ),
-                if (isShow)
-                  Padding(
-                    padding:
-                        EdgeInsets.only(left: 20.w, right: 20.w, top: 20.h),
-                    child: TextField(
-                      onChanged: (value) {
-                        setState(() {
-                          searchQuery = value;
-                        });
-                      },
-                      controller: searchController,
-                      cursorColor: Colors.white,
-                      style: GoogleFonts.roboto(
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.white),
-                      decoration: InputDecoration(
-                          contentPadding: EdgeInsets.only(
-                              left: 15.w, right: 15.w, top: 10.h, bottom: 10.h),
-                          hint: Text(
-                            "Search",
-                            style: GoogleFonts.inter(
-                                fontSize: 15.sp,
-                                fontWeight: FontWeight.w400,
-                                color: Colors.white),
+                Padding(
+                  padding: EdgeInsets.only(left: 20.w, right: 20.w, top: 20.h),
+                  child: TextField(
+                    onChanged: (value) {
+                      setState(() {
+                        searchQuery = value;
+                      });
+                    },
+                    controller: searchController,
+                    cursorColor: Colors.white,
+                    style: GoogleFonts.roboto(
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.white),
+                    decoration: InputDecoration(
+                        contentPadding: EdgeInsets.only(
+                            left: 15.w, right: 15.w, top: 10.h, bottom: 10.h),
+                        hint: Text(
+                          "Search",
+                          style: GoogleFonts.inter(
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.white),
+                        ),
+                        suffixIcon: InkWell(
+                          onTap: () {
+                            setState(() {
+                              isShow = false;
+                            });
+                          },
+                          child: Icon(
+                            isShow ? Icons.close : Icons.search,
+                            color: Colors.white,
                           ),
-                          suffixIcon: InkWell(
-                            onTap: () {
-                              setState(() {
-                                isShow = false;
-                              });
-                            },
-                            child: Icon(
-                              isShow ? Icons.close : Icons.search,
-                              color: Colors.white,
-                            ),
+                        ),
+                        filled: true,
+                        fillColor: Color(0xFF262626),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30.r),
+                          borderSide: BorderSide(
+                            color: Colors.transparent,
                           ),
-                          filled: true,
-                          fillColor: Color(0xFF262626),
-                          enabledBorder: OutlineInputBorder(
+                        ),
+                        focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30.r),
                             borderSide: BorderSide(
-                              color: Colors.transparent,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30.r),
-                              borderSide: BorderSide(
-                                color: Colors.white,
-                              ))),
-                    ),
+                              color: Colors.white,
+                            ))),
                   ),
+                ),
                 SizedBox(
                   height: 25.h,
                 ),

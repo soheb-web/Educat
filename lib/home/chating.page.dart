@@ -43,6 +43,7 @@ class _ChatingPageState extends ConsumerState<ChatingPage>
   bool _isKeyboardVisible = false;
   bool isBlocked = false;
   bool isLoading = false;
+  String isConnect = "connecting";
 
   @override
   void initState() {
@@ -53,13 +54,18 @@ class _ChatingPageState extends ConsumerState<ChatingPage>
     final userid = box.get("userid");
 
     channel = WebSocketChannel.connect(
-      Uri.parse("wss://websocket.educatservicesindia.com/chat/ws/$userid"),
+      Uri.parse("wss://websocket.educatservicesindia.com/chat/ws/user/$userid"),
+
+      //Uri.parse("ws://192.168.1.39:8000/chat/ws/user/$userid"),
     );
 
     log("WebSocket Connected: User ID = $userid", name: "WEBSOCKET");
 
     Future.microtask(() {
       ref.invalidate(chatHistoryController(widget.otherUesrid));
+    });
+    setState(() {
+      isConnect = "coneected";
     });
 
     // Listen to incoming messages from start
@@ -71,6 +77,9 @@ class _ChatingPageState extends ConsumerState<ChatingPage>
       },
       onError: (error) {
         log("WebSocket Stream Error: $error", name: "WEBSOCKET_ERROR");
+        setState(() {
+          isConnect = "disconected";
+        });
       },
       onDone: () {
         log("WebSocket Closed. Reconnecting...", name: "WEBSOCKET");
@@ -91,18 +100,15 @@ class _ChatingPageState extends ConsumerState<ChatingPage>
       final jsonMap = jsonDecode(raw);
       final prettyJson = JsonEncoder.withIndent('  ').convert(jsonMap);
       log("INCOMING (PARSED):\n$prettyJson", name: "CHAT_RECV");
-
       final senderId = int.tryParse(jsonMap["sender_id"].toString()) ?? 0;
       final message = jsonMap["message"]?.toString() ?? "";
       final timestamp =
           jsonMap["timestamp"]?.toString() ?? DateTime.now().toIso8601String();
-
       // Avoid duplicate message
       final exists = _messages.any((m) =>
           m.message == message &&
           m.timestamp == timestamp &&
           m.sender == senderId);
-
       if (!exists && message.isNotEmpty) {
         setState(() {
           _messages.add(Chat(
@@ -128,7 +134,6 @@ class _ChatingPageState extends ConsumerState<ChatingPage>
       "receiver_id": widget.otherUesrid,
       "message": message.trim(),
     };
-
     final rawJson = jsonEncode(outgoingData);
     // PRINT OUTGOING MESSAGE
     log("OUTGOING (RAW): $rawJson", name: "CHAT_SEND");
@@ -136,15 +141,6 @@ class _ChatingPageState extends ConsumerState<ChatingPage>
         name: "CHAT_SEND");
     // Send to server
     channel.sink.add(rawJson);
-    // Instantly show in UI
-    setState(() {
-      _messages.add(Chat(
-        sender: int.parse(userid.toString()),
-        message: message.trim(),
-        timestamp: DateTime.now().toIso8601String(),
-      ));
-    });
-
     messController.clear();
     _scrollToBottom();
   }
@@ -170,7 +166,8 @@ class _ChatingPageState extends ConsumerState<ChatingPage>
       channel.sink.close();
     } catch (_) {}
     channel = WebSocketChannel.connect(
-      Uri.parse("wss://websocket.educatservicesindia.com/chat/ws/$userid"),
+      Uri.parse("wss://websocket.educatservicesindia.com/chat/ws/user/$userid"),
+      // "http://192.168.1.39:8000/chat/ws/user/$userid"),
     );
     log("WebSocket Reconnected!", name: "WEBSOCKET");
     _lastRawMessage = null;
@@ -380,6 +377,7 @@ class _ChatingPageState extends ConsumerState<ChatingPage>
                                 fontSize: 14.sp,
                                 fontWeight: FontWeight.w600,
                                 color: Color(0xFFA8E6CF))),
+                        //Text("socket $isConnect"),
                       ],
                     ),
                     Spacer(),

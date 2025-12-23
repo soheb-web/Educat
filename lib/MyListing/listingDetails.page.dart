@@ -27,7 +27,6 @@ class _ListingDetailsPageState extends ConsumerState<ListingDetailsPage> {
   bool isAccept = false;
   late int status;
 
-
   @override
   void initState() {
     super.initState();
@@ -41,7 +40,8 @@ class _ListingDetailsPageState extends ConsumerState<ListingDetailsPage> {
   // Function: Rupees se Coins mein convert karega
   int _getCoinsFromRupees(double rupees) {
     // ₹1 = 10 coins → isliye rupees * 10
-    return (rupees * 10).toInt(); // .toInt() se decimal hat jayega (safe rounding down)
+    return (rupees * 10)
+        .toInt(); // .toInt() se decimal hat jayega (safe rounding down)
   }
 
 // Ya agar exact chahiye (decimal bhi allow karna ho toh double return karo)
@@ -294,7 +294,7 @@ class _ListingDetailsPageState extends ConsumerState<ListingDetailsPage> {
 
             /// CONTACT SECTION (Mobile Number)
             // hasApplied
-            status==1
+            status == 1
                 ? Container(
                     margin: EdgeInsets.only(bottom: 20.h),
                     padding: EdgeInsets.all(16.w),
@@ -365,7 +365,7 @@ class _ListingDetailsPageState extends ConsumerState<ListingDetailsPage> {
                       ),
                       padding: EdgeInsets.symmetric(vertical: 14.h),
                     ),
-                    onPressed:   status==0
+                    onPressed: status == 0
                         ? null
                         : () {
                             log("id : -  ${widget.item.id.toString()}");
@@ -388,112 +388,116 @@ class _ListingDetailsPageState extends ConsumerState<ListingDetailsPage> {
                   ),
                 ),
                 SizedBox(width: 12.w),
-                status==1?SizedBox():
-                Expanded(
-                  child: ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16.r),
-                      ),
-                      padding: EdgeInsets.symmetric(vertical: 14.h),
-                    ),
-
-
-                    onPressed: () async {
-                      final profile = ref.read(userProfileController);
-
-                      // Safety check
-                      if (profile.value == null || profile.value!.data == null) {
-                        Fluttertoast.showToast(msg: "Profile not loaded");
-                        return;
-                      }
-
-                      // User ke paas kitne coins hain (String se double mein convert)
-                      final String? userCoinsStr = profile.value!.data!.coins;
-                      final double userCoins = double.tryParse(userCoinsStr ?? "0") ?? 0.0;
-
-                      // Mentor apply ke liye kitni fee hai (rupees mein)
-                      final double feeInRupees = double.tryParse(widget.item.fee ?? "0") ?? 0.0;
-
-                      // Kitne coins chahiye is fee ke liye? (₹0.1 = 1 coin → ₹1 = 10 coins)
-                      final int requiredCoins = (feeInRupees * 10).toInt(); // Ya function use karo niche diya hua
-
-                      // Check karo: User ke paas kaafi coins hain ya nahi?
-                      if (userCoins < requiredCoins) {
-                        Fluttertoast.showToast(
-                          msg: "Insufficient coins! You need $requiredCoins coins (₹$feeInRupees)",
-                          toastLength: Toast.LENGTH_LONG,
-                          backgroundColor: Colors.red,
-                          textColor: Colors.white,
-                        );
-                        return;
-                      }
-
-                      // Agar coins kaafi hain toh apply karo
-                      final body = ApplybodyModel(
-                        body: "Your Mentor apply",
-                        title: "Hello",
-                        userId: widget.item.studentId,
-                      );
-
-                      try {
-                        setState(() {
-                          isAccept = true;
-                        });
-
-                        final service = APIStateNetwork(createDio());
-                        final response = await service.applyOrSendNotification(body);
-
-                        if (response.response.data['success'] == true) {
-                          Fluttertoast.showToast(
-                            msg: "Applied successfully!",
-                            backgroundColor: Colors.green,
-                          );
-                          setState(() {
-                            status = 1; // 🔥 UI instantly refresh ho jayega
-                          });
-
-                          ref.invalidate(myListingController);
-                        }
-
-                        else {
-                          Fluttertoast.showToast(
-                            msg: response.response.data['message'] ?? "Application failed",
-                          );
-                        }
-                      } catch (e, st) {
-                        log("Apply Error: $e\nStackTrace: $st");
-                        Fluttertoast.showToast(msg: "Something went wrong. Try again.");
-                      } finally {
-                        setState(() {
-                          isAccept = false;
-                        });
-                      }
-                    },
-                    label: isAccept
-                        ? Center(
-                            child: SizedBox(
-                              width: 25.w,
-                              height: 25.h,
-                              child: CircularProgressIndicator(
-                                color: const Color.fromARGB(255, 96, 74, 74),
-                                strokeWidth: 1.5,
-                              ),
+                status == 1
+                    ? SizedBox()
+                    : Expanded(
+                        child: ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16.r),
                             ),
-                          )
-                        : Text(
-                            "Apply",
-                            style: GoogleFonts.inter(color: Colors.white),
+                            padding: EdgeInsets.symmetric(vertical: 14.h),
                           ),
-                  ),
-                ),
+                          onPressed: () async {
+                            final profile = ref.read(userProfileController);
+
+                            // Safety check
+                            if (profile.value == null ||
+                                profile.value!.data == null) {
+                              Fluttertoast.showToast(msg: "Profile not loaded");
+                              return;
+                            }
+
+                            // User ke paas kitne coins hain (String se double mein convert)
+                            final String? userCoinsStr =
+                                profile.value!.data!.coins;
+                            final double userCoins =
+                                double.tryParse(userCoinsStr ?? "0") ?? 0.0;
+
+                            // Mentor apply ke liye kitni fee hai (rupees mein)
+                            final double feeInRupees =
+                                double.tryParse(widget.item.fee ?? "0") ?? 0.0;
+
+                            // Kitne coins chahiye is fee ke liye? (₹0.1 = 1 coin → ₹1 = 10 coins)
+                            // final int requiredCoins = (feeInRupees * 10)
+                            //     .toInt(); // Ya function use karo niche diya hua
+
+                            // Check karo: User ke paas kaafi coins hain ya nahi?
+                            if (userCoins < feeInRupees) {
+                              Fluttertoast.showToast(
+                                msg:
+                                    "Insufficient coins! You need $feeInRupees coins (₹$feeInRupees)",
+                                toastLength: Toast.LENGTH_LONG,
+                                backgroundColor: Colors.red,
+                                textColor: Colors.white,
+                              );
+                              return;
+                            }
+
+                            // Agar coins kaafi hain toh apply karo
+                            final body = ApplybodyModel(
+                              body: "Your Mentor apply",
+                              title: "Hello",
+                              userId: widget.item.studentId,
+                            );
+
+                            try {
+                              setState(() {
+                                isAccept = true;
+                              });
+
+                              final service = APIStateNetwork(createDio());
+                              final response =
+                                  await service.applyOrSendNotification(body);
+
+                              if (response.response.data['success'] == true) {
+                                Fluttertoast.showToast(
+                                  msg: "Applied successfully!",
+                                  backgroundColor: Colors.green,
+                                );
+                                setState(() {
+                                  status =
+                                      1; // 🔥 UI instantly refresh ho jayega
+                                });
+
+                                ref.invalidate(myListingController);
+                              } else {
+                                Fluttertoast.showToast(
+                                  msg: response.response.data['message'] ??
+                                      "Application failed",
+                                );
+                              }
+                            } catch (e, st) {
+                              log("Apply Error: $e\nStackTrace: $st");
+                              Fluttertoast.showToast(
+                                  msg: "Something went wrong. Try again.");
+                            } finally {
+                              setState(() {
+                                isAccept = false;
+                              });
+                            }
+                          },
+                          label: isAccept
+                              ? Center(
+                                  child: SizedBox(
+                                    width: 25.w,
+                                    height: 25.h,
+                                    child: CircularProgressIndicator(
+                                      color:
+                                          const Color.fromARGB(255, 96, 74, 74),
+                                      strokeWidth: 1.5,
+                                    ),
+                                  ),
+                                )
+                              : Text(
+                                  "Apply",
+                                  style: GoogleFonts.inter(color: Colors.white),
+                                ),
+                        ),
+                      ),
               ],
             ),
-
-
-
-
           ],
         ),
       ),

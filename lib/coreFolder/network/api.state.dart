@@ -10,6 +10,7 @@ import 'package:educationapp/coreFolder/Model/getStudentRequestResModel.dart';
 import 'package:educationapp/coreFolder/Model/listingBodyModel.dart';
 import 'package:educationapp/coreFolder/Model/login.body.model.dart';
 import 'package:educationapp/coreFolder/Model/login.rsponse.model.dart';
+import 'package:educationapp/coreFolder/Model/mentorNotificationResModel.dart';
 import 'package:educationapp/coreFolder/Model/mentorReviewResModel.dart';
 import 'package:educationapp/coreFolder/Model/myListingResModel.dart';
 import 'package:educationapp/coreFolder/Model/newRegisterResModel.dart';
@@ -40,7 +41,6 @@ import '../Model/ReviewGetModel.dart';
 import '../Model/SearchCompanyModel.dart';
 import '../Model/TransactionGetModel.dart';
 import '../Model/searchMentorModel.dart';
-import '../Model/ResisterModel.dart';
 import '../Model/GetCoinModel.dart';
 import '../Model/profileGetModel.dart';
 
@@ -212,17 +212,17 @@ abstract class APIStateNetwork {
   @GET("/mentor/users")
   Future<GetNotificationResModel> getNotification();
 
-
-
   @POST('/razorpay/order')
   Future<HttpResponse<dynamic>> razorpayOrder(@Body() PaymentCreateModel body);
 
   @POST('/razorpay/capture')
-  Future<VerifyPaymentResponseModel> razorpayOrderVerify(@Body() PaymentVerifyModel body);
-
+  Future<VerifyPaymentResponseModel> razorpayOrderVerify(
+      @Body() PaymentVerifyModel body);
 
   @POST("/apply")
   Future<HttpResponse<dynamic>> applyOrSendNotification(
       @Body() ApplybodyModel body);
 
+  @GET("/student/mentor")
+  Future<MentorNotificationResModel> mentorSideNotification();
 }

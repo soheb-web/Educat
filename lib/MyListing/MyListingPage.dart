@@ -27,7 +27,6 @@ class _MyListingState extends ConsumerState<MyListing> {
   final searchController = TextEditingController();
   bool isShow = false;
 
-
   @override
   void initState() {
     super.initState();
@@ -121,46 +120,35 @@ class _MyListingState extends ConsumerState<MyListing> {
               ),
             ],
           ),
-          if (isShow)
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
-              child: TextField(
-                onChanged: (_) => setState(() {}),
-                controller: searchController,
-                style: GoogleFonts.roboto(color: Colors.white, fontSize: 20.sp),
-                decoration: InputDecoration(
-                    isDense: true,
-                    contentPadding: EdgeInsets.only(
-                        left: 10.w, right: 10.w, top: 6.h, bottom: 6.h),
-                    hintText: "Search collage...",
-                    hintStyle: GoogleFonts.roboto(
-                        color: Colors.white70, fontSize: 18.sp),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25.r),
-                      borderSide: BorderSide(color: Colors.white),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25.r),
-                      borderSide: BorderSide(color: Colors.white),
-                    ),
-                    prefixIcon:
-                        const Icon(Icons.search, color: Colors.white, size: 20),
-                    suffixIcon: IconButton(
-                      icon: const Icon(Icons.clear, color: Colors.white),
-                      onPressed: () {
-                        setState(() {
-                          searchController.clear();
-                          isShow = false;
-                        });
-                      },
-                    )),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
+            child: TextField(
+              onChanged: (_) => setState(() {}),
+              controller: searchController,
+              style: GoogleFonts.roboto(color: Colors.white, fontSize: 20.sp),
+              decoration: InputDecoration(
+                isDense: true,
+                contentPadding: EdgeInsets.only(
+                    left: 10.w, right: 10.w, top: 6.h, bottom: 6.h),
+                hintText: "Search collage...",
+                hintStyle:
+                    GoogleFonts.roboto(color: Colors.white70, fontSize: 18.sp),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(25.r),
+                  borderSide: BorderSide(color: Colors.white),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(25.r),
+                  borderSide: BorderSide(color: Colors.white),
+                ),
+                prefixIcon:
+                    const Icon(Icons.search, color: Colors.white, size: 20),
               ),
             ),
-
+          ),
           SizedBox(
             height: 20.h,
           ),
-
           Expanded(
             child: Container(
               width: MediaQuery.of(context).size.width,
@@ -176,9 +164,7 @@ class _MyListingState extends ConsumerState<MyListing> {
                 child: Column(
                   children: [
                     type != "Student"
-                        ?
-
-                    myListingProvider.when(
+                        ? myListingProvider.when(
                             data: (listData) {
                               final query = searchController.text.toLowerCase();
                               final filteredList = query.isEmpty
@@ -188,8 +174,17 @@ class _MyListingState extends ConsumerState<MyListing> {
                                           item.education?.toLowerCase() ?? '';
                                       final experience =
                                           item.experience?.toString() ?? '';
+                                      final stName = item.student!.fullName
+                                              ?.toLowerCase() ??
+                                          '';
+                                      final subjects = item.subjects!
+                                          .map((e) => e.toLowerCase() ?? '')
+                                          .join(' ');
+
                                       return education.contains(query) ||
-                                          experience.contains(query);
+                                          experience.contains(query) ||
+                                          stName.contains(query) ||
+                                          subjects.contains(query);
                                     }).toList();
 
                               if (filteredList.isEmpty) {
@@ -367,14 +362,15 @@ class _MyListingState extends ConsumerState<MyListing> {
                                               ),
                                             ),
                                             onPressed: () {
-
                                               Navigator.push(
                                                 context,
                                                 CupertinoPageRoute(
-                                                  builder: (_) => ListingDetailsPage(item),
+                                                  builder: (_) =>
+                                                      ListingDetailsPage(item),
                                                 ),
                                               ).then((_) {
-                                                ref.invalidate(myListingController);
+                                                ref.invalidate(
+                                                    myListingController);
                                               });
 
                                               /*  Navigator.push(
@@ -564,7 +560,10 @@ class _CreateListPageState extends ConsumerState<CreateListPage> {
                         Fluttertoast.showToast(
                             msg: response.response.data['message']);
 
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>HomePage(0)));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => HomePage(0)));
                         setState(() {
                           isLoading = false;
                         });
