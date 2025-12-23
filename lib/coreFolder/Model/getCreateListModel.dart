@@ -36,6 +36,7 @@ class Datum {
   int? studentId;
   String? education;
   int? experience;
+  int? status;
   List<String>? subjects;
   String? fee;
   String? description;
@@ -52,6 +53,7 @@ class Datum {
     this.studentId,
     this.education,
     this.experience,
+    this.status,
     this.subjects,
     this.fee,
     this.description,
@@ -69,6 +71,7 @@ class Datum {
       studentId: json["student_id"],
       education: json["education"],
       experience: json["experience"],
+      status: json["status"],
       subjects: json["subjects"] == null
           ? []
           : List<String>.from(json["subjects"]!.map((x) => x)),
@@ -92,6 +95,7 @@ class Datum {
         "student_id": studentId,
         "education": education,
         "experience": experience,
+        "status": status,
         "subjects":
             subjects == null ? [] : List<dynamic>.from(subjects!.map((x) => x)),
         "fee": fee,

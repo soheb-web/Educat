@@ -114,7 +114,6 @@
 // });
 
 
-
 import 'dart:async';
 import 'dart:developer';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -123,11 +122,9 @@ import 'package:educationapp/coreFolder/utils/globalroute.key.dart';
 import 'package:educationapp/firebase_options.dart';
 import 'package:educationapp/home/home.page.dart';
 import 'package:educationapp/home/noInternetScreen.dart';
-import 'package:educationapp/login/login.page.dart';
 import 'package:educationapp/splash/splash.page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -242,6 +239,7 @@ class _MyAppState extends ConsumerState<MyApp> {
       log("✅ Token is valid — proceed to HomePage");
       setState(() => token = savedToken);
     }
+
   }
 
   Future<bool> _isTokenExpired(String token) async {

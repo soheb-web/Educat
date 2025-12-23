@@ -18,18 +18,36 @@ import 'package:google_fonts/google_fonts.dart';
 class ListingDetailsPage extends ConsumerStatefulWidget {
   final Datum item;
   const ListingDetailsPage(this.item, {super.key});
-
   @override
   ConsumerState<ListingDetailsPage> createState() => _ListingDetailsPageState();
 }
 
 class _ListingDetailsPageState extends ConsumerState<ListingDetailsPage> {
-  bool hasApplied = false;
+  // bool hasApplied = false;
   bool isAccept = false;
+  late int status;
+
+
+  @override
+  void initState() {
+    super.initState();
+    status = widget.item.status ?? 0;
+  }
 
   double _getAmountInRupees(int coins) {
     return (coins * 0.1);
   }
+
+  // Function: Rupees se Coins mein convert karega
+  int _getCoinsFromRupees(double rupees) {
+    // ₹1 = 10 coins → isliye rupees * 10
+    return (rupees * 10).toInt(); // .toInt() se decimal hat jayega (safe rounding down)
+  }
+
+// Ya agar exact chahiye (decimal bhi allow karna ho toh double return karo)
+// double _getCoinsFromRupees(double rupees) {
+//   return rupees * 10;
+// }
 
   @override
   Widget build(BuildContext context) {
@@ -275,7 +293,8 @@ class _ListingDetailsPageState extends ConsumerState<ListingDetailsPage> {
             SizedBox(height: 20.h),
 
             /// CONTACT SECTION (Mobile Number)
-            hasApplied
+            // hasApplied
+            status==1
                 ? Container(
                     margin: EdgeInsets.only(bottom: 20.h),
                     padding: EdgeInsets.all(16.w),
@@ -346,7 +365,7 @@ class _ListingDetailsPageState extends ConsumerState<ListingDetailsPage> {
                       ),
                       padding: EdgeInsets.symmetric(vertical: 14.h),
                     ),
-                    onPressed: hasApplied
+                    onPressed:   status==0
                         ? null
                         : () {
                             log("id : -  ${widget.item.id.toString()}");
@@ -369,6 +388,7 @@ class _ListingDetailsPageState extends ConsumerState<ListingDetailsPage> {
                   ),
                 ),
                 SizedBox(width: 12.w),
+                status==1?SizedBox():
                 Expanded(
                   child: ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
@@ -378,61 +398,79 @@ class _ListingDetailsPageState extends ConsumerState<ListingDetailsPage> {
                       ),
                       padding: EdgeInsets.symmetric(vertical: 14.h),
                     ),
-                    onPressed: hasApplied
-                        ? null
-                        : () async {
-                            final profile = ref.read(userProfileController);
-                            final coins = profile.value!.data!.coins ?? 0;
-                            double amountInRupees =
-                                _getAmountInRupees(int.parse(coins.toString()));
 
-                            final double userCoins =
-                                double.tryParse(coins.toString() ?? "0") ?? 0.0;
 
-                            if (amountInRupees < userCoins) {
-                              Fluttertoast.showToast(
-                                msg: "Insufficient coins! You need  coins.",
-                                toastLength: Toast.LENGTH_LONG,
-                              );
-                              return;
-                            }
-                            final body = ApplybodyModel(
-                              body: "Your Mentor apply",
-                              title: "Hello",
-                              userId: widget.item.studentId,
-                            );
-                            try {
-                              setState(() {
-                                isAccept = true;
-                              });
+                    onPressed: () async {
+                      final profile = ref.read(userProfileController);
 
-                              final service = APIStateNetwork(createDio());
-                              final response =
-                                  await service.applyOrSendNotification(body);
+                      // Safety check
+                      if (profile.value == null || profile.value!.data == null) {
+                        Fluttertoast.showToast(msg: "Profile not loaded");
+                        return;
+                      }
 
-                              if (response.response.data['success'] == true) {
-                                setState(() {
-                                  hasApplied = true;
-                                });
-                                Fluttertoast.showToast(msg: "sucess");
-                                ref.invalidate(myListingController);
-                              } else {
-                                Fluttertoast.showToast(
-                                    msg: response.response.data['message']);
+                      // User ke paas kitne coins hain (String se double mein convert)
+                      final String? userCoinsStr = profile.value!.data!.coins;
+                      final double userCoins = double.tryParse(userCoinsStr ?? "0") ?? 0.0;
 
-                                // Fluttertoast.showToast(
-                                //     msg: "Please upgrade the membership for mentor",
-                                //     toastLength: Toast.LENGTH_LONG);
-                              }
-                            } catch (e, st) {
-                              log("${e.toString()} /n ${st.toString()}");
-                              // Fluttertoast.showToast(msg: e.toString());
-                            } finally {
-                              setState(() {
-                                isAccept = false;
-                              });
-                            }
-                          },
+                      // Mentor apply ke liye kitni fee hai (rupees mein)
+                      final double feeInRupees = double.tryParse(widget.item.fee ?? "0") ?? 0.0;
+
+                      // Kitne coins chahiye is fee ke liye? (₹0.1 = 1 coin → ₹1 = 10 coins)
+                      final int requiredCoins = (feeInRupees * 10).toInt(); // Ya function use karo niche diya hua
+
+                      // Check karo: User ke paas kaafi coins hain ya nahi?
+                      if (userCoins < requiredCoins) {
+                        Fluttertoast.showToast(
+                          msg: "Insufficient coins! You need $requiredCoins coins (₹$feeInRupees)",
+                          toastLength: Toast.LENGTH_LONG,
+                          backgroundColor: Colors.red,
+                          textColor: Colors.white,
+                        );
+                        return;
+                      }
+
+                      // Agar coins kaafi hain toh apply karo
+                      final body = ApplybodyModel(
+                        body: "Your Mentor apply",
+                        title: "Hello",
+                        userId: widget.item.studentId,
+                      );
+
+                      try {
+                        setState(() {
+                          isAccept = true;
+                        });
+
+                        final service = APIStateNetwork(createDio());
+                        final response = await service.applyOrSendNotification(body);
+
+                        if (response.response.data['success'] == true) {
+                          Fluttertoast.showToast(
+                            msg: "Applied successfully!",
+                            backgroundColor: Colors.green,
+                          );
+                          setState(() {
+                            status = 1; // 🔥 UI instantly refresh ho jayega
+                          });
+
+                          ref.invalidate(myListingController);
+                        }
+
+                        else {
+                          Fluttertoast.showToast(
+                            msg: response.response.data['message'] ?? "Application failed",
+                          );
+                        }
+                      } catch (e, st) {
+                        log("Apply Error: $e\nStackTrace: $st");
+                        Fluttertoast.showToast(msg: "Something went wrong. Try again.");
+                      } finally {
+                        setState(() {
+                          isAccept = false;
+                        });
+                      }
+                    },
                     label: isAccept
                         ? Center(
                             child: SizedBox(
@@ -452,6 +490,10 @@ class _ListingDetailsPageState extends ConsumerState<ListingDetailsPage> {
                 ),
               ],
             ),
+
+
+
+
           ],
         ),
       ),

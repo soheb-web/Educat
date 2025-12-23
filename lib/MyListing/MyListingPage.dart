@@ -1,12 +1,10 @@
-import 'package:dio/dio.dart';
 import 'package:educationapp/MyListing/listingDetails.page.dart';
 import 'package:educationapp/coreFolder/Controller/myListingController.dart';
 import 'package:educationapp/coreFolder/Controller/themeController.dart';
 import 'package:educationapp/coreFolder/Model/listingBodyModel.dart';
 import 'package:educationapp/coreFolder/network/api.state.dart';
 import 'package:educationapp/coreFolder/utils/preety.dio.dart';
-import 'package:educationapp/home/createlist.page.dart';
-import 'package:educationapp/wallet/wallet.page.dart';
+import 'package:educationapp/home/home.page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -28,6 +26,15 @@ class _MyListingState extends ConsumerState<MyListing> {
   int currentBalance = 0;
   final searchController = TextEditingController();
   bool isShow = false;
+
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      ref.invalidate(myListingController);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -149,9 +156,11 @@ class _MyListingState extends ConsumerState<MyListing> {
                     )),
               ),
             ),
+
           SizedBox(
             height: 20.h,
           ),
+
           Expanded(
             child: Container(
               width: MediaQuery.of(context).size.width,
@@ -167,7 +176,9 @@ class _MyListingState extends ConsumerState<MyListing> {
                 child: Column(
                   children: [
                     type != "Student"
-                        ? myListingProvider.when(
+                        ?
+
+                    myListingProvider.when(
                             data: (listData) {
                               final query = searchController.text.toLowerCase();
                               final filteredList = query.isEmpty
@@ -356,13 +367,23 @@ class _MyListingState extends ConsumerState<MyListing> {
                                               ),
                                             ),
                                             onPressed: () {
+
                                               Navigator.push(
+                                                context,
+                                                CupertinoPageRoute(
+                                                  builder: (_) => ListingDetailsPage(item),
+                                                ),
+                                              ).then((_) {
+                                                ref.invalidate(myListingController);
+                                              });
+
+                                              /*  Navigator.push(
                                                 context,
                                                 CupertinoPageRoute(
                                                   builder: (_) =>
                                                       ListingDetailsPage(item),
                                                 ),
-                                              );
+                                              );*/
                                             },
                                             child: Text(
                                               "View Details",
@@ -542,6 +563,8 @@ class _CreateListPageState extends ConsumerState<CreateListPage> {
                       if (response.response.statusCode == 201) {
                         Fluttertoast.showToast(
                             msg: response.response.data['message']);
+
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>HomePage(0)));
                         setState(() {
                           isLoading = false;
                         });
