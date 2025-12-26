@@ -178,9 +178,6 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
     return "error_fetching_token";
   }
 
-
-
-
   Future<void> _handleLogin() async {
     if (_formKey.currentState?.validate() ?? false) {
       setState(() {

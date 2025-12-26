@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:educationapp/coreFolder/Controller/myListingController.dart';
 import 'package:educationapp/coreFolder/Controller/themeController.dart';
 import 'package:educationapp/coreFolder/Controller/userProfileController.dart';
@@ -14,6 +13,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 class ListingDetailsPage extends ConsumerStatefulWidget {
   final Datum item;
@@ -44,10 +44,83 @@ class _ListingDetailsPageState extends ConsumerState<ListingDetailsPage> {
         .toInt(); // .toInt() se decimal hat jayega (safe rounding down)
   }
 
-// Ya agar exact chahiye (decimal bhi allow karna ho toh double return karo)
-// double _getCoinsFromRupees(double rupees) {
-//   return rupees * 10;
-// }
+  String timeAgoFromTime(String timeString) {
+    try {
+      DateTime now = DateTime.now();
+
+      // "7:00 PM" parse karo
+      DateTime parsedTime = DateFormat("h:mm a").parse(timeString);
+
+      // Aaj ki date ke saath time set karo
+      DateTime postDateTime = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        parsedTime.hour,
+        parsedTime.minute,
+      );
+
+      Duration difference = now.difference(postDateTime);
+
+      if (difference.inMinutes < 1) {
+        return "Just now";
+      } else if (difference.inMinutes < 60) {
+        return "${difference.inMinutes} min ago";
+      } else if (difference.inHours < 24) {
+        return "${difference.inHours} hour ago";
+      } else {
+        return "${difference.inDays} day ago";
+      }
+    } catch (e) {
+      return timeString; // fallback
+    }
+  }
+
+  String timeAgo(String dateTimeString) {
+    DateTime postTime = DateTime.parse(dateTimeString);
+    DateTime now = DateTime.now();
+
+    Duration diff = now.difference(postTime);
+
+    if (diff.inSeconds < 60) {
+      return "Just now";
+    } else if (diff.inMinutes < 60) {
+      return "${diff.inMinutes} min ago";
+    } else if (diff.inHours < 24) {
+      return "${diff.inHours} hour ago";
+    } else if (diff.inDays < 7) {
+      return "${diff.inDays} day ago";
+    } else if (diff.inDays < 30) {
+      return "${(diff.inDays / 7).floor()} week ago";
+    } else if (diff.inDays < 365) {
+      return "${(diff.inDays / 30).floor()} month ago";
+    } else {
+      return "${(diff.inDays / 365).floor()} year ago";
+    }
+  }
+
+  String createAtago(String dateTimeString) {
+    DateTime postTime = DateTime.parse(dateTimeString); // ISO string parse
+    DateTime now = DateTime.now();
+
+    Duration diff = now.difference(postTime);
+
+    if (diff.inSeconds < 60) {
+      return "Just now";
+    } else if (diff.inMinutes < 60) {
+      return "${diff.inMinutes} min ago";
+    } else if (diff.inHours < 24) {
+      return "${diff.inHours} hour ago";
+    } else if (diff.inDays < 7) {
+      return "${diff.inDays} day ago";
+    } else if (diff.inDays < 30) {
+      return "${(diff.inDays / 7).floor()} week ago";
+    } else if (diff.inDays < 365) {
+      return "${(diff.inDays / 30).floor()} month ago";
+    } else {
+      return "${(diff.inDays / 365).floor()} year ago";
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -133,21 +206,6 @@ class _ListingDetailsPageState extends ConsumerState<ListingDetailsPage> {
                               color: Color.fromARGB(178, 0, 0, 0),
                               fontWeight: FontWeight.w500),
                         ),
-                        SizedBox(height: 6.h),
-                        Row(
-                          children: [
-                            Icon(Icons.work_outline,
-                                size: 18.sp, color: Colors.orange),
-                            SizedBox(width: 4.w),
-                            Text(
-                              "${widget.item.experience}+ Years Experience",
-                              style: GoogleFonts.roboto(
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.black),
-                            ),
-                          ],
-                        ),
                       ],
                     ),
                   )
@@ -202,13 +260,51 @@ class _ListingDetailsPageState extends ConsumerState<ListingDetailsPage> {
                         .toList(),
                   ),
                   SizedBox(height: 16.h),
-                  // ================= TEACHING MODE =================
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(Icons.location_on, color: Colors.red, size: 20.sp),
+                      SizedBox(width: 6.w),
+                      Expanded(
+                        child: Text(
+                          "Location : ${widget.item.localAddress ?? ''} ${widget.item.state} India ${widget.item.pincode}",
+                          style: GoogleFonts.roboto(
+                            fontSize: 15.sp,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10.h),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(Icons.date_range_outlined,
+                          color: Colors.grey, size: 20.sp),
+                      SizedBox(width: 6.w),
+                      Expanded(
+                        child: Text(
+                          // "Posted : ${widget.item.time ?? ''}",
+                          "Posted : ${timeAgo(widget.item.createdAt.toString())}",
+                          style: GoogleFonts.roboto(
+                            fontSize: 15.sp,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: 10.h),
                   Row(
                     children: [
                       Icon(Icons.school, color: Colors.blue, size: 20.sp),
                       SizedBox(width: 6.w),
                       Text(
-                        "Teaching Mode: ${widget.item.teachingMode ?? "N/A"}",
+                        "Leval : ${widget.item.education ?? "N/A"}",
                         style: GoogleFonts.roboto(
                           fontSize: 15.sp,
                           fontWeight: FontWeight.w600,
@@ -219,24 +315,94 @@ class _ListingDetailsPageState extends ConsumerState<ListingDetailsPage> {
                   ),
 
                   SizedBox(height: 10.h),
-
-// ================= LOCATION =================
+                  // ================= TEACHING MODE =================
                   Row(
                     children: [
-                      Icon(Icons.location_on, color: Colors.red, size: 20.sp),
+                      Icon(Icons.schedule, color: Colors.green, size: 20.sp),
                       SizedBox(width: 6.w),
-                      Expanded(
-                        child: Text(
-                          "Location: Lucknow, ${widget.item.location ?? "N/A"}",
+                      Text(
+                        "Requires : ${widget.item.requires ?? "N/A"}",
+                        style: GoogleFonts.roboto(
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: 10.h),
+                  // ================= TEACHING MODE =================
+                  Row(
+                    children: [
+                      Icon(Icons.person_2_outlined,
+                          color: Colors.deepPurple, size: 20.sp),
+                      SizedBox(width: 6.w),
+                      Text(
+                        "Posted By : ${widget.item.student!.fullName ?? "N/A"} (Student)",
+                        style: GoogleFonts.roboto(
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  Row(
+                    children: [
+                      Icon(Icons.people_outline_outlined,
+                          color: Colors.black, size: 20.sp),
+                      SizedBox(width: 6.w),
+                      Text(
+                        "Gender Preference : ${widget.item.gender ?? "None"}",
+                        style: GoogleFonts.roboto(
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  Row(
+                    children: [
+                      Icon(Icons.monetization_on,
+                          color: Colors.amber, size: 20.sp),
+                      SizedBox(width: 6.w),
+                      Text(
+                        "Coins : ",
+                        style: GoogleFonts.roboto(
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  if (widget.item.teachingMode != null)
+                    Row(
+                      children: [
+                        Icon(Icons.person, color: Colors.brown, size: 20.sp),
+                        SizedBox(width: 6.w),
+                        Text(
+                          "Available : ${widget.item.teachingMode ?? "None"}",
                           style: GoogleFonts.roboto(
                             fontSize: 15.sp,
                             fontWeight: FontWeight.w600,
                             color: Colors.black,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
 
                   SizedBox(height: 10.h),
 
@@ -246,7 +412,7 @@ class _ListingDetailsPageState extends ConsumerState<ListingDetailsPage> {
                       Icon(Icons.timer, color: Colors.orange, size: 20.sp),
                       SizedBox(width: 6.w),
                       Text(
-                        "Duration: ${widget.item.duration ?? "N/A"}",
+                        "Duration : ${widget.item.duration ?? "N/A"}",
                         style: GoogleFonts.roboto(
                           fontSize: 15.sp,
                           fontWeight: FontWeight.w600,
@@ -255,7 +421,44 @@ class _ListingDetailsPageState extends ConsumerState<ListingDetailsPage> {
                       ),
                     ],
                   ),
-
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  if (widget.item.mobileNumber != null)
+                    Row(
+                      children: [
+                        Icon(Icons.phone_android,
+                            color: Colors.blueGrey, size: 20.sp),
+                        SizedBox(width: 6.w),
+                        Text(
+                          "Phone : ${widget.item.mobileNumber ?? ""}",
+                          style: GoogleFonts.roboto(
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  if (widget.item.communicate != null)
+                    Row(
+                      children: [
+                        Icon(Icons.message,
+                            color: Colors.deepOrange, size: 20.sp),
+                        SizedBox(width: 6.w),
+                        Text(
+                          "Can Communicate in : ${widget.item.communicate ?? ""}",
+                          style: GoogleFonts.roboto(
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
                   SizedBox(height: 16.h),
                   Row(
                     children: [
@@ -263,29 +466,13 @@ class _ListingDetailsPageState extends ConsumerState<ListingDetailsPage> {
                           color: Colors.green, size: 20.sp),
                       SizedBox(width: 6.w),
                       Text(
-                        "Budget: ₹${widget.item.fee}",
+                        "Budget : ₹${(double.tryParse(widget.item.budget ?? '0') ?? 0).toInt()}",
                         style: GoogleFonts.roboto(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w700,
                             color: Colors.black),
                       ),
                     ],
-                  ),
-                  SizedBox(height: 16.h),
-                  Text(
-                    "Description",
-                    style: GoogleFonts.roboto(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.black),
-                  ),
-                  SizedBox(height: 6.h),
-                  Text(
-                    widget.item.description ?? "",
-                    style: GoogleFonts.inter(
-                        fontSize: 15.sp,
-                        color: Color.fromARGB(178, 0, 0, 0),
-                        fontWeight: FontWeight.w500),
                   ),
                 ],
               ),
@@ -295,99 +482,121 @@ class _ListingDetailsPageState extends ConsumerState<ListingDetailsPage> {
             /// CONTACT SECTION (Mobile Number)
             // hasApplied
             status == 1
-                ? Container(
-                    margin: EdgeInsets.only(bottom: 20.h),
-                    padding: EdgeInsets.all(16.w),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20.r),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.08),
-                          blurRadius: 8,
-                          offset: Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.phone, color: Colors.green, size: 22.sp),
-                        SizedBox(width: 10.w),
-                        Text(
-                          widget.item.student?.phoneNumber ?? "N/A",
-                          style: GoogleFonts.roboto(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.black,
+                ? Column(
+                    children: [
+                      InkWell(
+                        onTap: status == 0
+                            ? null
+                            : () {
+                                log("id : -  ${widget.item.id.toString()}");
+                                log("Student id : -  ${widget.item.studentId.toString()}");
+                                Navigator.push(
+                                    context,
+                                    CupertinoPageRoute(
+                                      builder: (context) => ChatingPage(
+                                          name: widget.item.student!.fullName ??
+                                              "N/A",
+                                          id: widget.item.id.toString(),
+                                          otherUesrid:
+                                              widget.item.studentId.toString()),
+                                    ));
+                              },
+                        child: Container(
+                          margin: EdgeInsets.only(bottom: 20.h),
+                          padding: EdgeInsets.all(14.w),
+                          decoration: BoxDecoration(
+                            color: Colors.blue,
+                            borderRadius: BorderRadius.circular(20.r),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.email, color: Colors.white),
+                              SizedBox(width: 10.w),
+                              Text(
+                                "Message",
+                                style: GoogleFonts.inter(
+                                    fontSize: 18.sp, color: Colors.white),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
-                  )
-                : Container(
-                    margin: EdgeInsets.only(bottom: 20.h),
-                    padding: EdgeInsets.all(16.w),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade200,
-                      borderRadius: BorderRadius.circular(20.r),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.lock, color: Colors.grey),
-                        SizedBox(width: 10.w),
-                        Expanded(
-                          child: Text(
-                            "Apply to unlock student's contact number",
-                            style: GoogleFonts.inter(
-                              fontSize: 14.sp,
-                              color: Colors.grey.shade700,
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(bottom: 20.h),
+                        padding: EdgeInsets.all(14.w),
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(20.r),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.phone, color: Colors.white),
+                            SizedBox(width: 10.w),
+                            Expanded(
+                              child: Text(
+                                "phone number ${widget.item.student!.phoneNumber ?? ""}",
+                                style: GoogleFonts.inter(
+                                    fontSize: 14.sp, color: Colors.white),
+                              ),
                             ),
-                          ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
+                  )
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(bottom: 20.h),
+                        padding: EdgeInsets.all(14.w),
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(20.r),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.email, color: Colors.white),
+                            SizedBox(width: 10.w),
+                            Expanded(
+                              child: Text(
+                                "Message & view phone number (${(double.tryParse(widget.item.budget ?? '0') ?? 0).toInt()} coins)",
+                                style: GoogleFonts.inter(
+                                    fontSize: 14.sp, color: Colors.white),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(bottom: 20.h),
+                        padding: EdgeInsets.all(14.w),
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(20.r),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.phone, color: Colors.white),
+                            SizedBox(width: 10.w),
+                            Expanded(
+                              child: Text(
+                                "view phone number (${(double.tryParse(widget.item.budget ?? '0') ?? 0).toInt()} coins)",
+                                style: GoogleFonts.inter(
+                                    fontSize: 14.sp, color: Colors.white),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
             SizedBox(height: 20.h),
 
             /// ACTION BUTTONS (Mentor Side)
             Row(
               children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    icon: Icon(
-                      Icons.chat,
-                      color: Colors.white,
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey.shade800,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16.r),
-                      ),
-                      padding: EdgeInsets.symmetric(vertical: 14.h),
-                    ),
-                    onPressed: status == 0
-                        ? null
-                        : () {
-                            log("id : -  ${widget.item.id.toString()}");
-                            log("Student id : -  ${widget.item.studentId.toString()}");
-                            Navigator.push(
-                                context,
-                                CupertinoPageRoute(
-                                  builder: (context) => ChatingPage(
-                                      name: widget.item.student!.fullName ??
-                                          "N/A",
-                                      id: widget.item.id.toString(),
-                                      otherUesrid:
-                                          widget.item.studentId.toString()),
-                                ));
-                          },
-                    label: Text(
-                      "Chat Student",
-                      style: GoogleFonts.inter(color: Colors.white),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 12.w),
                 status == 1
                     ? SizedBox()
                     : Expanded(
@@ -417,7 +626,8 @@ class _ListingDetailsPageState extends ConsumerState<ListingDetailsPage> {
 
                             // Mentor apply ke liye kitni fee hai (rupees mein)
                             final double feeInRupees =
-                                double.tryParse(widget.item.fee ?? "0") ?? 0.0;
+                                double.tryParse(widget.item.budget ?? "0") ??
+                                    0.0;
 
                             // Kitne coins chahiye is fee ke liye? (₹0.1 = 1 coin → ₹1 = 10 coins)
                             // final int requiredCoins = (feeInRupees * 10)
@@ -437,8 +647,9 @@ class _ListingDetailsPageState extends ConsumerState<ListingDetailsPage> {
 
                             // Agar coins kaafi hain toh apply karo
                             final body = ApplybodyModel(
-                              body: "Your Mentor apply",
-                              title: "Hello",
+                              body:
+                                  "A mentor has applied to your request. Check details now!",
+                              title: "Mentor Application",
                               userId: widget.item.studentId,
                             );
 

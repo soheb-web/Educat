@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:educationapp/coreFolder/Model/blockBodyModel.dart';
 import 'package:educationapp/coreFolder/Model/blockListModel.dart';
+import 'package:educationapp/coreFolder/Model/budgetResModel.dart';
 import 'package:educationapp/coreFolder/Model/getCreateListModel.dart';
 import 'package:educationapp/coreFolder/Model/getMentorReviewModel.dart';
 import 'package:educationapp/coreFolder/Model/getNotificationResModel.dart';
@@ -225,4 +226,7 @@ abstract class APIStateNetwork {
 
   @GET("/student/mentor")
   Future<MentorNotificationResModel> mentorSideNotification();
+
+  @GET("/budgets")
+  Future<BudgetResModel> fetchBudget();
 }

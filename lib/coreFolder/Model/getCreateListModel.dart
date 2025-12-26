@@ -35,78 +35,99 @@ class Datum {
   int? id;
   int? studentId;
   String? education;
-  int? experience;
-  int? status;
   List<String>? subjects;
-  String? fee;
-  String? description;
   DateTime? createdAt;
   DateTime? updatedAt;
-  Student? student;
   String? location;
   String? teachingMode;
-  String? frequency;
   String? duration;
+  int? status;
+  String? requires;
+  String? budget;
+  String? mobileNumber;
+  String? time;
+  String? gender;
+  String? communicate;
+  String? state;
+  String? localAddress;
+  String? pincode;
+  Student? student;
 
   Datum({
     this.id,
     this.studentId,
     this.education,
-    this.experience,
-    this.status,
     this.subjects,
-    this.fee,
-    this.description,
     this.createdAt,
     this.updatedAt,
-    this.student,
     this.location,
     this.teachingMode,
-    this.frequency,
     this.duration,
+    this.status,
+    this.requires,
+    this.budget,
+    this.mobileNumber,
+    this.time,
+    this.gender,
+    this.communicate,
+    this.state,
+    this.localAddress,
+    this.pincode,
+    this.student,
   });
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
-      id: json["id"],
-      studentId: json["student_id"],
-      education: json["education"],
-      experience: json["experience"],
-      status: json["status"],
-      subjects: json["subjects"] == null
-          ? []
-          : List<String>.from(json["subjects"]!.map((x) => x)),
-      fee: json["fee"],
-      description: json["description"],
-      createdAt: json["created_at"] == null
-          ? null
-          : DateTime.parse(json["created_at"]),
-      updatedAt: json["updated_at"] == null
-          ? null
-          : DateTime.parse(json["updated_at"]),
-      student:
-          json["student"] == null ? null : Student.fromJson(json["student"]),
-      location: json['location'],
-      teachingMode: json['teaching_mode'],
-      frequency: json['frequency'],
-      duration: json['duration']);
+        id: json["id"],
+        studentId: json["student_id"],
+        education: json["education"],
+        subjects: json["subjects"] == null
+            ? []
+            : List<String>.from(json["subjects"]!.map((x) => x)),
+        createdAt: json["created_at"] == null
+            ? null
+            : DateTime.parse(json["created_at"]),
+        updatedAt: json["updated_at"] == null
+            ? null
+            : DateTime.parse(json["updated_at"]),
+        location: json["location"],
+        teachingMode: json["teaching_mode"],
+        duration: json["duration"],
+        status: json["status"],
+        requires: json["requires"],
+        budget: json["budget"],
+        mobileNumber: json["mobile_number"],
+        time: json["time"],
+        gender: json["gender"],
+        communicate: json["communicate"],
+        state: json["state"],
+        localAddress: json["local_address"],
+        pincode: json["pincode"],
+        student:
+            json["student"] == null ? null : Student.fromJson(json["student"]),
+      );
 
   Map<String, dynamic> toJson() => {
         "id": id,
         "student_id": studentId,
         "education": education,
-        "experience": experience,
-        "status": status,
         "subjects":
             subjects == null ? [] : List<dynamic>.from(subjects!.map((x) => x)),
-        "fee": fee,
-        "description": description,
         "created_at": createdAt?.toIso8601String(),
         "updated_at": updatedAt?.toIso8601String(),
-        "student": student?.toJson(),
         "location": location,
         "teaching_mode": teachingMode,
-        "frequency": frequency,
         "duration": duration,
+        "status": status,
+        "requires": requires,
+        "budget": budget,
+        "mobile_number": mobileNumber,
+        "time": time,
+        "gender": gender,
+        "communicate": communicate,
+        "state": state,
+        "local_address": localAddress,
+        "pincode": pincode,
+        "student": student?.toJson(),
       };
 }
 
@@ -115,7 +136,7 @@ class Student {
   String? fullName;
   String? email;
   String? phoneNumber;
-  String? profilePic;
+  dynamic profilePic;
 
   Student({
     this.id,
@@ -129,8 +150,8 @@ class Student {
         id: json["id"],
         fullName: json["full_name"],
         email: json["email"],
-        phoneNumber: json['phone_number'],
-        profilePic: json['profile_pic'],
+        phoneNumber: json["phone_number"],
+        profilePic: json["profile_pic"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -138,6 +159,6 @@ class Student {
         "full_name": fullName,
         "email": email,
         "phone_number": phoneNumber,
-        "profile_pic" : profilePic,
+        "profile_pic": profilePic,
       };
 }

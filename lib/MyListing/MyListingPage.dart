@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:educationapp/MyListing/listingDetails.page.dart';
 import 'package:educationapp/coreFolder/Controller/myListingController.dart';
 import 'package:educationapp/coreFolder/Controller/themeController.dart';
@@ -9,10 +10,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:developer';
 import 'package:hive/hive.dart';
+
+import '../coreFolder/Controller/getSkillProvider.dart';
 
 class MyListing extends ConsumerStatefulWidget {
   const MyListing({super.key});
@@ -25,7 +29,6 @@ class _MyListingState extends ConsumerState<MyListing> {
   int voletId = 0;
   int currentBalance = 0;
   final searchController = TextEditingController();
-  bool isShow = false;
 
   @override
   void initState() {
@@ -59,29 +62,6 @@ class _MyListingState extends ConsumerState<MyListing> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(
-                width: 30.w,
-              ),
-              // GestureDetector(
-              //   onTap: () {
-              //     Navigator.pop(context);
-              //   },
-              //   child: Container(
-              //     height: 44.h,
-              //     width: 44.w,
-              //     decoration: BoxDecoration(
-              //         color: Color(0xFF1B1B1B),
-              //         borderRadius: BorderRadius.circular(500.r)),
-              //     child: Center(
-              //       child: Icon(
-              //         Icons.arrow_back_ios,
-              //         color: Color(0xFF1B1B1B),
-              //         size: 15.w,
-              //       ),
-              //     ),
-              //   ),
-              // ),
-              Spacer(),
               Text(
                 "My Listing",
                 style: GoogleFonts.roboto(
@@ -92,60 +72,37 @@ class _MyListingState extends ConsumerState<MyListing> {
                       : Colors.white,
                 ),
               ),
-              Spacer(),
-              InkWell(
-                onTap: () {
-                  setState(() {
-                    isShow = !isShow;
-                    if (!isShow) searchController.clear();
-                  });
-                },
-                child: Container(
-                  height: 44.h,
-                  width: 44.w,
-                  decoration: BoxDecoration(
-                    color: Color.fromARGB(39, 255, 255, 255),
-                    borderRadius: BorderRadius.circular(500.r),
-                  ),
-                  child: Center(
-                    child: Icon(
-                      Icons.search,
-                      color: const Color.fromARGB(255, 255, 255, 255),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: 30.w,
-              ),
             ],
           ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
-            child: TextField(
-              onChanged: (_) => setState(() {}),
-              controller: searchController,
-              style: GoogleFonts.roboto(color: Colors.white, fontSize: 20.sp),
-              decoration: InputDecoration(
-                isDense: true,
-                contentPadding: EdgeInsets.only(
-                    left: 10.w, right: 10.w, top: 6.h, bottom: 6.h),
-                hintText: "Search collage...",
-                hintStyle:
-                    GoogleFonts.roboto(color: Colors.white70, fontSize: 18.sp),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(25.r),
-                  borderSide: BorderSide(color: Colors.white),
+          SizedBox(
+            width: 20.w,
+          ),
+          if (type == "Mentor" || type == "Professional")
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
+              child: TextField(
+                onChanged: (_) => setState(() {}),
+                controller: searchController,
+                style: GoogleFonts.roboto(color: Colors.white, fontSize: 20.sp),
+                decoration: InputDecoration(
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 15.h, horizontal: 10.w),
+                  hintText: "Search collage...",
+                  hintStyle: GoogleFonts.roboto(
+                      color: Colors.white70, fontSize: 18.sp),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(25.r),
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(25.r),
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                  prefixIcon:
+                      const Icon(Icons.search, color: Colors.white, size: 20),
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(25.r),
-                  borderSide: BorderSide(color: Colors.white),
-                ),
-                prefixIcon:
-                    const Icon(Icons.search, color: Colors.white, size: 20),
               ),
             ),
-          ),
           SizedBox(
             height: 20.h,
           ),
@@ -172,8 +129,7 @@ class _MyListingState extends ConsumerState<MyListing> {
                                   : listData.data!.where((item) {
                                       final education =
                                           item.education?.toLowerCase() ?? '';
-                                      final experience =
-                                          item.experience?.toString() ?? '';
+
                                       final stName = item.student!.fullName
                                               ?.toLowerCase() ??
                                           '';
@@ -182,7 +138,6 @@ class _MyListingState extends ConsumerState<MyListing> {
                                           .join(' ');
 
                                       return education.contains(query) ||
-                                          experience.contains(query) ||
                                           stName.contains(query) ||
                                           subjects.contains(query);
                                     }).toList();
@@ -290,7 +245,7 @@ class _MyListingState extends ConsumerState<MyListing> {
                                             SizedBox(width: 6.w),
                                             Expanded(
                                               child: Text(
-                                                item.education ?? '',
+                                                "Leval : ${item.education ?? ''}",
                                                 style: GoogleFonts.roboto(
                                                   fontSize: 15.sp,
                                                   color: Colors.grey[700],
@@ -300,27 +255,43 @@ class _MyListingState extends ConsumerState<MyListing> {
                                             ),
                                           ],
                                         ),
-
-                                        SizedBox(height: 8.h),
-
-                                        /// EXPERIENCE
+                                        SizedBox(height: 10.h),
                                         Row(
                                           children: [
-                                            Icon(Icons.work_outline,
-                                                size: 18.sp,
-                                                color: Colors.orange),
+                                            Icon(Icons.timer,
+                                                size: 18.sp, color: Colors.red),
                                             SizedBox(width: 6.w),
-                                            Text(
-                                              "${item.experience}+ Years Experience",
-                                              style: GoogleFonts.roboto(
-                                                fontSize: 15.sp,
-                                                color: Colors.grey[700],
-                                                fontWeight: FontWeight.w700,
+                                            Expanded(
+                                              child: Text(
+                                                "Duration : ${item.duration ?? ''}",
+                                                style: GoogleFonts.roboto(
+                                                  fontSize: 15.sp,
+                                                  color: Colors.grey[700],
+                                                  fontWeight: FontWeight.w700,
+                                                ),
                                               ),
                                             ),
                                           ],
                                         ),
-
+                                        SizedBox(height: 10.h),
+                                        Row(
+                                          children: [
+                                            Icon(Icons.wifi,
+                                                size: 18.sp,
+                                                color: Colors.black),
+                                            SizedBox(width: 6.w),
+                                            Expanded(
+                                              child: Text(
+                                                "Available : ${item.teachingMode ?? ''}",
+                                                style: GoogleFonts.roboto(
+                                                  fontSize: 15.sp,
+                                                  color: Colors.grey[700],
+                                                  fontWeight: FontWeight.w700,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                         SizedBox(height: 10.h),
 
                                         /// SUBJECTS
@@ -372,14 +343,6 @@ class _MyListingState extends ConsumerState<MyListing> {
                                                 ref.invalidate(
                                                     myListingController);
                                               });
-
-                                              /*  Navigator.push(
-                                                context,
-                                                CupertinoPageRoute(
-                                                  builder: (_) =>
-                                                      ListingDetailsPage(item),
-                                                ),
-                                              );*/
                                             },
                                             child: Text(
                                               "View Details",
@@ -432,170 +395,821 @@ class CreateListPage extends ConsumerStatefulWidget {
 }
 
 class _CreateListPageState extends ConsumerState<CreateListPage> {
-  final educationCotnroller = TextEditingController();
-  final exprienceController = TextEditingController();
-  final subjectConroller = TextEditingController();
-  final feesController = TextEditingController();
-  final descController = TextEditingController();
+  final phoneController = TextEditingController();
   final durationController = TextEditingController();
-  final locationController = TextEditingController();
+  final localAddressController = TextEditingController();
+  final stateController = TextEditingController();
+  final pincodeController = TextEditingController();
+  //TextEditingController timeController = TextEditingController();
 
   bool isLoading = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  String? mode;
+  String? mode, qualification, budget, requires;
 
   List<String> modeList = [
     "online",
     "offline",
   ];
 
+  // ✅ selected skills
+  final List<String> selectedSubject = [];
+
+  List<String> qualificationList = [
+    "10th",
+    "12th",
+    "Diploma",
+    "graduate",
+    "Postgraduate"
+  ];
+
+  List<String> requireList = [
+    "Part Time",
+    "Full Time",
+  ];
+
+  String? gender;
+  String? communicate;
+
+  List<String> genderList = [
+    "male",
+    "female",
+    "other",
+  ];
+
+  List<String> communicateList = [
+    "English",
+    "Hindi",
+    "English , Hindi",
+  ];
+
   @override
   Widget build(BuildContext context) {
     final themeMode = ref.watch(themeProvider);
+    final subjectKeyword = ref.watch(getSkillProvider);
+    final budgetProvider = ref.watch(budgetController);
     return Form(
       key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            height: 20.h,
-          ),
-          CreateList(label: "Education", controller: educationCotnroller),
-          CreateList(label: "Experience", controller: exprienceController),
-          CreateList(label: "Subjects", controller: subjectConroller),
-          CreateList(label: "Location", controller: locationController),
-          CreateList(label: "Duration", controller: durationController),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 28.w, vertical: 20.h),
-            child: DropdownButtonFormField(
-              dropdownColor:
-                  themeMode == ThemeMode.dark ? Colors.white : Colors.black,
-              value: mode,
-              decoration: InputDecoration(
-                labelText: 'Teaching Mode',
-                labelStyle: GoogleFonts.roboto(
-                  fontSize: 13.w,
-                  fontWeight: FontWeight.w400,
-                  //color: const Color(0xFF4D4D4D),
-                  color:
-                      themeMode == ThemeMode.dark ? Colors.black : Colors.white,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30.sp),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30.sp),
-                  borderSide: const BorderSide(color: Colors.grey),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30.sp),
-                  borderSide: BorderSide(
-                    color: themeMode == ThemeMode.dark
-                        ? const Color(0xFF4D4D4D)
-                        : Colors.white,
+      child: Padding(
+          padding: EdgeInsets.only(right: 28.w, left: 28.w),
+          child: subjectKeyword.when(
+            data: (subjects) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 25.h,
                   ),
-                ),
-              ),
-              items: modeList
-                  .map((mode) => DropdownMenuItem(
-                        value: mode,
-                        child: Text(
-                          mode,
-                          style: GoogleFonts.roboto(
-                            fontSize: 14.w,
-                            color: themeMode == ThemeMode.dark
-                                ? Color(0xFF4D4D4D)
-                                : Colors.white,
-                          ),
-                        ),
-                      ))
-                  .toList(),
-              onChanged: (value) {
-                setState(() {
-                  mode = value;
-                });
-              },
-              validator: (value) =>
-                  value == null ? 'Teaching Mode is required' : null,
-            ),
-          ),
-          CreateList(label: "Budget", controller: feesController),
-          CreateList(label: "Description", controller: descController),
-          SizedBox(
-            height: 20.h,
-          ),
-          Center(
-              child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      minimumSize: Size(380.w, 50.h),
-                      padding: EdgeInsets.symmetric(vertical: 18.h)),
-                  onPressed: () async {
-                    if (!_formKey.currentState!.validate()) {
-                      return;
-                    }
-                    setState(() {
-                      isLoading = true;
-                    });
+                  Text(
+                    "Subject / Keyword",
+                    style: GoogleFonts.roboto(
+                      fontSize: 13.w,
+                      fontWeight: FontWeight.w400,
+                      // color: const Color(0xFF4D4D4D),
+                      color: themeMode == ThemeMode.dark
+                          ? Color(0xFF4D4D4D)
+                          : Colors.white,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10.h,
+                  ),
 
-                    try {
-                      final body = CreatelistBodyModel(
-                        education: educationCotnroller.text,
-                        experience: exprienceController.text,
-                        //  subjects: [subjectConroller.text],
-                        subjects: subjectConroller.text
-                            .split(',')
-                            .map((e) => e.trim())
-                            .toList(),
-                        fee: feesController.text,
-                        description: descController.text,
-                        duration: durationController.text,
-                        location: locationController.text,
-                        teachingMode: mode.toString(),
-                      );
-
-                      final service = APIStateNetwork(createDio());
-                      final response = await service.createList(body);
-                      if (response.response.statusCode == 201) {
-                        Fluttertoast.showToast(
-                            msg: response.response.data['message']);
-
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => HomePage(0)));
-                        setState(() {
-                          isLoading = false;
-                        });
+                  /// 🔹 TypeAhead
+                  FormField<String>(
+                    validator: (value) {
+                      if (selectedSubject.isEmpty) {
+                        return "Please select at least one subject";
                       }
-                    } catch (e, st) {
+                      return null;
+                    },
+                    builder: (FormFieldState<String> field) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TypeAheadField<String>(
+                            hideOnEmpty: false, // 🔥 important
+                            hideOnLoading: false,
+                            hideOnError: false,
+                            builder: (context, controller, focusNode) {
+                              return TextField(
+                                controller: controller,
+                                focusNode: focusNode,
+                                style: TextStyle(
+                                  color: themeMode == ThemeMode.dark
+                                      ? const Color(0xFF4D4D4D)
+                                      : Colors.white,
+                                ),
+                                decoration: InputDecoration(
+                                  errorText: field.errorText,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(30.r),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(30.r),
+                                    borderSide:
+                                        const BorderSide(color: Colors.grey),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(30.r),
+                                    borderSide: BorderSide(
+                                      color: themeMode == ThemeMode.dark
+                                          ? const Color(0xFF4D4D4D)
+                                          : Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+
+                            decorationBuilder: (context, child) {
+                              return Material(
+                                elevation: 4,
+                                borderRadius: BorderRadius.circular(12.r),
+                                child: child,
+                              );
+                            },
+
+                            offset: const Offset(0, 12),
+                            constraints: const BoxConstraints(maxHeight: 300),
+
+                            /// ✅ FIXED SUGGESTIONS
+                            suggestionsCallback: (pattern) {
+                              final query = pattern.trim().toLowerCase();
+
+                              return subjects.data
+                                  .where((s) => s.title
+                                      .trim()
+                                      .toLowerCase()
+                                      .contains(query))
+                                  .map((e) => e.title)
+                                  .toList();
+                            },
+
+                            itemBuilder: (context, skill) {
+                              return ListTile(
+                                title: Text(skill),
+                              );
+                            },
+
+                            onSelected: (skill) {
+                              if (!selectedSubject.contains(skill)) {
+                                setState(() => selectedSubject.add(skill));
+                                field.didChange(skill);
+                              }
+                            },
+                          ),
+                          SizedBox(height: 10.h),
+
+                          /// 🔹 Selected Chips
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: selectedSubject.map((skill) {
+                              return Chip(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.r),
+                                ),
+                                label: Text(
+                                  skill,
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                                onDeleted: () {
+                                  setState(() {
+                                    selectedSubject.remove(skill);
+                                  });
+                                  field.validate();
+                                },
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+
+                  SizedBox(
+                    height: 15.h,
+                  ),
+                  Text(
+                    "Education / Level",
+                    style: GoogleFonts.roboto(
+                      fontSize: 13.w,
+                      fontWeight: FontWeight.w400,
+                      // color: const Color(0xFF4D4D4D),
+                      color: themeMode == ThemeMode.dark
+                          ? Color(0xFF4D4D4D)
+                          : Colors.white,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  DropdownButtonFormField(
+                    dropdownColor: themeMode == ThemeMode.light
+                        ? Colors.black
+                        : Colors.white,
+                    value: qualification == null
+                        ? null
+                        : (qualificationList
+                                .where((item) =>
+                                    item.toLowerCase() ==
+                                    qualification!.toLowerCase())
+                                .isNotEmpty
+                            ? qualification
+                            : null),
+                    icon: Icon(
+                      Icons.arrow_drop_down,
+                      color: Colors.black,
+                    ),
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.sp),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.sp),
+                        borderSide: const BorderSide(color: Colors.grey),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.sp),
+                        borderSide: BorderSide(
+                          color: themeMode == ThemeMode.dark
+                              ? const Color(0xFF4D4D4D)
+                              : Colors.white,
+                        ),
+                      ),
+                    ),
+                    items: qualificationList
+                        .map((qualification) => DropdownMenuItem(
+                              value: qualification,
+                              child: Text(
+                                qualification,
+                                style: GoogleFonts.roboto(
+                                  fontSize: 14.w,
+                                  color: themeMode == ThemeMode.dark
+                                      ? Color(0xFF4D4D4D)
+                                      : Colors.white,
+                                ),
+                              ),
+                            ))
+                        .toList(),
+                    onChanged: (value) {
                       setState(() {
-                        isLoading = false;
+                        qualification = value;
                       });
-                      log("${e.toString()} /n ${st.toString()}");
-                      Fluttertoast.showToast(msg: "APi Error : $e");
-                    } finally {
+                    },
+                    validator: (value) =>
+                        value == null ? 'Education Level is required' : null,
+                  ),
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  CreateList(
+                      label: "Local Address",
+                      controller: localAddressController,
+                      type: TextInputType.streetAddress,
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Local Address is required';
+                        }
+                        return null;
+                      }),
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  CreateList(
+                      label: "State",
+                      controller: stateController,
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'State is required';
+                        }
+                        return null;
+                      }),
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  CreateList(
+                      label: "Pin Code",
+                      controller: pincodeController,
+                      type: TextInputType.number,
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Pin Code is required';
+                        }
+                        return null;
+                      }),
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  CreateList(
+                      label: "Duration",
+                      controller: durationController,
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Duration is required';
+                        }
+                        return null;
+                      }),
+                  // SizedBox(
+                  //   height: 10.h,
+                  // ),
+                  // Text(
+                  //   "Select Time",
+                  //   style: GoogleFonts.roboto(
+                  //     fontSize: 13.w,
+                  //     fontWeight: FontWeight.w400,
+                  //     // color: const Color(0xFF4D4D4D),
+                  //     color: themeMode == ThemeMode.dark
+                  //         ? Color(0xFF4D4D4D)
+                  //         : Colors.white,
+                  //   ),
+                  // ),
+                  // SizedBox(
+                  //   height: 10.h,
+                  // ),
+                  // TextFormField(
+                  //   controller: timeController,
+                  //   readOnly: true,
+                  //   style: TextStyle(
+                  //     color: themeMode == ThemeMode.dark
+                  //         ? Color(0xFF4D4D4D)
+                  //         : Colors.white,
+                  //   ),
+                  //   decoration: InputDecoration(
+                  //     focusedBorder: OutlineInputBorder(
+                  //       borderSide: BorderSide(
+                  //         // color: Colors.black,
+                  //         color: themeMode == ThemeMode.dark
+                  //             ? const Color(0xFF4D4D4D)
+                  //             : Colors.white,
+                  //       ),
+                  //       borderRadius: BorderRadius.circular(40.r),
+                  //     ),
+                  //     border: OutlineInputBorder(
+                  //       borderSide: BorderSide(
+                  //         color: Colors.grey,
+                  //       ),
+                  //       borderRadius: BorderRadius.circular(40.r),
+                  //     ),
+                  //     enabledBorder: OutlineInputBorder(
+                  //       borderSide: BorderSide(
+                  //         //color: Colors.grey
+                  //         color: Colors.grey,
+                  //       ),
+                  //       borderRadius: BorderRadius.circular(40.r),
+                  //     ),
+                  //   ),
+                  //   onTap: () async {
+                  //     TimeOfDay? picked = await showTimePicker(
+                  //       context: context,
+                  //       initialTime: TimeOfDay.now(),
+                  //     );
+                  //     if (picked != null) {
+                  //       timeController.text = picked.format(context);
+                  //     }
+                  //   },
+                  // ),
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  Text(
+                    "Gender Preference",
+                    style: GoogleFonts.roboto(
+                      fontSize: 13.w,
+                      fontWeight: FontWeight.w400,
+                      // color: const Color(0xFF4D4D4D),
+                      color: themeMode == ThemeMode.dark
+                          ? Color(0xFF4D4D4D)
+                          : Colors.white,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  DropdownButtonFormField(
+                    dropdownColor: themeMode == ThemeMode.light
+                        ? Colors.black
+                        : Colors.white,
+                    // value: gender,
+                    // ⭐ UPDATED VALUE FIX HERE
+                    value: gender,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.sp),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.sp),
+                        borderSide: const BorderSide(color: Colors.grey),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.sp),
+                        borderSide: BorderSide(
+                          color: themeMode == ThemeMode.dark
+                              ? const Color(0xFF4D4D4D)
+                              : Colors.white,
+                        ),
+                      ),
+                    ),
+                    items: genderList
+                        .map((data) => DropdownMenuItem(
+                              value: data,
+                              child: Text(
+                                data,
+                                style: GoogleFonts.roboto(
+                                  fontSize: 14.w,
+                                  color: themeMode == ThemeMode.dark
+                                      ? Color(0xFF4D4D4D)
+                                      : Colors.white,
+                                ),
+                              ),
+                            ))
+                        .toList(),
+                    onChanged: (value) {
                       setState(() {
-                        isLoading = false;
+                        gender = value;
                       });
-                    }
-                  },
-                  child: isLoading
-                      ? Center(
-                          child: SizedBox(
-                            width: 30.w,
-                            height: 30.h,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
+                    },
+                  ),
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  Text(
+                    "Communicate in",
+                    style: GoogleFonts.roboto(
+                      fontSize: 13.w,
+                      fontWeight: FontWeight.w400,
+                      // color: const Color(0xFF4D4D4D),
+                      color: themeMode == ThemeMode.dark
+                          ? Color(0xFF4D4D4D)
+                          : Colors.white,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  DropdownButtonFormField(
+                    dropdownColor: themeMode == ThemeMode.light
+                        ? Colors.black
+                        : Colors.white,
+
+                    // ⭐ UPDATED VALUE FIX HERE
+                    value: communicate,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.sp),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.sp),
+                        borderSide: const BorderSide(color: Colors.grey),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.sp),
+                        borderSide: BorderSide(
+                          color: themeMode == ThemeMode.dark
+                              ? const Color(0xFF4D4D4D)
+                              : Colors.white,
+                        ),
+                      ),
+                    ),
+                    items: communicateList
+                        .map((communi) => DropdownMenuItem(
+                              value: communi,
+                              child: Text(
+                                communi,
+                                style: GoogleFonts.roboto(
+                                  fontSize: 14.w,
+                                  color: themeMode == ThemeMode.dark
+                                      ? Color(0xFF4D4D4D)
+                                      : Colors.white,
+                                ),
+                              ),
+                            ))
+                        .toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        communicate = value;
+                      });
+                    },
+                    validator: (value) =>
+                        value == null ? 'Communicate is required' : null,
+                  ),
+
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  Text(
+                    'Teaching Mode',
+                    style: GoogleFonts.roboto(
+                      fontSize: 13.w,
+                      fontWeight: FontWeight.w400,
+                      // color: const Color(0xFF4D4D4D),
+                      color: themeMode == ThemeMode.dark
+                          ? Color(0xFF4D4D4D)
+                          : Colors.white,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  DropdownButtonFormField(
+                    dropdownColor: themeMode == ThemeMode.dark
+                        ? Colors.white
+                        : Colors.black,
+                    value: mode,
+                    icon: Icon(
+                      Icons.arrow_drop_down,
+                      color: Colors.black,
+                    ),
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.sp),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.sp),
+                        borderSide: const BorderSide(color: Colors.grey),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.sp),
+                        borderSide: BorderSide(
+                          color: themeMode == ThemeMode.dark
+                              ? const Color(0xFF4D4D4D)
+                              : Colors.white,
+                        ),
+                      ),
+                    ),
+                    items: modeList
+                        .map((mode) => DropdownMenuItem(
+                              value: mode,
+                              child: Text(
+                                mode,
+                                style: GoogleFonts.roboto(
+                                  fontSize: 14.w,
+                                  color: themeMode == ThemeMode.dark
+                                      ? Color(0xFF4D4D4D)
+                                      : Colors.white,
+                                ),
+                              ),
+                            ))
+                        .toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        mode = value;
+                      });
+                    },
+                    validator: (value) =>
+                        value == null ? 'Teaching Mode is required' : null,
+                  ),
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  Text(
+                    'Requires',
+                    style: GoogleFonts.roboto(
+                      fontSize: 13.w,
+                      fontWeight: FontWeight.w400,
+                      // color: const Color(0xFF4D4D4D),
+                      color: themeMode == ThemeMode.dark
+                          ? Color(0xFF4D4D4D)
+                          : Colors.white,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  DropdownButtonFormField(
+                    dropdownColor: themeMode == ThemeMode.light
+                        ? Colors.black
+                        : Colors.white,
+                    icon: Icon(
+                      Icons.arrow_drop_down,
+                      color: Colors.black,
+                    ),
+                    value: requires,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.sp),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.sp),
+                        borderSide: const BorderSide(color: Colors.grey),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.sp),
+                        borderSide: BorderSide(
+                          color: themeMode == ThemeMode.dark
+                              ? const Color(0xFF4D4D4D)
+                              : Colors.white,
+                        ),
+                      ),
+                    ),
+                    items: requireList
+                        .map((requires) => DropdownMenuItem(
+                              value: requires,
+                              child: Text(
+                                requires,
+                                style: GoogleFonts.roboto(
+                                  fontSize: 14.w,
+                                  color: themeMode == ThemeMode.dark
+                                      ? Color(0xFF4D4D4D)
+                                      : Colors.white,
+                                ),
+                              ),
+                            ))
+                        .toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        requires = value;
+                      });
+                    },
+                    validator: (value) =>
+                        value == null ? 'Teaching mode is required' : null,
+                  ),
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  Text(
+                    "Budget",
+                    style: GoogleFonts.roboto(
+                      fontSize: 13.w,
+                      fontWeight: FontWeight.w400,
+                      // color: const Color(0xFF4D4D4D),
+                      color: themeMode == ThemeMode.dark
+                          ? Color(0xFF4D4D4D)
+                          : Colors.white,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  budgetProvider.when(
+                    data: (snap) {
+                      return DropdownButtonFormField(
+                        dropdownColor: themeMode == ThemeMode.light
+                            ? Colors.black
+                            : Colors.white,
+                        icon: Icon(
+                          Icons.arrow_drop_down,
+                          color: Colors.black,
+                        ),
+                        value: budget,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30.sp),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30.sp),
+                            borderSide: const BorderSide(color: Colors.grey),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30.sp),
+                            borderSide: BorderSide(
+                              color: themeMode == ThemeMode.dark
+                                  ? const Color(0xFF4D4D4D)
+                                  : Colors.white,
                             ),
                           ),
-                        )
-                      : Text("Create List"))),
-          SizedBox(
-            height: 30.h,
-          )
-        ],
-      ),
+                        ),
+                        items: snap.data!
+                            .map((item) => DropdownMenuItem(
+                                  value: item.price,
+                                  child: Text(
+                                    item.price.toString(),
+                                    style: GoogleFonts.roboto(
+                                      fontSize: 14.w,
+                                      color: themeMode == ThemeMode.dark
+                                          ? Color(0xFF4D4D4D)
+                                          : Colors.white,
+                                    ),
+                                  ),
+                                ))
+                            .toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            budget = value.toString();
+                          });
+                        },
+                        validator: (value) =>
+                            value == null ? 'Budget is required' : null,
+                      );
+                    },
+                    error: (error, stackTrace) {
+                      return Center(
+                        child: Text(error.toString()),
+                      );
+                    },
+                    loading: () => SizedBox(),
+                  ),
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  CreateList(
+                      label: "Mobile Number", controller: phoneController),
+                  SizedBox(
+                    height: 25.h,
+                  ),
+                  Center(
+                    child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            minimumSize: Size(380.w, 50.h),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 20.h, horizontal: 15.w)),
+                        onPressed: () async {
+                          if (!_formKey.currentState!.validate()) {
+                            return;
+                          }
+                          setState(() {
+                            isLoading = true;
+                          });
+
+                          try {
+                            final body = CreatelistBodyModel(
+                                education: qualification.toString(),
+                                subjects: selectedSubject,
+                                teachingMode: mode.toString(),
+                                duration: durationController.text,
+                                requires: requires.toString(),
+                                budget: budget.toString(),
+                                mobileNumber: phoneController.text,
+                                // time: timeController.text,
+                                gender: gender ?? "",
+                                communicate: communicate ?? "",
+                                state: stateController.text,
+                                localAddress: localAddressController.text,
+                                pincode: pincodeController.text);
+
+                            final service = APIStateNetwork(createDio());
+                            final response = await service.createList(body);
+                            if (response.response.statusCode == 201) {
+                              Fluttertoast.showToast(
+                                  msg: response.response.data['message']);
+                              qualification = null;
+                              selectedSubject.clear();
+                              mode = null;
+                              durationController.clear();
+                              requires = null;
+                              budget = null;
+                              phoneController.clear();
+                              //timeController.clear();
+                              gender = null;
+                              communicate = null;
+                              stateController.clear();
+                              localAddressController.clear();
+                              pincodeController.clear();
+
+                              setState(() {
+                                isLoading = false;
+                              });
+                            }
+                          } on DioException catch (e) {
+                            if (e.response?.data != null) {
+                              final errors = e.response!.data['errors'];
+
+                              errors.forEach((key, value) {
+                                log("❌ $key : ${value[0]}");
+                              });
+
+                              final message = errors.values.first[0];
+
+                              Fluttertoast.showToast(
+                                  msg: message,
+                                  backgroundColor: Colors.red,
+                                  toastLength: Toast.LENGTH_LONG);
+                            }
+                          } finally {
+                            setState(() {
+                              isLoading = false;
+                            });
+                          }
+                        },
+                        child: isLoading
+                            ? Center(
+                                child: SizedBox(
+                                  width: 30.w,
+                                  height: 30.h,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              )
+                            : Text("Create List")),
+                  ),
+                  SizedBox(
+                    height: 30.h,
+                  )
+                ],
+              );
+            },
+            error: (error, stackTrace) {
+              log(stackTrace.toString());
+              return Center(
+                child: Text(error.toString()),
+              );
+            },
+            loading: () => Center(
+              child: CircularProgressIndicator(),
+            ),
+          )),
     );
   }
 }
@@ -604,7 +1218,6 @@ class CreateList extends ConsumerStatefulWidget {
   final String label;
   final TextEditingController controller;
   final TextInputType? type;
-
   final int? maxLine;
   final String? Function(String?)? validator;
 
@@ -625,70 +1238,67 @@ class _CreateListState extends ConsumerState<CreateList> {
   @override
   Widget build(BuildContext context) {
     final themeMode = ref.watch(themeProvider);
-    return Padding(
-      padding: EdgeInsets.only(top: 10.h, right: 28.w, left: 28.w),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                widget.label,
-                style: GoogleFonts.roboto(
-                  fontSize: 13.w,
-                  fontWeight: FontWeight.w400,
-                  // color: const Color(0xFF4D4D4D),
-                  color: themeMode == ThemeMode.dark
-                      ? Color(0xFF4D4D4D)
-                      : Colors.white,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 10.h),
-          TextFormField(
-            style: TextStyle(
-              color: themeMode == ThemeMode.dark
-                  ? Color(0xFF4D4D4D)
-                  : Colors.white,
-            ),
-            controller: widget.controller,
-            maxLines: widget.maxLine,
-            keyboardType: widget.type,
-            decoration: InputDecoration(
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  // color: Colors.black,
-                  color: themeMode == ThemeMode.dark
-                      ? const Color(0xFF4D4D4D)
-                      : Colors.white,
-                ),
-                borderRadius: BorderRadius.circular(40.r),
-              ),
-              border: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Colors.grey,
-                ),
-                borderRadius: BorderRadius.circular(40.r),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  //color: Colors.grey
-                  color: Colors.grey,
-                ),
-                borderRadius: BorderRadius.circular(40.r),
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              widget.label,
+              style: GoogleFonts.roboto(
+                fontSize: 13.w,
+                fontWeight: FontWeight.w400,
+                // color: const Color(0xFF4D4D4D),
+                color: themeMode == ThemeMode.dark
+                    ? Color(0xFF4D4D4D)
+                    : Colors.white,
               ),
             ),
-            validator: (value) {
-              if (value == null || value.trim().isEmpty) {
-                return '${widget.label} is required';
-              }
-              return null;
-            },
+          ],
+        ),
+        SizedBox(height: 10.h),
+        TextFormField(
+          style: TextStyle(
+            color:
+                themeMode == ThemeMode.dark ? Color(0xFF4D4D4D) : Colors.white,
           ),
-        ],
-      ),
+          controller: widget.controller,
+          maxLines: widget.maxLine,
+          keyboardType: widget.type,
+          decoration: InputDecoration(
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                // color: Colors.black,
+                color: themeMode == ThemeMode.dark
+                    ? const Color(0xFF4D4D4D)
+                    : Colors.white,
+              ),
+              borderRadius: BorderRadius.circular(40.r),
+            ),
+            border: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.grey,
+              ),
+              borderRadius: BorderRadius.circular(40.r),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                //color: Colors.grey
+                color: Colors.grey,
+              ),
+              borderRadius: BorderRadius.circular(40.r),
+            ),
+          ),
+          validator: widget.validator,
+          // validator: (value) {
+          //   if (value == null || value.trim().isEmpty) {
+          //     return '${widget.label} is required';
+          //   }
+          //   return null;
+          // },
+        ),
+      ],
     );
   }
 }

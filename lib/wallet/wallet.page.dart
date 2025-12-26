@@ -3149,6 +3149,7 @@ class _WalletPageState extends ConsumerState<WalletPage> {
   }
 }*/
 
+import 'package:educationapp/coreFolder/Controller/getSkillProvider.dart';
 import 'package:educationapp/coreFolder/Controller/themeController.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -3183,6 +3184,10 @@ class _WalletPageState extends ConsumerState<WalletPage> {
   int? selectCoins;
   bool _isSearching = false; // New
   String _searchQuery = ''; // New
+  String? selectedBudget;
+  double selectedPrice = 0; // actual price
+  double selectedDiscount = 0; // discount %
+  double finalAmount = 0; // price - discount
 
   @override
   void initState() {
@@ -3354,6 +3359,9 @@ class _WalletPageState extends ConsumerState<WalletPage> {
     });
   }
 
+  String finalammount = "";
+  int desi = 0;
+
   @override
   Widget build(BuildContext context) {
     var box = Hive.box('userdata');
@@ -3383,6 +3391,8 @@ class _WalletPageState extends ConsumerState<WalletPage> {
     );
 
     final transactionState = ref.watch(transactionProvider(userId));
+
+    final budgetProvider = ref.watch(budgetController);
 
     return Scaffold(
       backgroundColor: themeMode == ThemeMode.dark
@@ -3465,6 +3475,8 @@ class _WalletPageState extends ConsumerState<WalletPage> {
                 ),
                 GestureDetector(
                   onTap: () {
+///////////////////////////////////////////////////////////
+
                     showModalBottomSheet(
                       context: context,
                       isScrollControlled: true,
@@ -3477,206 +3489,397 @@ class _WalletPageState extends ConsumerState<WalletPage> {
                             final double amountToPay =
                                 _getAmountInRupees(coinsToUse);
 
-                            return Container(
-                              decoration: BoxDecoration(
-                                color: themeMode == ThemeMode.dark
-                                    ? Colors.white
-                                    : Colors.black,
-                                borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(40),
-                                    topRight: Radius.circular(40)),
-                              ),
-                              height: MediaQuery.of(context).size.height * 0.7,
-                              padding: EdgeInsets.all(15.w),
-                              child: Column(
-                                children: [
-                                  Container(
-                                      height: 5.h,
-                                      width: 50.w,
-                                      decoration: BoxDecoration(
-                                          color: Colors.grey,
-                                          borderRadius:
-                                              BorderRadius.circular(10))),
-                                  SizedBox(height: 15.h),
-                                  Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      "Add Coins",
-                                      style: GoogleFonts.roboto(
-                                        color: themeMode == ThemeMode.dark
-                                            ? Colors.black
-                                            : Colors.white,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 18.sp,
-                                      ),
-                                    ),
+                            return budgetProvider.when(
+                              data: (snp) {
+                                String price = snp.data!.first.price.toString();
+
+                                String disc =
+                                    snp.data!.first.discount.toString();
+
+                                return Container(
+                                  decoration: BoxDecoration(
+                                    color: themeMode == ThemeMode.dark
+                                        ? Colors.white
+                                        : Colors.black,
+                                    borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(40),
+                                        topRight: Radius.circular(40)),
                                   ),
-                                  SizedBox(height: 10.h),
-                                  TextFormField(
-                                    controller: _amountController,
-                                    keyboardType: TextInputType.number,
-                                    style: TextStyle(
-                                        color: themeMode == ThemeMode.dark
-                                            ? Colors.black
-                                            : Colors.white),
-                                    onChanged: (value) {
-                                      final parsed = int.tryParse(value) ?? 0;
-                                      setState(() => selectCoins = parsed);
-                                      setModalState(() {});
-                                    },
-                                    decoration: InputDecoration(
-                                      labelText: "Enter amount of coins",
-                                      border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10.r)),
-                                      enabledBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10.r),
-                                          borderSide: const BorderSide(
-                                              color: Colors.grey)),
-                                      focusedBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10.r),
-                                          borderSide: const BorderSide(
-                                              color: Colors.grey)),
-                                    ),
-                                  ),
-                                  SizedBox(height: 20.h),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [50, 100, 150, 200].map((amount) {
-                                      final bool isSelected =
-                                          selectCoins == amount;
-                                      return GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            selectCoins = amount;
-                                            _amountController.text =
-                                                amount.toString();
-                                          });
-                                          setModalState(() {});
-                                        },
-                                        child: AnimatedContainer(
-                                          duration:
-                                              const Duration(milliseconds: 250),
-                                          height: 60.h,
-                                          width: 80.w,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.7,
+                                  padding: EdgeInsets.all(15.w),
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                          height: 5.h,
+                                          width: 50.w,
                                           decoration: BoxDecoration(
-                                            color: isSelected
-                                                ? const Color(0xFF008080)
-                                                : Colors.grey.shade200,
-                                            borderRadius:
-                                                BorderRadius.circular(20.r),
-                                            boxShadow: isSelected
-                                                ? [
-                                                    BoxShadow(
-                                                        color: const Color(
-                                                                0xFF008080)
-                                                            .withOpacity(0.6),
-                                                        blurRadius: 12,
-                                                        spreadRadius: 3)
-                                                  ]
-                                                : null,
+                                              color: Colors.grey,
+                                              borderRadius:
+                                                  BorderRadius.circular(10))),
+                                      SizedBox(height: 15.h),
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          "Add Coins",
+                                          style: GoogleFonts.roboto(
+                                            color: themeMode == ThemeMode.dark
+                                                ? Colors.black
+                                                : Colors.white,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 18.sp,
                                           ),
-                                          child: Center(
-                                            child: Text(
-                                              "$amount",
-                                              style: GoogleFonts.inter(
-                                                fontSize: 18.sp,
-                                                fontWeight: FontWeight.w700,
-                                                color: isSelected
-                                                    ? Colors.white
-                                                    : Colors.black,
-                                              ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 10.h,
+                                      ),
+                                      DropdownButtonFormField<String>(
+                                        isExpanded: true,
+                                        padding: EdgeInsets.zero,
+                                        hint: Center(
+                                          child: Text(
+                                            "--- Select ---",
+                                            textAlign: TextAlign.center,
+                                            style: GoogleFonts.inter(
+                                              fontSize: 15.sp,
+                                              fontWeight: FontWeight.w400,
+                                              color: Colors.black,
                                             ),
                                           ),
                                         ),
-                                      );
-                                    }).toList(),
-                                  ),
-                                  SizedBox(height: 30.h),
-                                  AnimatedContainer(
-                                    duration: const Duration(milliseconds: 300),
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 16.h, horizontal: 20.w),
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFF008080)
-                                          .withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(15.r),
-                                      border: Border.all(
-                                          color: const Color(0xFF008080),
-                                          width: 1.5),
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          "You will pay",
-                                          style: GoogleFonts.roboto(
-                                            fontSize: 16.sp,
-                                            fontWeight: FontWeight.w500,
-                                            color: themeMode == ThemeMode.dark
-                                                ? Colors.black87
+                                        value: selectedBudget,
+                                        dropdownColor:
+                                            themeMode == ThemeMode.dark
+                                                ? Colors.black
                                                 : Colors.white,
+                                        icon: const Icon(Icons.arrow_drop_down),
+                                        decoration: InputDecoration(
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(25.sp),
+                                          ),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(25.sp),
+                                            borderSide: const BorderSide(
+                                                color: Colors.grey),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(25.sp),
+                                            borderSide: BorderSide(
+                                              color: themeMode == ThemeMode.dark
+                                                  ? const Color(0xFF4D4D4D)
+                                                  : Colors.white,
+                                            ),
                                           ),
                                         ),
-                                        Text(
-                                          "₹${amountToPay.toStringAsFixed(2)}",
-                                          style: GoogleFonts.roboto(
-                                            fontSize: 24.sp,
-                                            fontWeight: FontWeight.w800,
-                                            color: const Color(0xFF008080),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(height: 40.h),
-                                  GestureDetector(
-                                    onTap: _isLoading || coinsToUse <= 0
-                                        ? null
-                                        : () {
-                                            if (coinsToUse <= 0) {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                const SnackBar(
-                                                    content: Text(
-                                                        'Please enter a valid coin amount')),
-                                              );
-                                              return;
-                                            }
-                                            _openRazorpayCheckout(coinsToUse);
-                                          },
-                                    child: Container(
-                                      height: 56.h,
-                                      width: double.infinity,
-                                      decoration: BoxDecoration(
-                                        color: (_isLoading || coinsToUse <= 0)
-                                            ? Colors.grey
-                                            : const Color.fromARGB(
-                                                255, 220, 248, 129),
-                                        borderRadius:
-                                            BorderRadius.circular(40.r),
-                                      ),
-                                      child: Center(
-                                        child: _isLoading
-                                            ? const CircularProgressIndicator(
-                                                color: Colors.black)
-                                            : Text(
-                                                "Continue to Pay ₹${amountToPay.toStringAsFixed(2)}",
-                                                style: GoogleFonts.roboto(
-                                                  color: Colors.black,
-                                                  fontSize: 17.sp,
-                                                  fontWeight: FontWeight.w600,
+                                        items: snp.data!
+                                            .where((e) =>
+                                                e.price != null) // safety
+                                            .map(
+                                              (item) =>
+                                                  DropdownMenuItem<String>(
+                                                value: item.price,
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      "₹ ${(double.tryParse(item.price ?? '0') ?? 0).toInt()}",
+                                                      style: GoogleFonts.roboto(
+                                                        fontSize: 14.w,
+                                                        color: themeMode ==
+                                                                ThemeMode.dark
+                                                            ? Colors.white
+                                                            : Colors.black,
+                                                      ),
+                                                    ),
+                                                    if (item.discount != null)
+                                                      Text(
+                                                        "${(double.tryParse(item.discount ?? '0') ?? 0).toInt()}%",
+                                                        style:
+                                                            GoogleFonts.roboto(
+                                                          fontSize: 14.w,
+                                                          color: themeMode ==
+                                                                  ThemeMode.dark
+                                                              ? Colors.white
+                                                              : Colors.black,
+                                                        ),
+                                                      ),
+                                                  ],
                                                 ),
                                               ),
+                                            )
+                                            .toList(),
+
+                                        /// 🔹 SELECTED ITEM UI (closed state)
+                                        selectedItemBuilder: (context) {
+                                          return snp.data!
+                                              .where((e) => e.price != null)
+                                              .map((item) {
+                                            return Row(
+                                              children: [
+                                                /// LEFT - Amount
+                                                Text(
+                                                  "₹ ${(double.tryParse(item.price ?? '0') ?? 0).toInt()}",
+                                                  style: GoogleFonts.roboto(
+                                                    fontSize: 16.w,
+                                                    color: themeMode ==
+                                                            ThemeMode.dark
+                                                        ? const Color(
+                                                            0xFF4D4D4D)
+                                                        : Colors.white,
+                                                  ),
+                                                ),
+                                                Spacer(),
+
+                                                /// RIGHT - Discount
+                                                if (item.discount != null)
+                                                  Text(
+                                                    "${(double.tryParse(item.discount ?? '0') ?? 0).toInt()}%",
+                                                    style: GoogleFonts.roboto(
+                                                      fontSize: 16.w,
+                                                      color: themeMode ==
+                                                              ThemeMode.dark
+                                                          ? const Color(
+                                                              0xFF4D4D4D)
+                                                          : Colors.white,
+                                                    ),
+                                                  ),
+                                              ],
+                                            );
+                                          }).toList();
+                                        },
+                                        onChanged: (String? value) {
+                                          setModalState(() {
+                                            selectedBudget = value;
+
+                                            final selectedItem = snp.data!
+                                                .firstWhere(
+                                                    (e) => e.price == value);
+
+                                            selectedPrice = double.tryParse(
+                                                    selectedItem.price ??
+                                                        '0') ??
+                                                0;
+
+                                            selectedDiscount = double.tryParse(
+                                                    selectedItem.discount ??
+                                                        '0') ??
+                                                0;
+
+                                            // 🔥 FINAL CALCULATION
+                                            finalAmount = selectedPrice -
+                                                (selectedPrice *
+                                                    selectedDiscount /
+                                                    100);
+
+                                            // Coins ke liye (agar coins == price)
+                                            selectCoins = selectedPrice.toInt();
+                                          });
+                                        },
+                                        validator: (value) => value == null
+                                            ? 'Budget is required'
+                                            : null,
                                       ),
-                                    ),
+
+                                      // SizedBox(height: 10.h),
+                                      // TextFormField(
+                                      //   controller: _amountController,
+                                      //   keyboardType: TextInputType.number,
+                                      //   style: TextStyle(
+                                      //       color: themeMode == ThemeMode.dark
+                                      //           ? Colors.black
+                                      //           : Colors.white),
+                                      //   onChanged: (value) {
+                                      //     final parsed =
+                                      //         int.tryParse(value) ?? 0;
+                                      //     setState(() => selectCoins = parsed);
+                                      //     setModalState(() {});
+                                      //   },
+                                      //   decoration: InputDecoration(
+                                      //     labelText: "Enter amount of coins",
+                                      //     border: OutlineInputBorder(
+                                      //         borderRadius:
+                                      //             BorderRadius.circular(10.r)),
+                                      //     enabledBorder: OutlineInputBorder(
+                                      //         borderRadius:
+                                      //             BorderRadius.circular(10.r),
+                                      //         borderSide: const BorderSide(
+                                      //             color: Colors.grey)),
+                                      //     focusedBorder: OutlineInputBorder(
+                                      //         borderRadius:
+                                      //             BorderRadius.circular(10.r),
+                                      //         borderSide: const BorderSide(
+                                      //             color: Colors.grey)),
+                                      //   ),
+                                      // ),
+                                      // SizedBox(height: 20.h),
+                                      // Row(
+                                      //   mainAxisAlignment:
+                                      //       MainAxisAlignment.spaceEvenly,
+                                      //   children:
+                                      //       [50, 100, 150, 200].map((amount) {
+                                      //     final bool isSelected =
+                                      //         selectCoins == amount;
+                                      //     return GestureDetector(
+                                      //       onTap: () {
+                                      //         setState(() {
+                                      //           selectCoins = amount;
+                                      //           _amountController.text =
+                                      //               amount.toString();
+                                      //         });
+                                      //         setModalState(() {});
+                                      //       },
+                                      //       child: AnimatedContainer(
+                                      //         duration: const Duration(
+                                      //             milliseconds: 250),
+                                      //         height: 60.h,
+                                      //         width: 80.w,
+                                      //         decoration: BoxDecoration(
+                                      //           color: isSelected
+                                      //               ? const Color(0xFF008080)
+                                      //               : Colors.grey.shade200,
+                                      //           borderRadius:
+                                      //               BorderRadius.circular(20.r),
+                                      //           boxShadow: isSelected
+                                      //               ? [
+                                      //                   BoxShadow(
+                                      //                       color: const Color(
+                                      //                               0xFF008080)
+                                      //                           .withOpacity(
+                                      //                               0.6),
+                                      //                       blurRadius: 12,
+                                      //                       spreadRadius: 3)
+                                      //                 ]
+                                      //               : null,
+                                      //         ),
+                                      //         child: Center(
+                                      //           child: Text(
+                                      //             "$amount",
+                                      //             style: GoogleFonts.inter(
+                                      //               fontSize: 18.sp,
+                                      //               fontWeight: FontWeight.w700,
+                                      //               color: isSelected
+                                      //                   ? Colors.white
+                                      //                   : Colors.black,
+                                      //             ),
+                                      //           ),
+                                      //         ),
+                                      //       ),
+                                      //     );
+                                      //   }).toList(),
+                                      // ),
+
+                                      SizedBox(height: 30.h),
+                                      AnimatedContainer(
+                                        duration:
+                                            const Duration(milliseconds: 300),
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 16.h, horizontal: 20.w),
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFF008080)
+                                              .withOpacity(0.1),
+                                          borderRadius:
+                                              BorderRadius.circular(15.r),
+                                          border: Border.all(
+                                              color: const Color(0xFF008080),
+                                              width: 1.5),
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "You will pay",
+                                              style: GoogleFonts.roboto(
+                                                fontSize: 16.sp,
+                                                fontWeight: FontWeight.w500,
+                                                color:
+                                                    themeMode == ThemeMode.dark
+                                                        ? Colors.black87
+                                                        : Colors.white,
+                                              ),
+                                            ),
+                                            Text(
+                                              //  "₹${amountToPay.toStringAsFixed(2)}",
+                                              "₹${finalAmount.toStringAsFixed(2)}",
+                                              style: GoogleFonts.roboto(
+                                                fontSize: 24.sp,
+                                                fontWeight: FontWeight.w800,
+                                                color: const Color(0xFF008080),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(height: 40.h),
+                                      GestureDetector(
+                                        // onTap: _isLoading || coinsToUse <= 0
+                                        //     ? null
+                                        //     : () {
+                                        //         if (coinsToUse <= 0) {
+                                        //           ScaffoldMessenger.of(context)
+                                        //               .showSnackBar(
+                                        //             const SnackBar(
+                                        //                 content: Text(
+                                        //                     'Please enter a valid coin amount')),
+                                        //           );
+                                        //           return;
+                                        //         }
+                                        //         _openRazorpayCheckout(
+                                        //             coinsToUse);
+                                        //       },
+                                        onTap: _isLoading || finalAmount <= 0
+                                            ? null
+                                            : () {
+                                                _openRazorpayCheckout(
+                                                    finalAmount.toInt());
+                                              },
+                                        child: Container(
+                                          height: 56.h,
+                                          width: double.infinity,
+                                          decoration: BoxDecoration(
+                                            color:
+                                                (_isLoading || coinsToUse <= 0)
+                                                    ? Colors.grey
+                                                    : const Color.fromARGB(
+                                                        255, 220, 248, 129),
+                                            borderRadius:
+                                                BorderRadius.circular(40.r),
+                                          ),
+                                          child: Center(
+                                            child: _isLoading
+                                                ? const CircularProgressIndicator(
+                                                    color: Colors.black)
+                                                : Text(
+                                                    // "Continue to Pay ₹${amountToPay.toStringAsFixed(2)}",
+                                                    "Continue to Pay ₹${finalAmount.toStringAsFixed(2)}",
+                                                    style: GoogleFonts.roboto(
+                                                      color: Colors.black,
+                                                      fontSize: 17.sp,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
+                                                  ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
+                                );
+                              },
+                              error: (error, stackTrace) {
+                                return Center(
+                                  child: Text(error.toString()),
+                                );
+                              },
+                              loading: () => Center(
+                                child: CircularProgressIndicator(),
                               ),
                             );
                           },

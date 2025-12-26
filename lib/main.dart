@@ -113,7 +113,6 @@
 //   return FormDataNotifier();
 // });
 
-
 import 'dart:async';
 import 'dart:developer';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -151,7 +150,7 @@ void main() async {
     log("Hive initialization failed: $e");
   }
 
-    FirebaseMessaging.onBackgroundMessage(_firebaseBackgroundHandler);
+  FirebaseMessaging.onBackgroundMessage(_firebaseBackgroundHandler);
 
   runApp(const ProviderScope(child: MyApp()));
 }
@@ -239,7 +238,6 @@ class _MyAppState extends ConsumerState<MyApp> {
       log("✅ Token is valid — proceed to HomePage");
       setState(() => token = savedToken);
     }
-
   }
 
   Future<bool> _isTokenExpired(String token) async {

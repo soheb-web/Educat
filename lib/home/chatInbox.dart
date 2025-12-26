@@ -133,7 +133,7 @@ class _ChatinboxState extends ConsumerState<Chatinbox> {
                         color: Colors.white),
                     decoration: InputDecoration(
                         contentPadding: EdgeInsets.only(
-                            left: 15.w, right: 15.w, top: 10.h, bottom: 10.h),
+                            left: 15.w, right: 15.w, top: 12.h, bottom: 12.h),
                         hint: Text(
                           "Search",
                           style: GoogleFonts.inter(
