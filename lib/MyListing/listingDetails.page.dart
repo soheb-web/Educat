@@ -240,15 +240,15 @@ class _ListingDetailsPageState extends ConsumerState<ListingDetailsPage> {
                   ),
                   SizedBox(height: 10.h),
                   Wrap(
-                    spacing: 10,
-                    runSpacing: 10,
+                    spacing: 10.w,
+                    runSpacing: 10.h,
                     children: widget.item.subjects!
                         .map<Widget>(
                           (s) => Chip(
                             label: Text(
                               s,
                               style: GoogleFonts.roboto(
-                                fontSize: 18.sp,
+                                fontSize: 15.sp,
                                 fontWeight: FontWeight.w400,
                                 color: Colors.black,
                               ),
@@ -375,7 +375,7 @@ class _ListingDetailsPageState extends ConsumerState<ListingDetailsPage> {
                           color: Colors.amber, size: 20.sp),
                       SizedBox(width: 6.w),
                       Text(
-                        "Coins : ",
+                        "Coins : ${(double.tryParse(widget.item.budget ?? '0') ?? 0).toInt()}",
                         style: GoogleFonts.roboto(
                           fontSize: 15.sp,
                           fontWeight: FontWeight.w600,

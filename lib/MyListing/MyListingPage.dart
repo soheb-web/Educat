@@ -1074,7 +1074,8 @@ class _CreateListPageState extends ConsumerState<CreateListPage> {
                             .map((item) => DropdownMenuItem(
                                   value: item.price,
                                   child: Text(
-                                    item.price.toString(),
+                                    // item.price.toString(),
+                                    "₹${(double.tryParse(item.price ?? '0') ?? 0).toInt()}",
                                     style: GoogleFonts.roboto(
                                       fontSize: 14.w,
                                       color: themeMode == ThemeMode.dark
