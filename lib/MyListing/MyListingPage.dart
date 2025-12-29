@@ -151,9 +151,12 @@ class _MyListingState extends ConsumerState<MyListing> {
                                     Text(
                                       "No List Available",
                                       style: GoogleFonts.inter(
-                                          fontSize: 20.sp,
-                                          fontWeight: FontWeight.w300,
-                                          color: Colors.black),
+                                        fontSize: 20.sp,
+                                        fontWeight: FontWeight.w300,
+                                        color: themeMode == ThemeMode.dark
+                                            ? Colors.black
+                                            : Colors.white,
+                                      ),
                                     ),
                                   ],
                                 );
@@ -548,14 +551,23 @@ class _CreateListPageState extends ConsumerState<CreateListPage> {
 
                             itemBuilder: (context, skill) {
                               return ListTile(
-                                title: Text(skill),
+                                title: Text(
+                                  skill,
+                                  style: GoogleFonts.inter(
+                                    color: themeMode == ThemeMode.dark
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                ),
                               );
                             },
 
                             onSelected: (skill) {
                               if (!selectedSubject.contains(skill)) {
                                 setState(() => selectedSubject.add(skill));
-                                field.didChange(skill);
+                                field.didChange(
+                                  skill,
+                                );
                               }
                             },
                           ),
@@ -572,7 +584,11 @@ class _CreateListPageState extends ConsumerState<CreateListPage> {
                                 ),
                                 label: Text(
                                   skill,
-                                  style: const TextStyle(color: Colors.white),
+                                  style: TextStyle(
+                                    color: themeMode == ThemeMode.dark
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
                                 ),
                                 onDeleted: () {
                                   setState(() {
@@ -1105,7 +1121,8 @@ class _CreateListPageState extends ConsumerState<CreateListPage> {
                     height: 10.h,
                   ),
                   CreateList(
-                      label: "Mobile Number", controller: phoneController),
+                      label: "Mobile Number (Optional)",
+                      controller: phoneController),
                   SizedBox(
                     height: 25.h,
                   ),
